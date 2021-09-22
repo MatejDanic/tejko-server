@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>matej</groupId>
-	<artifactId>tejko-games</artifactId>
+	<artifactId>tejko-games-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>tejko-games</name>
-	<description>Tejko Games</description>
+	<name>tejko-games-server</name>
+	<description>Tejko Games Server</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
