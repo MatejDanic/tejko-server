@@ -1,4 +1,4 @@
-package matej.tejkogames.exceptions;
+package matej.tejkogames.advice;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
@@ -15,8 +15,8 @@ import matej.tejkogames.models.general.ApiError;
 import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 
-@Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class TejkoGamesExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Autowired

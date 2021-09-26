@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.UserServiceImpl;
 import matej.tejkogames.api.services.YambServiceImpl;
-import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.exceptions.IllegalMoveException;
 import matej.tejkogames.interfaces.controllers.YambController;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
@@ -31,8 +29,6 @@ import matej.tejkogames.models.yamb.Yamb;
 import matej.tejkogames.utils.JwtUtil;
 
 @RestController
-@CrossOrigin(origins = { TejkoGamesConstants.ORIGIN_DEFAULT, TejkoGamesConstants.ORIGIN_WWW,
-		TejkoGamesConstants.ORIGIN_HEROKU })
 @RequestMapping("/api/yambs")
 public class YambControllerImpl implements YambController {
 

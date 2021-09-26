@@ -5,7 +5,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,12 +14,9 @@ import matej.tejkogames.models.general.payload.requests.LoginRequest;
 import matej.tejkogames.models.general.payload.requests.RegisterRequest;
 import matej.tejkogames.models.general.payload.responses.JwtResponse;
 import matej.tejkogames.api.services.AuthService;
-import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.exceptions.UsernameTakenException;
 
 @RestController
-@CrossOrigin(origins = { TejkoGamesConstants.ORIGIN_DEFAULT, TejkoGamesConstants.ORIGIN_WWW,
-        TejkoGamesConstants.ORIGIN_HEROKU })
 @RequestMapping("/api/auth")
 public class AuthController {
 

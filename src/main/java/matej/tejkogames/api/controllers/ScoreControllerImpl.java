@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.ScoreServiceImpl;
-import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.interfaces.controllers.ScoreController;
 import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.payload.requests.DateIntervalRequest;
@@ -26,8 +24,6 @@ import matej.tejkogames.models.general.payload.requests.ScoreRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 
 @RestController
-@CrossOrigin(origins = { TejkoGamesConstants.ORIGIN_DEFAULT, TejkoGamesConstants.ORIGIN_WWW,
-		TejkoGamesConstants.ORIGIN_HEROKU })
 @RequestMapping("/api/scores")
 public class ScoreControllerImpl implements ScoreController {
 
