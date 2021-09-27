@@ -18,38 +18,49 @@ public class ScoreServiceImpl implements ScoreService {
     @Autowired
     ScoreRepository scoreRepository;
 
+    @Override
     public Score getById(UUID id) {
         return scoreRepository.getById(id);
     }
 
+    @Override
     public List<Score> getAll() {
         return scoreRepository.findAll();
     }
 
+    @Override
+    public Score updateById(UUID id, ScoreRequest requestBody) {
+        Score score = getById(id);
+        if (requestBody.getUser() != null) {
+            score.setUser(requestBody.getUser());
+        }
+        if (requestBody.getDate() != null) {
+            score.setDate(requestBody.getDate());
+        }
+        if (requestBody.getValue() != null) {
+            score.setValue(requestBody.getValue());
+        }
+        return scoreRepository.save(score);
+    }
+
+    @Override
+    public Score create(ScoreRequest requestBody) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public void deleteById(UUID id) {
         scoreRepository.deleteById(id);
     }
 
+    @Override
     public void deleteAll() {
         scoreRepository.deleteAll();
     }
 
     public List<Score> getAllByDateBetween(LocalDateTime start, LocalDateTime end) {
         return scoreRepository.findAllByDateBetween(start, end);
-    }
-
-    public Score updateById(UUID id, ScoreRequest scoreRequest) {
-        Score score = getById(id);
-        if (scoreRequest.getUser() != null) {
-            score.setUser(scoreRequest.getUser());
-        }
-        if (scoreRequest.getDate() != null) {
-            score.setDate(scoreRequest.getDate());
-        }
-        if (scoreRequest.getValue() != null) {
-            score.setValue(scoreRequest.getValue());
-        }
-        return scoreRepository.save(score);
     }
 
 }

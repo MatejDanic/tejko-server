@@ -9,8 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,35 +33,50 @@ public class PreferenceControllerImpl implements PreferenceController {
 
     @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'Preference')")
     @GetMapping("/{id}")
+    @Override
     public ResponseEntity<Preference> getById(@PathVariable UUID id) {
         return new ResponseEntity<>(preferenceService.getById(id), HttpStatus.OK);
     }
-    
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("")
+    @Override
     public ResponseEntity<List<Preference>> getAll() {
         return new ResponseEntity<>(preferenceService.getAll(), HttpStatus.OK);
+    }
+    
+    @PreAuthorize("isAuthenticated()")   
+    @PostMapping("/{id}")
+    @Override
+    public ResponseEntity<Preference> create(@RequestBody PreferenceRequest requestBody) {
+        return new ResponseEntity<>(preferenceService.create(requestBody), HttpStatus.OK);
+    }
 
+    @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'Preference')")
+    @PutMapping("/{id}")
+    @Override
+    public ResponseEntity<Preference> updateById(@PathVariable UUID id,
+            @RequestBody PreferenceRequest requestBody) {
+        return new ResponseEntity<>(preferenceService.updateById(id, requestBody), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth, @PathVariable UUID id) {
+    @Override
+    public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth,
+            @PathVariable UUID id) {
         preferenceService.deleteById(id);
-        return new ResponseEntity<>(new MessageResponse("Preference", MessageType.DEFAULT, "Preference with id " + id + " has been successfully deleted"), HttpStatus.OK);
+        return new ResponseEntity<>(new MessageResponse("Preference", MessageType.DEFAULT,
+                "Preference with id " + id + " has been successfully deleted"), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("")
+    @Override
     public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
         preferenceService.deleteAll();
-        return new ResponseEntity<>(new MessageResponse("Preference", MessageType.DEFAULT, "All preferences have been successfully deleted"), HttpStatus.OK);
+        return new ResponseEntity<>(new MessageResponse("Preference", MessageType.DEFAULT,
+                "All preferences have been successfully deleted"), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'Preference')")
-    @PatchMapping("/{id}")
-    public ResponseEntity<Preference> updateById(@PathVariable UUID id, @RequestBody PreferenceRequest preferenceRequest) {
-        return new ResponseEntity<>(preferenceService.updateById(id, preferenceRequest), HttpStatus.OK);
-    }
-    
 }

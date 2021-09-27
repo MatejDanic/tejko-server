@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,38 +33,52 @@ public class TejkoGamesControllerImpl implements TejkoGamesController {
     TejkoGameServiceImpl tejkoGameService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<TejkoGame> getById(Integer id) {
+    @Override
+    public ResponseEntity<TejkoGame> getById(@PathVariable Integer id) {
         return new ResponseEntity<>(tejkoGameService.getById(id), HttpStatus.OK);
     }
 
     @GetMapping("")
+    @Override
     public ResponseEntity<List<TejkoGame>> getAll() {
         return new ResponseEntity<>(tejkoGameService.getAll(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/{id}")
+    @Override
+    public ResponseEntity<TejkoGame> create(@RequestBody TejkoGameRequest requestBody) {
+        return new ResponseEntity<>(tejkoGameService.create(requestBody), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/{id}")
+    @Override
+    public ResponseEntity<TejkoGame> updateById(@PathVariable Integer id,
+            @RequestBody TejkoGameRequest requestBody) {
+        return new ResponseEntity<>(tejkoGameService.updateById(id, requestBody), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth, @PathVariable Integer id) {
+    @Override
+    public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth,
+            @PathVariable Integer id) {
         tejkoGameService.deleteById(id);
         return new ResponseEntity<>(new MessageResponse("", MessageType.DEFAULT, ""), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("")
+    @Override
     public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
         tejkoGameService.deleteAll();
         return new ResponseEntity<>(new MessageResponse("", MessageType.DEFAULT, ""), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PatchMapping("/{id}")
-    public ResponseEntity<TejkoGame> updateById(@PathVariable Integer id,
-            @RequestBody TejkoGameRequest tejkoGameRequest) {
-        return new ResponseEntity<>(tejkoGameService.updateById(id, tejkoGameRequest), HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("/{id}/scores")
+    @Override
     public ResponseEntity<List<Score>> getScoresByGameId(Integer id) {
         return new ResponseEntity<>(tejkoGameService.getScoresByGameId(id), HttpStatus.OK);
     }

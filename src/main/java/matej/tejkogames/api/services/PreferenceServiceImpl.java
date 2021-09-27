@@ -17,22 +17,26 @@ public class PreferenceServiceImpl implements PreferenceService {
     @Autowired
     PreferenceRepository preferenceRepository;
 
+    @Override
     public Preference getById(UUID id) {
         return preferenceRepository.getById(id);
     }
 
+    @Override
     public List<Preference> getAll() {
         return preferenceRepository.findAll();
     }
 
-    public void deleteById(UUID id) {
-        preferenceRepository.deleteById(id);    
+    @Override
+    public Preference create(PreferenceRequest requestBody) {
+        Preference preference = new Preference();
+        preference.setTheme(requestBody.getTheme());
+        preference.setUser(requestBody.getUser());
+        preference.setVolume(requestBody.getVolume());
+        return preferenceRepository.save(preference);
     }
 
-    public void deleteAll() {
-        preferenceRepository.deleteAll();
-    }
-
+    @Override
     public Preference updateById(UUID id, PreferenceRequest preferenceRequest) {
         Preference preference = getById(id);
         if (preferenceRequest.getTheme() != null) {
@@ -43,9 +47,20 @@ public class PreferenceServiceImpl implements PreferenceService {
         }
         return preferenceRepository.save(preference);
     }
-    
+
+    @Override
+    public void deleteById(UUID id) {
+        preferenceRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAll() {
+        preferenceRepository.deleteAll();
+    }
+
+    @Override
     public boolean hasPermission(UUID id, String username) {
         return preferenceRepository.getById(id).getUser().getUsername().equals(username);
     }
-    
+
 }

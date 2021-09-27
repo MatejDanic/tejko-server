@@ -15,6 +15,7 @@ import matej.tejkogames.exceptions.IllegalMoveException;
 import matej.tejkogames.interfaces.services.YambService;
 import matej.tejkogames.utils.YambUtil;
 import matej.tejkogames.models.general.Score;
+import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.yamb.Box;
 import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.Column;
@@ -38,24 +39,36 @@ public class YambServiceImpl implements YambService {
     @Autowired
     TejkoGameRepository tejkoGamesRepository;
 
+    @Override
     public Yamb getById(UUID id) {
         return yambRepository.findById(id).get();
     }
 
+    @Override
     public List<Yamb> getAll() {
         return yambRepository.findAll();
     }
 
+    @Override
+    public Yamb updateById(UUID id, YambRequest requestBody) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Yamb create(YambRequest requestBody) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
     public void deleteById(UUID id) {
         yambRepository.deleteById(id);
     }
 
+    @Override
     public void deleteAll() {
         yambRepository.deleteAll();
-    }
-
-    public Yamb saveById(Yamb yamb) {
-        return yambRepository.save(yamb);
     }
 
     public Set<Dice> rollDiceById(UUID id) throws IllegalMoveException {

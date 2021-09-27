@@ -28,25 +28,31 @@ public class ApiErrorControllerImpl implements ApiErrorController {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/{id}")
+	@Override
+
 	public ResponseEntity<ApiError> getById(@PathVariable UUID id) {
 		return new ResponseEntity<>(apiErrorService.getById(id), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("")
+	@Override
 	public ResponseEntity<List<ApiError>> getAll() {
 		return new ResponseEntity<>(apiErrorService.getAll(), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/{id}")
-	public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth, @PathVariable UUID id) {
+	@Override
+	public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth,
+			@PathVariable UUID id) {
 		apiErrorService.deleteById(id);
 		return new ResponseEntity<>(new MessageResponse("ApiError uspješno izbrisan."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("")
+	@Override
 	public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
 		apiErrorService.deleteAll();
 		return new ResponseEntity<>(new MessageResponse("All Exception Logs have been deleted."), HttpStatus.OK);

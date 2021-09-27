@@ -62,8 +62,8 @@ public class SocketController {
             throws Exception {
         if (message.getToken() != null
                 && jwtUtil.getUsernameFromJwtToken(message.getToken()).equals(message.getSender())) {
-            MessageResponse response = new MessageResponse(message.getSubject(), MessageType.CHAT,
-                    message.getBody(), message.getSender());
+            MessageResponse response = new MessageResponse(message.getSubject(), MessageType.CHAT, message.getBody(),
+                    message.getSender());
             simpMessagingTemplate.convertAndSendToUser(socketService.getUUIDFromUsername(message.getReceiver()),
                     "/topic/user", response);
         }
@@ -71,12 +71,11 @@ public class SocketController {
 
     @MessageMapping("/match")
     @SendToUser("/topic/match")
-    public void sendMatch(@Payload MessageRequest message, @Header("simpSessionId") String sessionId)
-            throws Exception {
+    public void sendMatch(@Payload MessageRequest message, @Header("simpSessionId") String sessionId) throws Exception {
         if (message.getToken() != null
                 && jwtUtil.getUsernameFromJwtToken(message.getToken()).equals(message.getSender())) {
-            MessageResponse response = new MessageResponse(message.getSubject(), MessageType.MATCH,
-                    message.getBody(), message.getSender());
+            MessageResponse response = new MessageResponse(message.getSubject(), MessageType.MATCH, message.getBody(),
+                    message.getSender());
             simpMessagingTemplate.convertAndSendToUser(socketService.getUUIDFromUsername(message.getReceiver()),
                     "/topic/match", response);
         }

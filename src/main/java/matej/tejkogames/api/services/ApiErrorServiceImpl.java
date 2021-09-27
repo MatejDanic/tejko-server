@@ -29,18 +29,22 @@ public class ApiErrorServiceImpl implements ApiErrorService {
         return apiErrorRepository.save(new ApiError(user, exception));
     }
 
+    @Override
     public ApiError getById(UUID id) {
         return apiErrorRepository.getById(id);
     }
 
+    @Override
     public List<ApiError> getAll() {
         return apiErrorRepository.findAll();
     }
 
+    @Override
     public void deleteById(UUID id) {
         apiErrorRepository.deleteById(id);
     }
 
+    @Override
     public void deleteAll() {
         apiErrorRepository.deleteAll();
     }

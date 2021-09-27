@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.payload.requests.ScoreRequest;
 
-public interface ScoreController extends ControllerInterface<Score, UUID> {
+public interface ScoreController extends ControllerInterface<Score, UUID, ScoreRequest> {
 
     public ResponseEntity<Score> updateById(UUID id, ScoreRequest scoreRequest);
     

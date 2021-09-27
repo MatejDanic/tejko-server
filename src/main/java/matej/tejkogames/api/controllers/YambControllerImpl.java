@@ -21,6 +21,7 @@ import matej.tejkogames.api.services.UserServiceImpl;
 import matej.tejkogames.api.services.YambServiceImpl;
 import matej.tejkogames.exceptions.IllegalMoveException;
 import matej.tejkogames.interfaces.controllers.YambController;
+import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.ColumnType;
@@ -43,25 +44,44 @@ public class YambControllerImpl implements YambController {
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'Yamb')")
 	@GetMapping("/{id}")
+	@Override
 	public ResponseEntity<Yamb> getById(@PathVariable(value = "id") UUID id) {
 		return new ResponseEntity<>(yambService.getById(id), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("")
+	@Override
 	public ResponseEntity<List<Yamb>> getAll() {
 		return new ResponseEntity<>(yambService.getAll(), HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@PostMapping("")
+	@Override
+	public ResponseEntity<Yamb> create(@RequestBody YambRequest requestBody) {
+		return new ResponseEntity<>(yambService.create(requestBody), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@PutMapping("")
+	@Override
+	public ResponseEntity<Yamb> updateById(@PathVariable UUID id, @RequestBody YambRequest requestBody) {
+		return new ResponseEntity<>(yambService.updateById(id, requestBody), HttpStatus.OK);
+	}
+
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'Yamb')")
 	@DeleteMapping("/{id}")
-	public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth, @PathVariable(value = "id") UUID id) {
+	@Override
+	public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth,
+			@PathVariable(value = "id") UUID id) {
 		yambService.deleteById(id);
 		return new ResponseEntity<>(new MessageResponse("Yamb s id-em " + id + " uspješno izbrisan."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("")
+	@Override
 	public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
 		yambService.deleteAll();
 		return new ResponseEntity<>(new MessageResponse("Svi Yambovi uspješno izbrisani."), HttpStatus.OK);

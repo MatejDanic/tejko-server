@@ -21,35 +21,46 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     UserRepository userRepository;
 
+    @Override
     public Role getById(Integer id) {
         return roleRepository.getById(id);
     }
 
+    @Override
     public List<Role> getAll() {
         return roleRepository.findAll();
     }
 
-    public void deleteById(Integer id) {
-        roleRepository.deleteById(id);     
+    @Override
+    public Role create(RoleRequest requestBody) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    public void deleteAll() {
-        roleRepository.deleteAll();     
-    }
-
-    public Role updateById(Integer id, RoleRequest roleRequest) {
+    @Override
+    public Role updateById(Integer id, RoleRequest requestBody) {
         Role role = getById(id);
-        if (roleRequest.getLabel() != null) {
-            role.setLabel(roleRequest.getLabel());
+        if (requestBody.getLabel() != null) {
+            role.setLabel(requestBody.getLabel());
         }
-        if (roleRequest.getDescription() != null) {
-            role.setDescription(roleRequest.getDescription());
+        if (requestBody.getDescription() != null) {
+            role.setDescription(requestBody.getDescription());
         }
         return roleRepository.save(role);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        roleRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAll() {
+        roleRepository.deleteAll();
     }
 
     public List<User> getUsersByRolesId(Integer id) {
         return userRepository.findAllByRolesId(id);
     }
-    
+
 }

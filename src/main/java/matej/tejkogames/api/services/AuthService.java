@@ -61,20 +61,10 @@ public class AuthService {
 
         User user = new User(registerRequest.getUsername(), encoder.encode(registerRequest.getPassword()));
 
-        Set<String> strRoles = registerRequest.getRoles();
         Set<Role> roles = new HashSet<>();
 
-        if (strRoles == null) {
-            Role userRole = roleRepo.findByLabel("USER")
-                    .orElseThrow(() -> new RuntimeException("Uloga nije pronađena."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                Role adminRole = roleRepo.findByLabel(role)
-                        .orElseThrow(() -> new RuntimeException("Uloga '" + role + "' nije pronađena."));
-                roles.add(adminRole);
-            });
-        }
+        Role userRole = roleRepo.findByLabel("USER").orElseThrow(() -> new RuntimeException("Role not found."));
+        roles.add(userRole);
         user.setRoles(roles);
         userRepo.save(user);
         return "User " + user.getUsername() + " successfully registered.";
