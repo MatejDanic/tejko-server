@@ -76,6 +76,10 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Preference preference;
 
+    @JsonIgnore
+    @Column
+    private boolean isTestUser = false;
+
     public User() {
     }
 
@@ -138,6 +142,14 @@ public class User {
 
     public void setPreference(Preference preference) {
         this.preference = preference;
+    }
+    
+    public boolean isTestUser() {
+        return isTestUser;
+    }
+
+    public void setTestUser(boolean isTestUser) {
+        this.isTestUser = isTestUser;
     }
 
     @Override

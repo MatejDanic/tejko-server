@@ -29,8 +29,8 @@ public class ScoreServiceImpl implements ScoreService {
     }
 
     @Override
-    public Score updateById(UUID id, ScoreRequest requestBody) {
-        Score score = getById(id);
+    public Score create(ScoreRequest requestBody) {
+        Score score = new Score();
         if (requestBody.getUser() != null) {
             score.setUser(requestBody.getUser());
         }
@@ -44,9 +44,18 @@ public class ScoreServiceImpl implements ScoreService {
     }
 
     @Override
-    public Score create(ScoreRequest requestBody) {
-        // TODO Auto-generated method stub
-        return null;
+    public Score updateById(UUID id, ScoreRequest requestBody) {
+        Score score = getById(id);
+        if (requestBody.getUser() != null) {
+            score.setUser(requestBody.getUser());
+        }
+        if (requestBody.getDate() != null) {
+            score.setDate(requestBody.getDate());
+        }
+        if (requestBody.getValue() != null) {
+            score.setValue(requestBody.getValue());
+        }
+        return scoreRepository.save(score);
     }
 
     @Override

@@ -33,8 +33,14 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role create(RoleRequest requestBody) {
-        // TODO Auto-generated method stub
-        return null;
+        Role role = new Role();
+        if (requestBody.getLabel() != null) {
+            role.setLabel(requestBody.getLabel());
+        }
+        if (requestBody.getDescription() != null) {
+            role.setDescription(requestBody.getDescription());
+        }
+        return roleRepository.save(role);
     }
 
     @Override

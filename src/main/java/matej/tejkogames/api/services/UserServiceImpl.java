@@ -5,6 +5,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.PreferenceRepository;
@@ -15,6 +17,7 @@ import matej.tejkogames.api.repositories.YambRepository;
 import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.constants.YambConstants;
 import matej.tejkogames.exceptions.YambLimitReachedException;
+import matej.tejkogames.factories.UserFactory;
 import matej.tejkogames.interfaces.services.UserService;
 import matej.tejkogames.models.general.Preference;
 import matej.tejkogames.models.general.Role;
@@ -51,6 +54,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     ScoreRepository scoreRepository;
 
+    @Autowired
+    UserFactory userFactory;
+
     @Override
     public User getById(UUID id) {
         return userRepository.findById(id).get();
@@ -63,14 +69,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateById(UUID id, UserRequest requestBody) {
-        // TODO Auto-generated method stub
-        return null;
+        User user = getById(id);
+        if (requestBody.getUsername() != null) {
+            user.setUsername(requestBody.getUsername());
+        }
+        if (requestBody.getPassword() != null) {
+            PasswordEncoder encoder = new BCryptPasswordEncoder();
+            user.setPassword(encoder.encode(requestBody.getPassword()));
+        }
+
+        return userRepository.save(user);
     }
 
     @Override
     public User create(UserRequest requestBody) {
-        // TODO Auto-generated method stub
-        return null;
+        if (requestBody.getUsername() == null || requestBody.getPassword() == null) return null;
+        User user = userFactory.createUser(requestBody.getUsername(), requestBody.getPassword());
+        return userRepository.save(user);
     }
 
     @Override
