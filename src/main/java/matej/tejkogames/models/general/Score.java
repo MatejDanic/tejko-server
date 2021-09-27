@@ -18,7 +18,6 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import matej.tejkogames.models.yamb.YambChallenge;
-import matej.tejkogames.models.yamb.YambMatch;
 
 @Entity
 @Table(name = "game_score")
@@ -48,11 +47,6 @@ public class Score {
 	@JsonIgnore
 	@JoinColumn(name = "challenge_id")
 	private YambChallenge challenge;
-
-	@ManyToOne
-	@JsonIgnore
-	@JoinColumn(name = "match_id")
-	private YambMatch match;
 
 	@Column(nullable = false)
 	private Integer value;

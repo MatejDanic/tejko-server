@@ -30,14 +30,32 @@ public class YambChallengeServiceImpl implements YambChallengeService {
 
     @Override
     public YambChallenge updateById(UUID id, YambChallengeRequest requestBody) {
-        // TODO Auto-generated method stub
-        return null;
+        YambChallenge yambChallenge = getById(id);
+        if (requestBody.getUsers() != null) {
+            yambChallenge.setUsers(requestBody.getUsers());
+        }
+        if (requestBody.getYambs() != null) {
+            yambChallenge.setYambs(requestBody.getYambs());
+        }
+        if (requestBody.getScores() != null) {
+            yambChallenge.setScores(requestBody.getScores());
+        }
+        return yambChallengeRepository.save(yambChallenge);
     }
 
     @Override
     public YambChallenge create(YambChallengeRequest requestBody) {
-        // TODO Auto-generated method stub
-        return null;
+        YambChallenge yambChallenge = new YambChallenge();
+        if (requestBody.getUsers() != null) {
+            yambChallenge.setUsers(requestBody.getUsers());
+        }
+        if (requestBody.getYambs() != null) {
+            yambChallenge.setYambs(requestBody.getYambs());
+        }
+        if (requestBody.getScores() != null) {
+            yambChallenge.setScores(requestBody.getScores());
+        }
+        return yambChallengeRepository.save(yambChallenge);
     }
 
     @Override

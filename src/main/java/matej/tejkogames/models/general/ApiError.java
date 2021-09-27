@@ -21,8 +21,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.rest.core.annotation.RestResource;
 
-import matej.tejkogames.utils.ApiErrorUtil;
-
 @Entity
 @Table(name = "api_error")
 @RestResource(rel = "errors", path = "errors")
@@ -50,22 +48,8 @@ public class ApiError {
     @Column(columnDefinition = "jsonb")
     private List<String> content;
 
-    public ApiError() {}
-
-    public ApiError(Throwable exception) {
-        this.timestamp = LocalDateTime.now();    
-        this.message = ApiErrorUtil.constructErrorMessage(exception);   
-        this.content = ApiErrorUtil.constructErrorContent(exception);
-
+    public ApiError() {
     }
-
-    public ApiError(User user, Throwable exception) {
-        this.user = user;
-        this.timestamp = LocalDateTime.now();
-        this.message = ApiErrorUtil.constructErrorMessage(exception);
-        this.content = ApiErrorUtil.constructErrorContent(exception);
-    }
-
 
     public UUID getId() {
         return id;
@@ -107,6 +91,4 @@ public class ApiError {
         this.message = message;
     }
 
-
-    
 }

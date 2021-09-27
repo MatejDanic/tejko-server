@@ -18,6 +18,7 @@ import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.constants.YambConstants;
 import matej.tejkogames.exceptions.YambLimitReachedException;
 import matej.tejkogames.factories.UserFactory;
+import matej.tejkogames.factories.YambFactory;
 import matej.tejkogames.interfaces.services.UserService;
 import matej.tejkogames.models.general.Preference;
 import matej.tejkogames.models.general.Role;
@@ -57,6 +58,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserFactory userFactory;
 
+    @Autowired
+    YambFactory yambFactory;
+
     @Override
     public User getById(UUID id) {
         return userRepository.findById(id).get();
@@ -77,7 +81,6 @@ public class UserServiceImpl implements UserService {
             PasswordEncoder encoder = new BCryptPasswordEncoder();
             user.setPassword(encoder.encode(requestBody.getPassword()));
         }
-
         return userRepository.save(user);
     }
 
@@ -121,8 +124,7 @@ public class UserServiceImpl implements UserService {
             throw new YambLimitReachedException(
                     "Yamb limit of " + yambLimit + " has been reached by user " + user.getUsername());
         } else {
-            Yamb yamb = new Yamb(user, yambRequest.getType(), yambRequest.getNumberOfColumns(),
-                    yambRequest.getNumberOfDice());
+            Yamb yamb = yambFactory.createYamb(user, yambRequest.getType(), yambRequest.getNumberOfColumns(), yambRequest.getNumberOfDice(), null);
             return yambRepository.save(yamb);
         }
     }

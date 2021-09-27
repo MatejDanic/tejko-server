@@ -12,6 +12,8 @@ import matej.tejkogames.api.repositories.YambRepository;
 import matej.tejkogames.api.repositories.ScoreRepository;
 import matej.tejkogames.api.repositories.TejkoGameRepository;
 import matej.tejkogames.exceptions.IllegalMoveException;
+import matej.tejkogames.factories.ScoreFactory;
+import matej.tejkogames.factories.YambFactory;
 import matej.tejkogames.interfaces.services.YambService;
 import matej.tejkogames.utils.YambUtil;
 import matej.tejkogames.models.general.Score;
@@ -39,6 +41,12 @@ public class YambServiceImpl implements YambService {
     @Autowired
     TejkoGameRepository tejkoGamesRepository;
 
+    @Autowired
+    YambFactory yambFactory;
+
+    @Autowired
+    ScoreFactory scoreFactory;
+
     @Override
     public Yamb getById(UUID id) {
         return yambRepository.findById(id).get();
@@ -51,14 +59,42 @@ public class YambServiceImpl implements YambService {
 
     @Override
     public Yamb updateById(UUID id, YambRequest requestBody) {
-        // TODO Auto-generated method stub
-        return null;
+        Yamb yamb = getById(id);
+        if (requestBody.getUser() != null) {
+            yamb.setUser(requestBody.getUser());
+        }
+        if (requestBody.getChallenge() != null) {
+            yamb.setChallenge(requestBody.getChallenge());
+        }
+        if (requestBody.getType() != null) {
+            yamb.setType(requestBody.getType());
+        }
+        if (requestBody.getNumberOfColumns() != null) {
+            yamb.setNumberOfColumns(requestBody.getNumberOfColumns());
+        }
+        if (requestBody.getNumberOfDice() != null) {
+            yamb.setNumberOfDice(requestBody.getNumberOfDice());
+        }
+        if (requestBody.getForm() != null) {
+            yamb.setForm(requestBody.getForm());
+        }
+        if (requestBody.getDiceSet() != null) {
+            yamb.setDiceSet(requestBody.getDiceSet());
+        }
+        if (requestBody.getAnnouncement() != null) {
+            yamb.setAnnouncement(requestBody.getAnnouncement());
+        }
+        if (requestBody.getRollCount() != null) {
+            yamb.setRollCount(requestBody.getRollCount());
+        }
+        return yambRepository.save(yamb);
     }
 
     @Override
     public Yamb create(YambRequest requestBody) {
-        // TODO Auto-generated method stub
-        return null;
+        Yamb yamb = yambFactory.createYamb(requestBody.getUser(), requestBody.getType(),
+                requestBody.getNumberOfColumns(), requestBody.getNumberOfDice(), requestBody.getChallenge());
+        return yambRepository.save(yamb);
     }
 
     @Override
@@ -168,8 +204,7 @@ public class YambServiceImpl implements YambService {
         form.setAvailableBoxes(form.getAvailableBoxes() - 1);
 
         if (form.getAvailableBoxes() == 0) {
-            Score score = new Score(form.getTotalSum());
-            score.setUser(yamb.getUser());
+            Score score = scoreFactory.createScore(yamb.getUser(), form.getTotalSum());
             scoreRepository.save(score);
         }
 

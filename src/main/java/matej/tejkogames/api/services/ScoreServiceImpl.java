@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.payload.requests.ScoreRequest;
 import matej.tejkogames.api.repositories.ScoreRepository;
+import matej.tejkogames.factories.ScoreFactory;
 import matej.tejkogames.interfaces.services.ScoreService;
 
 @Service
@@ -17,6 +18,9 @@ public class ScoreServiceImpl implements ScoreService {
 
     @Autowired
     ScoreRepository scoreRepository;
+
+    @Autowired
+    ScoreFactory scoreFactory;
 
     @Override
     public Score getById(UUID id) {
@@ -30,16 +34,7 @@ public class ScoreServiceImpl implements ScoreService {
 
     @Override
     public Score create(ScoreRequest requestBody) {
-        Score score = new Score();
-        if (requestBody.getUser() != null) {
-            score.setUser(requestBody.getUser());
-        }
-        if (requestBody.getDate() != null) {
-            score.setDate(requestBody.getDate());
-        }
-        if (requestBody.getValue() != null) {
-            score.setValue(requestBody.getValue());
-        }
+        Score score = scoreFactory.createScore(requestBody.getUser(), requestBody.getValue());
         return scoreRepository.save(score);
     }
 

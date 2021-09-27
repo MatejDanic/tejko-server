@@ -11,6 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import matej.tejkogames.api.services.ApiErrorServiceImpl;
+import matej.tejkogames.factories.ApiErrorFactory;
 import matej.tejkogames.models.general.ApiError;
 import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
@@ -22,9 +23,12 @@ public class TejkoGamesExceptionHandler extends ResponseEntityExceptionHandler {
     @Autowired
     ApiErrorServiceImpl apiErrorService;
 
+    @Autowired
+    ApiErrorFactory apiErrorFactory;
+
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<MessageResponse> handleException(RuntimeException exception, WebRequest request) {
-        ApiError apiError = new ApiError(exception);            
+        ApiError apiError = apiErrorFactory.createApiError(exception);           
         apiErrorService.save(apiError);
         return new ResponseEntity<>(new MessageResponse("Error", MessageType.ERROR, apiError.getMessage()),
                 HttpStatus.BAD_REQUEST);

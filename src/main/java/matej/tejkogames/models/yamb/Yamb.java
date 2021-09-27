@@ -1,5 +1,6 @@
 package matej.tejkogames.models.yamb;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -20,7 +21,6 @@ import org.hibernate.annotations.TypeDef;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import matej.tejkogames.models.general.User;
-import matej.tejkogames.utils.YambUtil;
 
 @Entity
 @Table(name = "game_yamb")
@@ -53,31 +53,27 @@ public class Yamb {
     private YambForm form;
 
     @Column
-    private BoxType announcement;
+    private BoxType announcement = null;
 
     @Type(type = "json_binary")
     @Column(columnDefinition = "jsonb")
     private Set<Dice> diceSet;
 
     @Column
-    private int rollCount;
+    private int rollCount = 0;
 
 	@ManyToOne
 	@JsonIncludeProperties("id")
 	@JoinColumn(name = "challenge_id")
 	private YambChallenge challenge;
 
-    public Yamb() {
-    }
+    @Column(nullable = false)
+    private LocalDateTime startDate;
 
-    public Yamb(User user, YambType type, int numberOfColumns, int numberOfDice) {
-        this.type = type;
-        this.numberOfColumns = numberOfColumns;
-        this.numberOfDice = numberOfDice;
-        this.announcement = null;
-        this.rollCount = 0;
-        this.form = YambUtil.generateYambForm(type, numberOfColumns, numberOfDice);
-        this.diceSet = YambUtil.generateDiceSet(numberOfDice);
+    @Column(nullable = false)
+    private LocalDateTime endDate;
+
+    public Yamb() {
     }
 
     public UUID getId() {
@@ -150,6 +146,30 @@ public class Yamb {
 
     public void setRollCount(int rollCount) {
         this.rollCount = rollCount;
+    }
+
+    public YambChallenge getChallenge() {
+        return challenge;
+    }
+
+    public void setChallenge(YambChallenge challenge) {
+        this.challenge = challenge;
+    }
+
+    public LocalDateTime getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
     }
 
 }

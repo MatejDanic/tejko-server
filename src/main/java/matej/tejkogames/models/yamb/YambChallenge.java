@@ -49,10 +49,10 @@ public class YambChallenge {
     private Set<Yamb> yambs;
 
     @Column(nullable = false)
-    private boolean active;
+    private LocalDateTime startDate;
 
-    @Column(nullable = false)
-    private LocalDateTime date;
+    @Column(nullable = true)
+    private LocalDateTime endDate;
 
     public YambChallenge() {
     }
@@ -60,8 +60,7 @@ public class YambChallenge {
     public YambChallenge(Set<User> users, Set<Yamb> yambs) {
         this.users = users;
         this.yambs = yambs;
-        this.active = true;
-        this.date = LocalDateTime.now();
+        this.startDate = LocalDateTime.now();
     }
 
     public Set<User> getUsers() {
@@ -80,20 +79,28 @@ public class YambChallenge {
         this.scores = scores;
     }
 
-    public boolean isActive() {
-        return active;
+    public Set<Yamb> getYambs() {
+        return yambs;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setYambs(Set<Yamb> yambs) {
+        this.yambs = yambs;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getStartDate() {
+        return startDate;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
     }
 
 }
