@@ -51,7 +51,7 @@ public class YambChallenge {
     @Column(nullable = false)
     private LocalDateTime startDate;
 
-    @Column(nullable = true)
+    @Column
     private LocalDateTime endDate;
 
     public YambChallenge() {

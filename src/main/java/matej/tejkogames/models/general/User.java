@@ -74,9 +74,9 @@ public class User {
 
     @JsonIgnore
     @Column
-    private boolean isTestUser = false;
+    private Boolean isTestUser = false;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime createdDate;
 
     public User() {
@@ -143,11 +143,11 @@ public class User {
         this.preference = preference;
     }
     
-    public boolean isTestUser() {
+    public Boolean isTestUser() {
         return isTestUser;
     }
 
-    public void setTestUser(boolean isTestUser) {
+    public void setTestUser(Boolean isTestUser) {
         this.isTestUser = isTestUser;
     }
 

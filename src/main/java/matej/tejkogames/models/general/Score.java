@@ -35,7 +35,7 @@ public class Score {
 
 	@ManyToOne
 	@JsonIncludeProperties({ "id", "name" })
-	@JoinColumn(name = "game_id", nullable = false)
+	@JoinColumn(name = "game_id")
 	private TejkoGame game;
 
 	@ManyToOne
