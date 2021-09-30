@@ -51,9 +51,6 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 		
 		String rangeHeader = request.getHeader("Range");
 
-		// response.setHeader("X-Total-Count", String.valueOf((new ContentCachingResponseWrapper(
-		// 	(HttpServletResponse) response)).getContentSize()));
-
 		// if there is no range request in the header than do the "normal" filtering
 		if (rangeHeader == null) {
 			filterChain.doFilter(request, response);

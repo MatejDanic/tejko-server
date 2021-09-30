@@ -13,10 +13,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.data.rest.core.annotation.RestResource;
 
+import matej.tejkogames.interfaces.models.RoleInterface;
+import matej.tejkogames.models.general.payload.requests.RoleRequest;
+
 @Entity
 @Table(name = "auth_role")
 @RestResource(rel = "roles", path = "roles")
-public class Role {
+public class Role implements RoleInterface {
     
     @Id
     private int id;
@@ -59,8 +62,18 @@ public class Role {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	@Override
+	public void updateByRequest(RoleRequest requestBody) {
+		if (requestBody.getLabel() != null) {
+            this.setLabel(requestBody.getLabel());
+        }
+        if (requestBody.getDescription() != null) {
+            this.setDescription(requestBody.getDescription());
+        }
+	}
     
 }

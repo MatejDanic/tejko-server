@@ -1,6 +1,7 @@
 package matej.tejkogames.api.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.UserServiceImpl;
@@ -53,8 +55,12 @@ public class YambControllerImpl implements YambController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("")
 	@Override
-	public ResponseEntity<List<Yamb>> getAll() {
-		return new ResponseEntity<>(yambService.getAll(), HttpStatus.OK);
+	public ResponseEntity<List<Yamb>> getAll(
+						@RequestParam(defaultValue = "0") Integer page, 
+                        @RequestParam(defaultValue = "10") Integer size,
+                        @RequestParam(defaultValue = "id") String sort,
+                        @RequestParam(defaultValue = "desc") String direction) {
+		return new ResponseEntity<>(yambService.getAll(page, size, sort, direction), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
@@ -65,10 +71,17 @@ public class YambControllerImpl implements YambController {
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
-	@PutMapping("")
+	@PutMapping("/{id}")
 	@Override
 	public ResponseEntity<Yamb> updateById(@PathVariable UUID id, @RequestBody YambRequest requestBody) {
 		return new ResponseEntity<>(yambService.updateById(id, requestBody), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@PutMapping("")
+	@Override
+	public ResponseEntity<List<Yamb>> updateAll(Map<UUID, YambRequest> idRequestMap) {
+		return new ResponseEntity<>(yambService.updateAll(idRequestMap), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'Yamb')")

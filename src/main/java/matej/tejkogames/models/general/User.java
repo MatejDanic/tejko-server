@@ -25,13 +25,15 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import matej.tejkogames.constants.TejkoGamesConstants;
+import matej.tejkogames.interfaces.models.UserInterface;
+import matej.tejkogames.models.general.payload.requests.UserRequest;
 import matej.tejkogames.models.yamb.Yamb;
 import matej.tejkogames.models.yamb.YambChallenge;
 
 @Entity
 @Table(name = "auth_user")
 @RestResource(rel = "users", path = "users")
-public class User {
+public class User implements UserInterface {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -162,4 +164,15 @@ public class User {
 
     public void setCreatedDate(LocalDateTime now) {
     }
+
+	@Override
+	public void updateByRequest(UserRequest requestBody) {
+		if (requestBody.getUsername() != null) {
+            this.setUsername(requestBody.getUsername());
+        }
+        if (requestBody.getPassword() != null) {
+            this.setPassword(requestBody.getPassword());
+        }
+		
+	}
 }

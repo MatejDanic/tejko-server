@@ -1,12 +1,15 @@
 package matej.tejkogames.api.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.PreferenceRepository;
@@ -62,34 +65,47 @@ public class UserServiceImpl implements UserService {
     YambFactory yambFactory;
 
     @Override
-    public User getById(UUID id) {
-        return userRepository.findById(id).get();
-    }
+	public User getById(UUID id) {
+		return userRepository.findById(id).get();
+	}
 
-    @Override
-    public List<User> getAll() {
-        return userRepository.findAll();
-    }
-
-    @Override
-    public User updateById(UUID id, UserRequest requestBody) {
-        User user = getById(id);
-        if (requestBody.getUsername() != null) {
-            user.setUsername(requestBody.getUsername());
-        }
-        if (requestBody.getPassword() != null) {
-            PasswordEncoder encoder = new BCryptPasswordEncoder();
-            user.setPassword(encoder.encode(requestBody.getPassword()));
-        }
-        return userRepository.save(user);
-    }
-
+	@Override
+	public List<User> getAll(Integer page, Integer size, String sort, String direction) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
+		return userRepository.findAll(pageable).getContent();
+	}
+	
+	@Override
+	public List<User> getAllByIdIn(Set<UUID> idSet) {
+		return userRepository.findAllById(idSet);
+	}
+	
     @Override
     public User create(UserRequest requestBody) {
         if (requestBody.getUsername() == null || requestBody.getPassword() == null) return null;
         User user = userFactory.createUser(requestBody.getUsername(), requestBody.getPassword());
         return userRepository.save(user);
     }
+
+    @Override
+	public User updateById(UUID id, UserRequest requestBody) {
+		User user = getById(id);
+
+		user.updateByRequest(requestBody);
+
+		return userRepository.save(user);
+	}
+
+	@Override
+	public List<User> updateAll(Map<UUID, UserRequest> idRequestMap) {
+		List<User> userList = getAllByIdIn(idRequestMap.keySet());
+
+		for (User user : userList) {
+			user.updateByRequest(idRequestMap.get(user.getId()));
+		}
+
+		return userRepository.saveAll(userList);
+	}
 
     @Override
     public void deleteById(UUID id) {
@@ -174,8 +190,8 @@ public class UserServiceImpl implements UserService {
         return scoreRepository.findAllByUserId(id);
     }
 
-    public boolean hasPermission(UUID id, String username) {
-        return getById(id).getUsername().equals(username);
-    }
-
+	public boolean hasPermission(UUID id, String username) {
+		return getById(id).getUsername().equals(username);
+	}
+	
 }

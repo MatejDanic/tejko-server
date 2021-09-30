@@ -1,9 +1,15 @@
 package matej.tejkogames.api.services;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.YambChallengeRepository;
@@ -23,40 +29,45 @@ public class YambChallengeServiceImpl implements YambChallengeService {
         return yambChallengeRepository.findById(id).get();
     }
 
-    @Override
-    public List<YambChallenge> getAll() {
-        return yambChallengeRepository.findAll();
+	@Override
+	public List<YambChallenge> getAll(Integer page, Integer size, String sort, String direction) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
+        return yambChallengeRepository.findAll(pageable).getContent();
     }
 
-    @Override
-    public YambChallenge updateById(UUID id, YambChallengeRequest requestBody) {
-        YambChallenge yambChallenge = getById(id);
-        if (requestBody.getUsers() != null) {
-            yambChallenge.setUsers(requestBody.getUsers());
-        }
-        if (requestBody.getYambs() != null) {
-            yambChallenge.setYambs(requestBody.getYambs());
-        }
-        if (requestBody.getScores() != null) {
-            yambChallenge.setScores(requestBody.getScores());
-        }
-        return yambChallengeRepository.save(yambChallenge);
-    }
+	@Override
+	public List<YambChallenge> getAllByIdIn(Set<UUID> idSet) {
+		return yambChallengeRepository.findAllById(idSet);
+	}
 
     @Override
     public YambChallenge create(YambChallengeRequest requestBody) {
-        YambChallenge yambChallenge = new YambChallenge();
-        if (requestBody.getUsers() != null) {
-            yambChallenge.setUsers(requestBody.getUsers());
-        }
-        if (requestBody.getYambs() != null) {
-            yambChallenge.setYambs(requestBody.getYambs());
-        }
-        if (requestBody.getScores() != null) {
-            yambChallenge.setScores(requestBody.getScores());
-        }
+		YambChallenge yambChallenge = new YambChallenge();
+        
+		yambChallenge.updateByRequest(requestBody);
+		
         return yambChallengeRepository.save(yambChallenge);
     }
+
+    @Override
+	public YambChallenge updateById(UUID id, YambChallengeRequest requestBody) {
+		YambChallenge yambChallenge = getById(id);
+		
+		yambChallenge.updateByRequest(requestBody);
+		
+		return yambChallengeRepository.save(yambChallenge);
+	}
+
+	@Override
+	public List<YambChallenge> updateAll(Map<UUID, YambChallengeRequest> idRequestMap) {
+		List<YambChallenge> yambChallengeList = getAllByIdIn(idRequestMap.keySet());
+		
+		for (YambChallenge yambChallenge : yambChallengeList) {
+			yambChallenge.updateByRequest(idRequestMap.get(yambChallenge.getId()));
+		}
+
+		return yambChallengeRepository.saveAll(yambChallengeList);
+	}
 
     @Override
     public void deleteById(UUID id) {

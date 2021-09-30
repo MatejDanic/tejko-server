@@ -1,6 +1,7 @@
 package matej.tejkogames.api.services;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,13 @@ public class ApiErrorServiceImpl implements ApiErrorService {
     }
 
     @Override
-    public List<ApiError> getAll() {
-        return apiErrorRepository.findAll();
+	public List<ApiError> getAll(Integer page, Integer size, String sort, String direction) {
+		return apiErrorRepository.findAll();
+	}
+	
+	@Override
+    public List<ApiError> getAllByIdIn(Set<UUID> idList) {
+        return apiErrorRepository.findAllById(idList);
     }
 
     @Override

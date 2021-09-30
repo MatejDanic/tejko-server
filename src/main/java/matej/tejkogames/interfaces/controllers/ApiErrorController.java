@@ -12,10 +12,10 @@ public interface ApiErrorController {
 
     public ResponseEntity<ApiError> getById(UUID id);
 
-    public ResponseEntity<List<ApiError>> getAll();
+    public ResponseEntity<List<ApiError>> getAll(Integer page, Integer size, String sort, String direction);
+	
+	public ResponseEntity<MessageResponse> deleteById(String headerAuth, UUID id);
 
-    public ResponseEntity<MessageResponse> deleteById(String headerAuth, UUID id);
-
-    public ResponseEntity<MessageResponse> deleteAll(String headerAuth);
+	public ResponseEntity<MessageResponse> deleteAll(String headerAuth);
 
 }

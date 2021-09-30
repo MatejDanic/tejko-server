@@ -1,10 +1,15 @@
 package matej.tejkogames.api.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.UserRepository;
@@ -53,49 +58,42 @@ public class YambServiceImpl implements YambService {
     }
 
     @Override
-    public List<Yamb> getAll() {
-        return yambRepository.findAll();
-    }
+	public List<Yamb> getAll(Integer page, Integer size, String sort, String direction) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
+		return yambRepository.findAll(pageable).getContent();
+	}
 
-    @Override
-    public Yamb updateById(UUID id, YambRequest requestBody) {
-        Yamb yamb = getById(id);
-        if (requestBody.getUser() != null) {
-            yamb.setUser(requestBody.getUser());
-        }
-        if (requestBody.getChallenge() != null) {
-            yamb.setChallenge(requestBody.getChallenge());
-        }
-        if (requestBody.getType() != null) {
-            yamb.setType(requestBody.getType());
-        }
-        if (requestBody.getNumberOfColumns() != null) {
-            yamb.setNumberOfColumns(requestBody.getNumberOfColumns());
-        }
-        if (requestBody.getNumberOfDice() != null) {
-            yamb.setNumberOfDice(requestBody.getNumberOfDice());
-        }
-        if (requestBody.getForm() != null) {
-            yamb.setForm(requestBody.getForm());
-        }
-        if (requestBody.getDiceSet() != null) {
-            yamb.setDiceSet(requestBody.getDiceSet());
-        }
-        if (requestBody.getAnnouncement() != null) {
-            yamb.setAnnouncement(requestBody.getAnnouncement());
-        }
-        if (requestBody.getRollCount() != null) {
-            yamb.setRollCount(requestBody.getRollCount());
-        }
-        return yambRepository.save(yamb);
-    }
-
+	@Override
+	public List<Yamb> getAllByIdIn(Set<UUID> idSet) {
+		return yambRepository.findAllById(idSet);
+	}
+	
     @Override
     public Yamb create(YambRequest requestBody) {
         Yamb yamb = yambFactory.createYamb(requestBody.getUser(), requestBody.getType(),
                 requestBody.getNumberOfColumns(), requestBody.getNumberOfDice(), requestBody.getChallenge());
         return yambRepository.save(yamb);
     }
+
+    @Override
+	public Yamb updateById(UUID id, YambRequest requestBody) {
+		Yamb yamb = getById(id);
+		
+		yamb.updateByRequest(requestBody);
+		
+		return yambRepository.save(yamb);
+	}
+
+	@Override
+	public List<Yamb> updateAll(Map<UUID, YambRequest> idRequestMap) {
+		List<Yamb> yambList = getAllByIdIn(idRequestMap.keySet());
+
+		for (Yamb yamb : yambList) {
+			yamb.updateByRequest(idRequestMap.get(yamb.getId()));
+		}
+
+		return yambRepository.saveAll(yambList);
+	}
 
     @Override
     public void deleteById(UUID id) {

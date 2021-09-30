@@ -13,10 +13,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.data.rest.core.annotation.RestResource;
 
+import matej.tejkogames.interfaces.models.TejkoGameInterface;
+import matej.tejkogames.models.general.payload.requests.TejkoGameRequest;
+
 @Entity
 @Table(name = "game")
 @RestResource(rel = "games", path = "games")
-public class TejkoGame {
+public class TejkoGame implements TejkoGameInterface {
 
     @Id
     private int id;
@@ -71,5 +74,15 @@ public class TejkoGame {
     public void setDescription(String description) {
         this.description = description;
     }
+
+	@Override
+	public void updateByRequest(TejkoGameRequest requestBody) {
+		if (requestBody.getName() != null) {
+			this.setName(requestBody.getName());
+		}
+		if (requestBody.getDescription() != null) {
+			this.setDescription(requestBody.getDescription());
+		}
+	}
 
 }

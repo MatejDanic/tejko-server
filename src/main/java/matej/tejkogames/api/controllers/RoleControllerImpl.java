@@ -1,6 +1,7 @@
 package matej.tejkogames.api.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -39,8 +41,12 @@ public class RoleControllerImpl implements RoleController {
 
     @GetMapping("")
     @Override
-    public ResponseEntity<List<Role>> getAll() {
-        return new ResponseEntity<>(roleService.getAll(), HttpStatus.OK);
+    public ResponseEntity<List<Role>> getAll(
+						@RequestParam(defaultValue = "0") Integer page, 
+                        @RequestParam(defaultValue = "10") Integer size,
+                        @RequestParam(defaultValue = "id") String sort,
+                        @RequestParam(defaultValue = "desc") String direction) {
+        return new ResponseEntity<>(roleService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -53,9 +59,16 @@ public class RoleControllerImpl implements RoleController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Role> updateById(@PathVariable Integer id, @RequestBody RoleRequest requestBody) {
-        return new ResponseEntity<>(roleService.updateById(id, requestBody), HttpStatus.OK);
-    }
+	public ResponseEntity<Role> updateById(@PathVariable Integer id, @RequestBody RoleRequest requestBody) {
+		return new ResponseEntity<>(roleService.updateById(id, requestBody), HttpStatus.OK);
+	}
+	
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("")
+    @Override
+	public ResponseEntity<List<Role>> updateAll(Map<Integer, RoleRequest> idRequestMap) {
+		return new ResponseEntity<>(roleService.updateAll(idRequestMap), HttpStatus.OK);
+	}
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")

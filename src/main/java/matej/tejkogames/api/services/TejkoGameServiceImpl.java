@@ -1,8 +1,14 @@
 package matej.tejkogames.api.services;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.ScoreRepository;
@@ -27,9 +33,15 @@ public class TejkoGameServiceImpl implements TejkoGameService {
     }
 
     @Override
-    public List<TejkoGame> getAll() {
-        return tejkoGameRepository.findAll();
-    }
+	public List<TejkoGame> getAll(Integer page, Integer size, String sort, String direction) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
+		return tejkoGameRepository.findAll(pageable).getContent();
+	}
+	
+	@Override
+	public List<TejkoGame> getAllByIdIn(Set<Integer> idSet) {
+		return tejkoGameRepository.findAllById(idSet);
+	}
 
     @Override
     public TejkoGame create(TejkoGameRequest requestBody) {
@@ -37,16 +49,24 @@ public class TejkoGameServiceImpl implements TejkoGameService {
     }
 
     @Override
-    public TejkoGame updateById(Integer id, TejkoGameRequest requestBody) {
-        TejkoGame tejkoGame = getById(id);
-        if (requestBody.getName() != null) {
-            tejkoGame.setName(requestBody.getName());
-        }
-        if (requestBody.getDescription() != null) {
-            tejkoGame.setDescription(requestBody.getDescription());
-        }
-        return tejkoGameRepository.save(tejkoGame);
-    }
+	public TejkoGame updateById(Integer id, TejkoGameRequest requestBody) {
+		TejkoGame tejkoGame = getById(id);
+
+		tejkoGame.updateByRequest(requestBody);
+		
+		return tejkoGameRepository.save(tejkoGame);
+	}
+
+	@Override
+	public List<TejkoGame> updateAll(Map<Integer, TejkoGameRequest> idRequestMap) {
+		List<TejkoGame> tejkoGameList = getAllByIdIn(idRequestMap.keySet());
+
+		for (TejkoGame tejkoGame : tejkoGameList) {
+			tejkoGame.updateByRequest(idRequestMap.get(tejkoGame.getId()));
+		}
+
+		return tejkoGameRepository.saveAll(tejkoGameList);
+	}
 
     @Override
     public void deleteById(Integer id) {

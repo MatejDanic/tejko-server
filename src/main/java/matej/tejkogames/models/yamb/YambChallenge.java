@@ -22,12 +22,14 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import matej.tejkogames.models.general.User;
+import matej.tejkogames.models.general.payload.requests.YambChallengeRequest;
+import matej.tejkogames.interfaces.models.YambChallengeInterface;
 import matej.tejkogames.models.general.Score;
 
 @Entity
 @Table(name = "yamb_challenge")
 @RestResource(rel = "challenges", path = "challenges")
-public class YambChallenge {
+public class YambChallenge implements YambChallengeInterface {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -57,11 +59,19 @@ public class YambChallenge {
     public YambChallenge() {
     }
 
-    public YambChallenge(Set<User> users, Set<Yamb> yambs) {
-        this.users = users;
-        this.yambs = yambs;
-        this.startDate = LocalDateTime.now();
-    }
+	public YambChallenge(Set<User> users, Set<Yamb> yambs) {
+		this.users = users;
+		this.yambs = yambs;
+		this.startDate = LocalDateTime.now();
+	}
+	
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
 
     public Set<User> getUsers() {
         return users;
@@ -102,5 +112,18 @@ public class YambChallenge {
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
+
+	@Override
+	public void updateByRequest(YambChallengeRequest requestBody) {
+		if (requestBody.getUsers() != null) {
+            this.setUsers(requestBody.getUsers());
+        }
+        if (requestBody.getYambs() != null) {
+            this.setYambs(requestBody.getYambs());
+        }
+        if (requestBody.getScores() != null) {
+            this.setScores(requestBody.getScores());
+        }		
+	}
 
 }

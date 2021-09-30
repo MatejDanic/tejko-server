@@ -20,13 +20,15 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.springframework.data.rest.core.annotation.RestResource;
 
+import matej.tejkogames.interfaces.models.YambInterface;
 import matej.tejkogames.models.general.User;
+import matej.tejkogames.models.general.payload.requests.YambRequest;
 
 @Entity
 @Table(name = "game_yamb")
 @RestResource(rel = "yambs", path = "yambs")
 @TypeDef(name = "json_binary", typeClass = JsonBinaryType.class)
-public class Yamb {
+public class Yamb implements YambInterface {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -168,8 +170,38 @@ public class Yamb {
         return endDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
-        this.endDate = endDate;
-    }
+	public void setEndDate(LocalDateTime endDate) {
+		this.endDate = endDate;
+	}
+
+	public void updateByRequest(YambRequest requestBody) {
+		if (requestBody.getUser() != null) {
+            this.setUser(requestBody.getUser());
+        }
+        if (requestBody.getChallenge() != null) {
+            this.setChallenge(requestBody.getChallenge());
+        }
+        if (requestBody.getType() != null) {
+            this.setType(requestBody.getType());
+        }
+        if (requestBody.getNumberOfColumns() != null) {
+            this.setNumberOfColumns(requestBody.getNumberOfColumns());
+        }
+        if (requestBody.getNumberOfDice() != null) {
+            this.setNumberOfDice(requestBody.getNumberOfDice());
+        }
+        if (requestBody.getForm() != null) {
+            this.setForm(requestBody.getForm());
+        }
+        if (requestBody.getDiceSet() != null) {
+            this.setDiceSet(requestBody.getDiceSet());
+        }
+        if (requestBody.getAnnouncement() != null) {
+            this.setAnnouncement(requestBody.getAnnouncement());
+        }
+        if (requestBody.getRollCount() != null) {
+            this.setRollCount(requestBody.getRollCount());
+        }
+	}
 
 }

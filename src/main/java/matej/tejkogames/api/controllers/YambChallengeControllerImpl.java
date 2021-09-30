@@ -1,6 +1,7 @@
 package matej.tejkogames.api.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -41,8 +43,12 @@ public class YambChallengeControllerImpl implements YambChallengeController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("")
     @Override
-    public ResponseEntity<List<YambChallenge>> getAll() {
-        return new ResponseEntity<>(yambChallengeService.getAll(), HttpStatus.OK);
+    public ResponseEntity<List<YambChallenge>> getAll(
+						@RequestParam(defaultValue = "0") Integer page, 
+                        @RequestParam(defaultValue = "10") Integer size,
+                        @RequestParam(defaultValue = "id") String sort,
+                        @RequestParam(defaultValue = "desc") String direction) {
+        return new ResponseEntity<>(yambChallengeService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -55,9 +61,17 @@ public class YambChallengeControllerImpl implements YambChallengeController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<YambChallenge> updateById(@PathVariable UUID id, @RequestBody YambChallengeRequest requestBody) {
-        return new ResponseEntity<>(yambChallengeService.updateById(id, requestBody), HttpStatus.OK);
-    }
+	public ResponseEntity<YambChallenge> updateById(@PathVariable UUID id,
+			@RequestBody YambChallengeRequest requestBody) {
+		return new ResponseEntity<>(yambChallengeService.updateById(id, requestBody), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("")
+    @Override
+	public ResponseEntity<List<YambChallenge>> updateAll(@RequestBody Map<UUID, YambChallengeRequest> idRequestMap) {
+		return new ResponseEntity<>(yambChallengeService.updateAll(idRequestMap), HttpStatus.OK);
+	}
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")

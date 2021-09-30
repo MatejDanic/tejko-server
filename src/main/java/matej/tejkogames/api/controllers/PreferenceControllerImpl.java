@@ -1,6 +1,7 @@
 package matej.tejkogames.api.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.PreferenceServiceImpl;
@@ -41,8 +43,12 @@ public class PreferenceControllerImpl implements PreferenceController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("")
     @Override
-    public ResponseEntity<List<Preference>> getAll() {
-        return new ResponseEntity<>(preferenceService.getAll(), HttpStatus.OK);
+    public ResponseEntity<List<Preference>> getAll(
+						@RequestParam(defaultValue = "0") Integer page, 
+                        @RequestParam(defaultValue = "10") Integer size,
+                        @RequestParam(defaultValue = "id") String sort,
+                        @RequestParam(defaultValue = "desc") String direction) {
+        return new ResponseEntity<>(preferenceService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
     
     @PreAuthorize("isAuthenticated()")   
@@ -56,9 +62,16 @@ public class PreferenceControllerImpl implements PreferenceController {
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<Preference> updateById(@PathVariable UUID id,
-            @RequestBody PreferenceRequest requestBody) {
-        return new ResponseEntity<>(preferenceService.updateById(id, requestBody), HttpStatus.OK);
-    }
+			@RequestBody PreferenceRequest requestBody) {
+		return new ResponseEntity<>(preferenceService.updateById(id, requestBody), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("")
+    @Override
+	public ResponseEntity<List<Preference>> updateAll(@RequestBody Map<UUID, PreferenceRequest> idRequestMap) {
+		return new ResponseEntity<>(preferenceService.updateAll(idRequestMap), HttpStatus.OK);
+	}
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")

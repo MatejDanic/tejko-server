@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.ApiErrorServiceImpl;
@@ -37,8 +38,12 @@ public class ApiErrorControllerImpl implements ApiErrorController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("")
 	@Override
-	public ResponseEntity<List<ApiError>> getAll() {
-		return new ResponseEntity<>(apiErrorService.getAll(), HttpStatus.OK);
+	public ResponseEntity<List<ApiError>> getAll(
+						@RequestParam(defaultValue = "0") Integer page, 
+                        @RequestParam(defaultValue = "10") Integer size,
+                        @RequestParam(defaultValue = "id") String sort,
+						@RequestParam(defaultValue = "desc") String direction) {
+		return new ResponseEntity<>(apiErrorService.getAll(page, size, sort, direction), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")

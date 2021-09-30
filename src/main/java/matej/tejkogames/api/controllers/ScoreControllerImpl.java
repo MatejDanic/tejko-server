@@ -1,6 +1,7 @@
 package matej.tejkogames.api.controllers;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.ScoreServiceImpl;
@@ -39,8 +41,12 @@ public class ScoreControllerImpl implements ScoreController {
 
 	@GetMapping("")
 	@Override
-	public ResponseEntity<List<Score>> getAll() {
-		return new ResponseEntity<>(yambScoreService.getAll(), HttpStatus.OK);
+	public ResponseEntity<List<Score>> getAll(
+						@RequestParam(defaultValue = "0") Integer page, 
+                        @RequestParam(defaultValue = "10") Integer size,
+                        @RequestParam(defaultValue = "id") String sort,
+                        @RequestParam(defaultValue = "desc") String direction) {
+		return new ResponseEntity<>(yambScoreService.getAll(page, size, sort, direction), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
@@ -55,6 +61,13 @@ public class ScoreControllerImpl implements ScoreController {
 	@Override
 	public ResponseEntity<Score> updateById(@PathVariable UUID id, @RequestBody ScoreRequest requestBody) {
 		return new ResponseEntity<>(yambScoreService.updateById(id, requestBody), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@PutMapping("/")
+	@Override
+	public ResponseEntity<List<Score>> updateAll(@RequestBody Map<UUID, ScoreRequest> idRequestMap) {
+		return new ResponseEntity<>(yambScoreService.updateAll(idRequestMap), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")

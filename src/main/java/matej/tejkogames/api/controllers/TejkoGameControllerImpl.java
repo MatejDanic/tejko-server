@@ -1,6 +1,7 @@
 package matej.tejkogames.api.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,11 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import matej.tejkogames.api.services.TejkoGameServiceImpl;
-import matej.tejkogames.interfaces.controllers.TejkoGamesController;
+import matej.tejkogames.interfaces.controllers.TejkoGameController;
 import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.TejkoGame;
 import matej.tejkogames.models.general.enums.MessageType;
@@ -27,7 +29,7 @@ import matej.tejkogames.models.general.payload.responses.MessageResponse;
 
 @RestController
 @RequestMapping("/api/games")
-public class TejkoGamesControllerImpl implements TejkoGamesController {
+public class TejkoGameControllerImpl implements TejkoGameController {
 
     @Autowired
     TejkoGameServiceImpl tejkoGameService;
@@ -40,8 +42,12 @@ public class TejkoGamesControllerImpl implements TejkoGamesController {
 
     @GetMapping("")
     @Override
-    public ResponseEntity<List<TejkoGame>> getAll() {
-        return new ResponseEntity<>(tejkoGameService.getAll(), HttpStatus.OK);
+	public ResponseEntity<List<TejkoGame>> getAll(
+						@RequestParam(defaultValue = "0") Integer page, 
+						@RequestParam(defaultValue = "10") Integer size,
+                        @RequestParam(defaultValue = "id") String sort,
+                        @RequestParam(defaultValue = "desc") String direction) {
+        return new ResponseEntity<>(tejkoGameService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -55,9 +61,17 @@ public class TejkoGamesControllerImpl implements TejkoGamesController {
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<TejkoGame> updateById(@PathVariable Integer id,
-            @RequestBody TejkoGameRequest requestBody) {
-        return new ResponseEntity<>(tejkoGameService.updateById(id, requestBody), HttpStatus.OK);
-    }
+			@RequestBody TejkoGameRequest requestBody) {
+		return new ResponseEntity<>(tejkoGameService.updateById(id, requestBody), HttpStatus.OK);
+	}
+	
+	
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("")
+    @Override
+	public ResponseEntity<List<TejkoGame>> updateAll(@RequestBody Map<Integer, TejkoGameRequest> idRequestMap) {
+		return new ResponseEntity<>(tejkoGameService.updateAll(idRequestMap), HttpStatus.OK);
+	}
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")

@@ -7,6 +7,6 @@ import matej.tejkogames.models.general.payload.requests.UserRequest;
 
 public interface UserService extends ServiceInterface<User, UUID, UserRequest> {
 
-    public boolean hasPermission(UUID id, String username);
+	public boolean hasPermission(UUID id, String username);
 
 }

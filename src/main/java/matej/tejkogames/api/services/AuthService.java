@@ -52,7 +52,8 @@ public class AuthService {
         if (userRepository.existsByUsername(registerRequest.getUsername()))
             throw new UsernameTakenException("Korisničko ime je već zauzeto!");
 
-        User user = userFactory.createUser(registerRequest.getUsername(), registerRequest.getPassword());
+		User user = userFactory.createUser(registerRequest.getUsername(), registerRequest.getPassword());
+		userRepository.save(user);
         return "User " + user.getUsername() + " successfully registered.";
     }
 

@@ -2,9 +2,15 @@ package matej.tejkogames.api.services;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.models.general.Score;
@@ -28,30 +34,41 @@ public class ScoreServiceImpl implements ScoreService {
     }
 
     @Override
-    public List<Score> getAll() {
-        return scoreRepository.findAll();
-    }
+	public List<Score> getAll(Integer page, Integer size, String sort, String direction) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
+		return scoreRepository.findAll(pageable).getContent();
+	}
+
+	@Override
+	public List<Score> getAllByIdIn(Set<UUID> idSet) {
+		return scoreRepository.findAllById(idSet);
+	}
 
     @Override
-    public Score create(ScoreRequest requestBody) {
-        Score score = scoreFactory.createScore(requestBody.getUser(), requestBody.getValue());
-        return scoreRepository.save(score);
-    }
-
+	public Score create(ScoreRequest requestBody) {
+		Score score = scoreFactory.createScore(requestBody.getUser(), requestBody.getValue());
+		return scoreRepository.save(score);
+	}
+	
     @Override
-    public Score updateById(UUID id, ScoreRequest requestBody) {
-        Score score = getById(id);
-        if (requestBody.getUser() != null) {
-            score.setUser(requestBody.getUser());
-        }
-        if (requestBody.getDate() != null) {
-            score.setDate(requestBody.getDate());
-        }
-        if (requestBody.getValue() != null) {
-            score.setValue(requestBody.getValue());
-        }
-        return scoreRepository.save(score);
-    }
+	public Score updateById(UUID id, ScoreRequest requestBody) {
+		Score score = getById(id);
+		
+		score.updateByRequest(requestBody);
+
+		return scoreRepository.save(score);
+	}
+
+	@Override
+	public List<Score> updateAll(Map<UUID, ScoreRequest> idRequestMap) {
+		List<Score> scoreList = getAllByIdIn(idRequestMap.keySet());
+
+		for (Score score : scoreList) {
+			score.updateByRequest(idRequestMap.get(score.getId()));
+		}
+
+		return scoreRepository.saveAll(scoreList);
+	}
 
     @Override
     public void deleteById(UUID id) {
