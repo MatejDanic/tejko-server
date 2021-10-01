@@ -15,12 +15,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
+import matej.tejkogames.interfaces.models.PreferenceInterface;
 import matej.tejkogames.models.general.enums.Theme;
+import matej.tejkogames.models.general.payload.requests.PreferenceRequest;
 
 @Entity
 @Table(name = "user_preference")
 @RestResource(rel = "preferences", path = "preferences")
-public class Preference {
+public class Preference implements PreferenceInterface {
 
 	@Id
     @GeneratedValue(generator = "UUID")
@@ -77,8 +79,18 @@ public class Preference {
         return theme;
     }
 
-    public void setTheme(Theme theme) {
-        this.theme = theme;
-    }
+	public void setTheme(Theme theme) {
+		this.theme = theme;
+	}
+
+	@Override
+	public void updateByRequest(PreferenceRequest preferenceRequest) {
+		if (preferenceRequest.getTheme() != null) {
+            this.setTheme(preferenceRequest.getTheme());
+        }
+        if (preferenceRequest.getVolume() != null) {
+            this.setVolume(preferenceRequest.getVolume());
+        }
+	}
 
 }

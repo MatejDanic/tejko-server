@@ -17,19 +17,6 @@ import matej.tejkogames.models.yamb.YambType;
 
 public class YambUtil {
 
-	// public static Yamb generateYamb(User user, YambType type, int numberOfColumns, int numberOfDice) {
-	// 	Yamb yamb = new Yamb();
-	// 	yamb.setUser(user);
-	// 	yamb.setType(type);
-	// 	yamb.setNumberOfColumns(numberOfColumns);
-	// 	yamb.setNumberOfDice(numberOfDice);
-	// 	yamb.setYambForm(generateYambForm);
-	// 	yamb.setUser(user);
-
-	// 	return new Yamb(user, type, numberOfColumns, numberOfDice, generateYambForm(type, numberOfColumns, numberOfDice),
-	// 			generateDiceSet(numberOfDice));
-	// }
-
 	public static YambForm generateYambForm(YambType type, int numberOfColumns, int numberOfDice) {
 
 		List<Column> columnList = new ArrayList<>();

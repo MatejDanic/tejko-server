@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import matej.tejkogames.api.services.PreferenceServiceImpl;
 import matej.tejkogames.api.services.UserServiceImpl;
 import matej.tejkogames.api.services.YambChallengeServiceImpl;
-import matej.tejkogames.api.services.YambMatchServiceImpl;
 import matej.tejkogames.api.services.YambServiceImpl;
 
 @Component
@@ -26,9 +25,6 @@ public class AuthPermissionComponent {
     @Autowired
     YambChallengeServiceImpl yambChallengeService;
 
-    @Autowired
-    YambMatchServiceImpl yambMatchService;
-
     public boolean hasPermission(String username, UUID id, String object) {
         boolean hasPermission = false;
         switch (object) {
@@ -43,9 +39,6 @@ public class AuthPermissionComponent {
                 break;
             case "YambChallenge":
                 hasPermission = yambChallengeService.hasPermission(id, username);
-                break;
-            case "YambMatch":
-                hasPermission = yambMatchService.hasPermission(id, username);
                 break;
             case "Matej":
                 hasPermission = username.equals("Matej");

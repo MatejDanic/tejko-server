@@ -22,12 +22,14 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import matej.tejkogames.models.general.User;
+import matej.tejkogames.models.general.payload.requests.YambChallengeRequest;
+import matej.tejkogames.interfaces.models.YambChallengeInterface;
 import matej.tejkogames.models.general.Score;
 
 @Entity
 @Table(name = "yamb_challenge")
 @RestResource(rel = "challenges", path = "challenges")
-public class YambChallenge {
+public class YambChallenge implements YambChallengeInterface {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -49,20 +51,27 @@ public class YambChallenge {
     private Set<Yamb> yambs;
 
     @Column(nullable = false)
-    private boolean active;
+    private LocalDateTime startDate;
 
-    @Column(nullable = false)
-    private LocalDateTime date;
+    @Column
+    private LocalDateTime endDate;
 
     public YambChallenge() {
     }
 
-    public YambChallenge(Set<User> users, Set<Yamb> yambs) {
-        this.users = users;
-        this.yambs = yambs;
-        this.active = true;
-        this.date = LocalDateTime.now();
-    }
+	public YambChallenge(Set<User> users, Set<Yamb> yambs) {
+		this.users = users;
+		this.yambs = yambs;
+		this.startDate = LocalDateTime.now();
+	}
+	
+	public UUID getId() {
+		return id;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
 
     public Set<User> getUsers() {
         return users;
@@ -80,20 +89,41 @@ public class YambChallenge {
         this.scores = scores;
     }
 
-    public boolean isActive() {
-        return active;
+    public Set<Yamb> getYambs() {
+        return yambs;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setYambs(Set<Yamb> yambs) {
+        this.yambs = yambs;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getStartDate() {
+        return startDate;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
     }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+    }
+
+	@Override
+	public void updateByRequest(YambChallengeRequest requestBody) {
+		if (requestBody.getUsers() != null) {
+            this.setUsers(requestBody.getUsers());
+        }
+        if (requestBody.getYambs() != null) {
+            this.setYambs(requestBody.getYambs());
+        }
+        if (requestBody.getScores() != null) {
+            this.setScores(requestBody.getScores());
+        }		
+	}
 
 }

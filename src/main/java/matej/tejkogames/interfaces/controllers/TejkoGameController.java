@@ -8,7 +8,7 @@ import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.TejkoGame;
 import matej.tejkogames.models.general.payload.requests.TejkoGameRequest;
 
-public interface TejkoGamesController extends ControllerInterface<TejkoGame, Integer> {
+public interface TejkoGameController extends ControllerInterface<TejkoGame, Integer, TejkoGameRequest> {
 
     public ResponseEntity<TejkoGame> updateById(Integer id, TejkoGameRequest tejkoGameRequest);
 

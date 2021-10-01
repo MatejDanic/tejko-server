@@ -1,10 +1,15 @@
 package matej.tejkogames.api.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.PreferenceRepository;
@@ -15,11 +20,14 @@ import matej.tejkogames.api.repositories.YambRepository;
 import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.constants.YambConstants;
 import matej.tejkogames.exceptions.YambLimitReachedException;
+import matej.tejkogames.factories.UserFactory;
+import matej.tejkogames.factories.YambFactory;
 import matej.tejkogames.interfaces.services.UserService;
 import matej.tejkogames.models.general.Preference;
 import matej.tejkogames.models.general.Role;
 import matej.tejkogames.models.general.User;
 import matej.tejkogames.models.general.payload.requests.RoleRequest;
+import matej.tejkogames.models.general.payload.requests.UserRequest;
 import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.yamb.Yamb;
@@ -43,25 +51,68 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     PreferenceRepository preferenceRepository;
-    
+
     @Autowired
     YambRepository yambRepository;
 
     @Autowired
     ScoreRepository scoreRepository;
 
-    public User getById(UUID id) {
-        return userRepository.findById(id).get();
+    @Autowired
+    UserFactory userFactory;
+
+    @Autowired
+    YambFactory yambFactory;
+
+    @Override
+	public User getById(UUID id) {
+		return userRepository.findById(id).get();
+	}
+
+	@Override
+	public List<User> getAll(Integer page, Integer size, String sort, String direction) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
+		return userRepository.findAll(pageable).getContent();
+	}
+	
+	@Override
+	public List<User> getAllByIdIn(Set<UUID> idSet) {
+		return userRepository.findAllById(idSet);
+	}
+	
+    @Override
+    public User create(UserRequest requestBody) {
+        if (requestBody.getUsername() == null || requestBody.getPassword() == null) return null;
+        User user = userFactory.createUser(requestBody.getUsername(), requestBody.getPassword());
+        return userRepository.save(user);
     }
 
-    public List<User> getAll() {
-        return userRepository.findAll();
-    }
+    @Override
+	public User updateById(UUID id, UserRequest requestBody) {
+		User user = getById(id);
 
+		user.updateByRequest(requestBody);
+
+		return userRepository.save(user);
+	}
+
+	@Override
+	public List<User> updateAll(Map<UUID, UserRequest> idRequestMap) {
+		List<User> userList = getAllByIdIn(idRequestMap.keySet());
+
+		for (User user : userList) {
+			user.updateByRequest(idRequestMap.get(user.getId()));
+		}
+
+		return userRepository.saveAll(userList);
+	}
+
+    @Override
     public void deleteById(UUID id) {
         userRepository.deleteById(id);
     }
 
+    @Override
     public void deleteAll() {
         userRepository.deleteAll();
     }
@@ -71,7 +122,7 @@ public class UserServiceImpl implements UserService {
         int yambLimit = 0;
         if (yambRequest.getType() == YambType.CLASSIC || yambRequest.getType() == YambType.CUSTOM) {
             yambLimit = YambConstants.YAMB_LIMIT;
-            
+
         } else if (yambRequest.getType() == YambType.CHALLENGE) {
             yambLimit = YambConstants.CHALLENGE_LIMIT;
         }
@@ -86,9 +137,10 @@ public class UserServiceImpl implements UserService {
             }
         }
         if (limitReached) {
-            throw new YambLimitReachedException("Yamb limit of " + yambLimit + " has been reached by user " + user.getUsername());
+            throw new YambLimitReachedException(
+                    "Yamb limit of " + yambLimit + " has been reached by user " + user.getUsername());
         } else {
-            Yamb yamb = new Yamb(user, yambRequest.getType(), yambRequest.getNumberOfColumns(), yambRequest.getNumberOfDice());
+            Yamb yamb = yambFactory.createYamb(user, yambRequest.getType(), yambRequest.getNumberOfColumns(), yambRequest.getNumberOfDice(), null);
             return yambRepository.save(yamb);
         }
     }
@@ -100,7 +152,7 @@ public class UserServiceImpl implements UserService {
     public Set<Yamb> getYambsByUserId(UUID id) {
         return getById(id).getYambs();
     }
-    
+
     public Preference getPreferenceByUserId(UUID id) {
         Preference preference;
         if (getById(id).getPreference() != null) {
@@ -116,7 +168,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public Preference savePreferenceByUserId(UUID id) {
-        return preferenceRepository.save(new Preference(TejkoGamesConstants.DEFAULT_VOLUME, TejkoGamesConstants.DEFAULT_THEME));
+        return preferenceRepository
+                .save(new Preference(TejkoGamesConstants.DEFAULT_VOLUME, TejkoGamesConstants.DEFAULT_THEME));
     }
 
     public Set<Role> assignRoleByUserId(UUID id, RoleRequest roleRequest) {
@@ -137,8 +190,8 @@ public class UserServiceImpl implements UserService {
         return scoreRepository.findAllByUserId(id);
     }
 
-    public boolean hasPermission(UUID id, String username) {
-        return getById(id).getUsername().equals(username);
-    }
-
+	public boolean hasPermission(UUID id, String username) {
+		return getById(id).getUsername().equals(username);
+	}
+	
 }

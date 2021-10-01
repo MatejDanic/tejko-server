@@ -1,5 +1,6 @@
 package matej.tejkogames.models.general;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,14 +25,15 @@ import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import matej.tejkogames.constants.TejkoGamesConstants;
+import matej.tejkogames.interfaces.models.UserInterface;
+import matej.tejkogames.models.general.payload.requests.UserRequest;
 import matej.tejkogames.models.yamb.Yamb;
 import matej.tejkogames.models.yamb.YambChallenge;
-import matej.tejkogames.models.yamb.YambMatch;
 
 @Entity
 @Table(name = "auth_user")
 @RestResource(rel = "users", path = "users")
-public class User {
+public class User implements UserInterface {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -69,12 +71,15 @@ public class User {
     private Set<YambChallenge> challenges;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
-    private Set<YambMatch> matches;
-
-    @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Preference preference;
+
+    @JsonIgnore
+    @Column
+    private Boolean isTestUser = false;
+
+    @Column
+    private LocalDateTime createdDate;
 
     public User() {
     }
@@ -139,6 +144,14 @@ public class User {
     public void setPreference(Preference preference) {
         this.preference = preference;
     }
+    
+    public Boolean isTestUser() {
+        return isTestUser;
+    }
+
+    public void setTestUser(Boolean isTestUser) {
+        this.isTestUser = isTestUser;
+    }
 
     @Override
     public String toString() {
@@ -148,4 +161,18 @@ public class User {
         }
         return string;
     }
+
+    public void setCreatedDate(LocalDateTime now) {
+    }
+
+	@Override
+	public void updateByRequest(UserRequest requestBody) {
+		if (requestBody.getUsername() != null) {
+            this.setUsername(requestBody.getUsername());
+        }
+        if (requestBody.getPassword() != null) {
+            this.setPassword(requestBody.getPassword());
+        }
+		
+	}
 }

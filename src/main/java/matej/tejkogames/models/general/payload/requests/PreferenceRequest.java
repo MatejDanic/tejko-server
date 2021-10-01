@@ -3,9 +3,12 @@ package matej.tejkogames.models.general.payload.requests;
 import javax.validation.constraints.Size;
 
 import matej.tejkogames.constants.TejkoGamesConstants;
+import matej.tejkogames.models.general.User;
 import matej.tejkogames.models.general.enums.Theme;
 
 public class PreferenceRequest {
+
+    private User user;
 
     @Size(min = TejkoGamesConstants.VOLUME_MIN, max = TejkoGamesConstants.VOLUME_MAX)
     private Integer volume;
@@ -13,6 +16,14 @@ public class PreferenceRequest {
     private Theme theme;
 
     protected PreferenceRequest() {
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Integer getVolume() {

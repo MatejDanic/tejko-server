@@ -1,10 +1,15 @@
 package matej.tejkogames.api.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.UserRepository;
@@ -12,9 +17,12 @@ import matej.tejkogames.api.repositories.YambRepository;
 import matej.tejkogames.api.repositories.ScoreRepository;
 import matej.tejkogames.api.repositories.TejkoGameRepository;
 import matej.tejkogames.exceptions.IllegalMoveException;
+import matej.tejkogames.factories.ScoreFactory;
+import matej.tejkogames.factories.YambFactory;
 import matej.tejkogames.interfaces.services.YambService;
 import matej.tejkogames.utils.YambUtil;
 import matej.tejkogames.models.general.Score;
+import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.yamb.Box;
 import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.Column;
@@ -38,24 +46,63 @@ public class YambServiceImpl implements YambService {
     @Autowired
     TejkoGameRepository tejkoGamesRepository;
 
+    @Autowired
+    YambFactory yambFactory;
+
+    @Autowired
+    ScoreFactory scoreFactory;
+
+    @Override
     public Yamb getById(UUID id) {
         return yambRepository.findById(id).get();
     }
 
-    public List<Yamb> getAll() {
-        return yambRepository.findAll();
+    @Override
+	public List<Yamb> getAll(Integer page, Integer size, String sort, String direction) {
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
+		return yambRepository.findAll(pageable).getContent();
+	}
+
+	@Override
+	public List<Yamb> getAllByIdIn(Set<UUID> idSet) {
+		return yambRepository.findAllById(idSet);
+	}
+	
+    @Override
+    public Yamb create(YambRequest requestBody) {
+        Yamb yamb = yambFactory.createYamb(requestBody.getUser(), requestBody.getType(),
+                requestBody.getNumberOfColumns(), requestBody.getNumberOfDice(), requestBody.getChallenge());
+        return yambRepository.save(yamb);
     }
 
+    @Override
+	public Yamb updateById(UUID id, YambRequest requestBody) {
+		Yamb yamb = getById(id);
+		
+		yamb.updateByRequest(requestBody);
+		
+		return yambRepository.save(yamb);
+	}
+
+	@Override
+	public List<Yamb> updateAll(Map<UUID, YambRequest> idRequestMap) {
+		List<Yamb> yambList = getAllByIdIn(idRequestMap.keySet());
+
+		for (Yamb yamb : yambList) {
+			yamb.updateByRequest(idRequestMap.get(yamb.getId()));
+		}
+
+		return yambRepository.saveAll(yambList);
+	}
+
+    @Override
     public void deleteById(UUID id) {
         yambRepository.deleteById(id);
     }
 
+    @Override
     public void deleteAll() {
         yambRepository.deleteAll();
-    }
-
-    public Yamb saveById(Yamb yamb) {
-        return yambRepository.save(yamb);
     }
 
     public Set<Dice> rollDiceById(UUID id) throws IllegalMoveException {
@@ -155,8 +202,7 @@ public class YambServiceImpl implements YambService {
         form.setAvailableBoxes(form.getAvailableBoxes() - 1);
 
         if (form.getAvailableBoxes() == 0) {
-            Score score = new Score(form.getTotalSum());
-            score.setUser(yamb.getUser());
+            Score score = scoreFactory.createScore(yamb.getUser(), form.getTotalSum());
             scoreRepository.save(score);
         }
 

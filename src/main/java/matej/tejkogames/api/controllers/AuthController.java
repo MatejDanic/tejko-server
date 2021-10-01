@@ -5,7 +5,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,13 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import matej.tejkogames.models.general.payload.requests.LoginRequest;
 import matej.tejkogames.models.general.payload.requests.RegisterRequest;
 import matej.tejkogames.models.general.payload.responses.JwtResponse;
+import matej.tejkogames.models.general.payload.responses.MessageResponse;
 import matej.tejkogames.api.services.AuthService;
-import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.exceptions.UsernameTakenException;
 
 @RestController
-@CrossOrigin(origins = { TejkoGamesConstants.ORIGIN_DEFAULT, TejkoGamesConstants.ORIGIN_WWW,
-        TejkoGamesConstants.ORIGIN_HEROKU })
 @RequestMapping("/api/auth")
 public class AuthController {
 
@@ -33,9 +30,9 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest registerRequest)
-            throws UsernameTakenException {
-        return new ResponseEntity<>(authService.register(registerRequest), HttpStatus.OK);
+    public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest registerRequest)
+			throws UsernameTakenException {
+        return new ResponseEntity<>(new MessageResponse("Registration", authService.register(registerRequest)), HttpStatus.OK);
     }
 
 }

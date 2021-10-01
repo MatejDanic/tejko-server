@@ -17,13 +17,14 @@ import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
+import matej.tejkogames.interfaces.models.ScoreInterface;
+import matej.tejkogames.models.general.payload.requests.ScoreRequest;
 import matej.tejkogames.models.yamb.YambChallenge;
-import matej.tejkogames.models.yamb.YambMatch;
 
 @Entity
 @Table(name = "game_score")
 @RestResource(rel = "scores", path = "scores")
-public class Score {
+public class Score implements ScoreInterface {
 
 	@Id
     @GeneratedValue(generator = "UUID")
@@ -36,7 +37,7 @@ public class Score {
 
 	@ManyToOne
 	@JsonIncludeProperties({ "id", "name" })
-	@JoinColumn(name = "game_id", nullable = false)
+	@JoinColumn(name = "game_id")
 	private TejkoGame game;
 
 	@ManyToOne
@@ -48,11 +49,6 @@ public class Score {
 	@JsonIgnore
 	@JoinColumn(name = "challenge_id")
 	private YambChallenge challenge;
-
-	@ManyToOne
-	@JsonIgnore
-	@JoinColumn(name = "match_id")
-	private YambMatch match;
 
 	@Column(nullable = false)
 	private Integer value;
@@ -98,6 +94,19 @@ public class Score {
 
 	public void setDate(LocalDateTime date) {
 		this.date = date;
+	}
+
+	@Override
+	public void updateByRequest(ScoreRequest requestBody) {
+		if (requestBody.getUser() != null) {
+			this.setUser(requestBody.getUser());
+		}
+		if (requestBody.getDate() != null) {
+			this.setDate(requestBody.getDate());
+		}
+		if (requestBody.getValue() != null) {
+			this.setValue(requestBody.getValue());
+		}
 	}
 
 }
