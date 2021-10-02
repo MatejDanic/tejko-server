@@ -5,6 +5,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.ApiErrorRepository;
@@ -43,7 +47,8 @@ public class ApiErrorServiceImpl implements ApiErrorService {
 
     @Override
 	public List<ApiError> getAll(Integer page, Integer size, String sort, String direction) {
-		return apiErrorRepository.findAll();
+		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
+		return apiErrorRepository.findAll(pageable).getContent();
 	}
 	
 	@Override
