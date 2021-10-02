@@ -14,7 +14,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("api/socket").setAllowedOrigins(TejkoGamesConstants.ORIGIN_DEFAULT,
+        registry.addEndpoint("api/socket").setAllowedOrigins(TejkoGamesConstants.ORIGIN_LOCALHOST, TejkoGamesConstants.ORIGIN_DEFAULT,
                 TejkoGamesConstants.ORIGIN_HEROKU, TejkoGamesConstants.ORIGIN_WWW)
                 .setHandshakeHandler(new CustomHandshakeHandler()).withSockJS();
     }

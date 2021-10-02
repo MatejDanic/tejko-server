@@ -9,7 +9,7 @@ public class TejkoGamesConstants {
 
     public static final String ORIGIN_DEFAULT = "https://tejko.games";
     public static final String ORIGIN_WWW = "https://www.tejko.games";
-    public static final String ORIGIN_HEROKU = "https://tejko-games.herokuapp.com";
+    public static final String ORIGIN_HEROKU = "https://tejko-games-client.herokuapp.com";
     public static final String ORIGIN_LOCALHOST = "http://localhost:3000";
 
     public static final int EXCEPTION_LOG_SIZE = 1024;
