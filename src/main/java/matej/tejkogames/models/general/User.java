@@ -144,7 +144,7 @@ public class User implements UserInterface {
     public void setPreference(Preference preference) {
         this.preference = preference;
     }
-    
+
     public Boolean isTestUser() {
         return isTestUser;
     }
@@ -162,17 +162,30 @@ public class User implements UserInterface {
         return string;
     }
 
-    public void setCreatedDate(LocalDateTime now) {
+    public Boolean getIsTestUser() {
+        return isTestUser;
     }
 
-	@Override
-	public void updateByRequest(UserRequest requestBody) {
-		if (requestBody.getUsername() != null) {
+    public void setIsTestUser(Boolean isTestUser) {
+        this.isTestUser = isTestUser;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    @Override
+    public void updateByRequest(UserRequest requestBody) {
+        if (requestBody.getUsername() != null) {
             this.setUsername(requestBody.getUsername());
         }
         if (requestBody.getPassword() != null) {
             this.setPassword(requestBody.getPassword());
         }
-		
-	}
+
+    }
 }

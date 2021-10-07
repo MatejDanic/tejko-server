@@ -14,7 +14,7 @@ import matej.tejkogames.models.general.User;
 
 @Component
 public class UserFactory {
-    
+
     @Autowired
     RoleRepository roleRepository;
 
@@ -34,11 +34,12 @@ public class UserFactory {
     public User createUserWithEncodedPassword(String username, String encodedPassword) {
         User user = new User(username, encodedPassword);
         Set<Role> roles = new HashSet<>();
+        user.setCreatedDate(LocalDateTime.now());
         Role userRole = roleRepository.findByLabel("USER").orElseThrow(() -> new RuntimeException("Role not found."));
         roles.add(userRole);
         user.setRoles(roles);
         user.setCreatedDate(LocalDateTime.now());
         return user;
     }
-    
+
 }
