@@ -58,16 +58,16 @@ public class YambServiceImpl implements YambService {
     }
 
     @Override
-	public List<Yamb> getAll(Integer page, Integer size, String sort, String direction) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-		return yambRepository.findAll(pageable).getContent();
-	}
+    public List<Yamb> getAll(Integer page, Integer size, String sort, String direction) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
+        return yambRepository.findAll(pageable).getContent();
+    }
 
-	@Override
-	public List<Yamb> getAllByIdIn(Set<UUID> idSet) {
-		return yambRepository.findAllById(idSet);
-	}
-	
+    @Override
+    public List<Yamb> getAllByIdIn(Set<UUID> idSet) {
+        return yambRepository.findAllById(idSet);
+    }
+
     @Override
     public Yamb create(YambRequest requestBody) {
         Yamb yamb = yambFactory.createYamb(requestBody.getUser(), requestBody.getType(),
@@ -76,24 +76,24 @@ public class YambServiceImpl implements YambService {
     }
 
     @Override
-	public Yamb updateById(UUID id, YambRequest requestBody) {
-		Yamb yamb = getById(id);
-		
-		yamb.updateByRequest(requestBody);
-		
-		return yambRepository.save(yamb);
-	}
+    public Yamb updateById(UUID id, YambRequest requestBody) {
+        Yamb yamb = getById(id);
 
-	@Override
-	public List<Yamb> updateAll(Map<UUID, YambRequest> idRequestMap) {
-		List<Yamb> yambList = getAllByIdIn(idRequestMap.keySet());
+        yamb.updateByRequest(requestBody);
 
-		for (Yamb yamb : yambList) {
-			yamb.updateByRequest(idRequestMap.get(yamb.getId()));
-		}
+        return yambRepository.save(yamb);
+    }
 
-		return yambRepository.saveAll(yambList);
-	}
+    @Override
+    public List<Yamb> updateAll(Map<UUID, YambRequest> idRequestMap) {
+        List<Yamb> yambList = getAllByIdIn(idRequestMap.keySet());
+
+        for (Yamb yamb : yambList) {
+            yamb.updateByRequest(idRequestMap.get(yamb.getId()));
+        }
+
+        return yambRepository.saveAll(yambList);
+    }
 
     @Override
     public void deleteById(UUID id) {
@@ -103,6 +103,11 @@ public class YambServiceImpl implements YambService {
     @Override
     public void deleteAll() {
         yambRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteAllById(Set<UUID> idSet) {
+        yambRepository.deleteAllById(idSet);
     }
 
     public Set<Dice> rollDiceById(UUID id) throws IllegalMoveException {

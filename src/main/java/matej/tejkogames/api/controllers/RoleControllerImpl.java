@@ -2,6 +2,7 @@ package matej.tejkogames.api.controllers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,11 +42,9 @@ public class RoleControllerImpl implements RoleController {
 
     @GetMapping("")
     @Override
-    public ResponseEntity<List<Role>> getAll(
-						@RequestParam(defaultValue = "0") Integer page, 
-                        @RequestParam(defaultValue = "10") Integer size,
-                        @RequestParam(defaultValue = "id") String sort,
-                        @RequestParam(defaultValue = "desc") String direction) {
+    public ResponseEntity<List<Role>> getAll(@RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "desc") String direction) {
         return new ResponseEntity<>(roleService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
 
@@ -59,16 +58,16 @@ public class RoleControllerImpl implements RoleController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     @Override
-	public ResponseEntity<Role> updateById(@PathVariable Integer id, @RequestBody RoleRequest requestBody) {
-		return new ResponseEntity<>(roleService.updateById(id, requestBody), HttpStatus.OK);
-	}
-	
+    public ResponseEntity<Role> updateById(@PathVariable Integer id, @RequestBody RoleRequest requestBody) {
+        return new ResponseEntity<>(roleService.updateById(id, requestBody), HttpStatus.OK);
+    }
+
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("")
     @Override
-	public ResponseEntity<List<Role>> updateAll(Map<Integer, RoleRequest> idRequestMap) {
-		return new ResponseEntity<>(roleService.updateAll(idRequestMap), HttpStatus.OK);
-	}
+    public ResponseEntity<List<Role>> updateAll(Map<Integer, RoleRequest> idRequestMap) {
+        return new ResponseEntity<>(roleService.updateAll(idRequestMap), HttpStatus.OK);
+    }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
@@ -85,6 +84,17 @@ public class RoleControllerImpl implements RoleController {
     public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
         roleService.deleteAll();
         return new ResponseEntity<>(new MessageResponse("", MessageType.DEFAULT, ""), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/bulk")
+    @Override
+    public ResponseEntity<MessageResponse> deleteAllById(@RequestHeader(value = "Authorization") String headerAuth,
+            @RequestBody Set<Integer> idSet) {
+        roleService.deleteAllById(idSet);
+        return new ResponseEntity<>(
+                new MessageResponse("Role", MessageType.DEFAULT, "All roles have been successfully deleted"),
+                HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

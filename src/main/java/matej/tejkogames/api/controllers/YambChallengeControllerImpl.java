@@ -2,6 +2,7 @@ package matej.tejkogames.api.controllers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +44,9 @@ public class YambChallengeControllerImpl implements YambChallengeController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("")
     @Override
-    public ResponseEntity<List<YambChallenge>> getAll(
-						@RequestParam(defaultValue = "0") Integer page, 
-                        @RequestParam(defaultValue = "10") Integer size,
-                        @RequestParam(defaultValue = "id") String sort,
-                        @RequestParam(defaultValue = "desc") String direction) {
+    public ResponseEntity<List<YambChallenge>> getAll(@RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "desc") String direction) {
         return new ResponseEntity<>(yambChallengeService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
 
@@ -61,17 +60,17 @@ public class YambChallengeControllerImpl implements YambChallengeController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     @Override
-	public ResponseEntity<YambChallenge> updateById(@PathVariable UUID id,
-			@RequestBody YambChallengeRequest requestBody) {
-		return new ResponseEntity<>(yambChallengeService.updateById(id, requestBody), HttpStatus.OK);
-	}
+    public ResponseEntity<YambChallenge> updateById(@PathVariable UUID id,
+            @RequestBody YambChallengeRequest requestBody) {
+        return new ResponseEntity<>(yambChallengeService.updateById(id, requestBody), HttpStatus.OK);
+    }
 
-	@PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("")
     @Override
-	public ResponseEntity<List<YambChallenge>> updateAll(@RequestBody Map<UUID, YambChallengeRequest> idRequestMap) {
-		return new ResponseEntity<>(yambChallengeService.updateAll(idRequestMap), HttpStatus.OK);
-	}
+    public ResponseEntity<List<YambChallenge>> updateAll(@RequestBody Map<UUID, YambChallengeRequest> idRequestMap) {
+        return new ResponseEntity<>(yambChallengeService.updateAll(idRequestMap), HttpStatus.OK);
+    }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
@@ -90,4 +89,14 @@ public class YambChallengeControllerImpl implements YambChallengeController {
         return new ResponseEntity<>(new MessageResponse("", MessageType.DEFAULT, ""), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/bulk")
+    @Override
+    public ResponseEntity<MessageResponse> deleteAllById(@RequestHeader(value = "Authorization") String headerAuth,
+            @RequestBody Set<UUID> idSet) {
+        yambChallengeService.deleteAllById(idSet);
+        return new ResponseEntity<>(
+                new MessageResponse("Yamb Challenge", MessageType.DEFAULT, "All users have been successfully deleted"),
+                HttpStatus.OK);
+    }
 }

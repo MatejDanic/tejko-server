@@ -2,6 +2,7 @@ package matej.tejkogames.api.controllers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import matej.tejkogames.api.services.ScoreServiceImpl;
 import matej.tejkogames.interfaces.controllers.ScoreController;
 import matej.tejkogames.models.general.Score;
+import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.requests.DateIntervalRequest;
 import matej.tejkogames.models.general.payload.requests.ScoreRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
@@ -41,11 +43,9 @@ public class ScoreControllerImpl implements ScoreController {
 
 	@GetMapping("")
 	@Override
-	public ResponseEntity<List<Score>> getAll(
-						@RequestParam(defaultValue = "0") Integer page, 
-                        @RequestParam(defaultValue = "10") Integer size,
-                        @RequestParam(defaultValue = "id") String sort,
-                        @RequestParam(defaultValue = "desc") String direction) {
+	public ResponseEntity<List<Score>> getAll(@RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "id") String sort,
+			@RequestParam(defaultValue = "desc") String direction) {
 		return new ResponseEntity<>(yambScoreService.getAll(page, size, sort, direction), HttpStatus.OK);
 	}
 
@@ -85,6 +85,17 @@ public class ScoreControllerImpl implements ScoreController {
 	public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
 		yambScoreService.deleteAll();
 		return new ResponseEntity<>(new MessageResponse("All scores have been deleted."), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@DeleteMapping("/bulk")
+	@Override
+	public ResponseEntity<MessageResponse> deleteAllById(@RequestHeader(value = "Authorization") String headerAuth,
+			@RequestBody Set<UUID> idSet) {
+		yambScoreService.deleteAllById(idSet);
+		return new ResponseEntity<>(
+				new MessageResponse("Score", MessageType.DEFAULT, "All scores have been successfully deleted"),
+				HttpStatus.OK);
 	}
 
 	@GetMapping("/between")

@@ -2,6 +2,7 @@ package matej.tejkogames.api.controllers;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +44,13 @@ public class PreferenceControllerImpl implements PreferenceController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("")
     @Override
-    public ResponseEntity<List<Preference>> getAll(
-						@RequestParam(defaultValue = "0") Integer page, 
-                        @RequestParam(defaultValue = "10") Integer size,
-                        @RequestParam(defaultValue = "id") String sort,
-                        @RequestParam(defaultValue = "desc") String direction) {
+    public ResponseEntity<List<Preference>> getAll(@RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "desc") String direction) {
         return new ResponseEntity<>(preferenceService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
-    
-    @PreAuthorize("isAuthenticated()")   
+
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}")
     @Override
     public ResponseEntity<Preference> create(@RequestBody PreferenceRequest requestBody) {
@@ -61,17 +60,16 @@ public class PreferenceControllerImpl implements PreferenceController {
     @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'Preference')")
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Preference> updateById(@PathVariable UUID id,
-			@RequestBody PreferenceRequest requestBody) {
-		return new ResponseEntity<>(preferenceService.updateById(id, requestBody), HttpStatus.OK);
-	}
+    public ResponseEntity<Preference> updateById(@PathVariable UUID id, @RequestBody PreferenceRequest requestBody) {
+        return new ResponseEntity<>(preferenceService.updateById(id, requestBody), HttpStatus.OK);
+    }
 
-	@PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("")
     @Override
-	public ResponseEntity<List<Preference>> updateAll(@RequestBody Map<UUID, PreferenceRequest> idRequestMap) {
-		return new ResponseEntity<>(preferenceService.updateAll(idRequestMap), HttpStatus.OK);
-	}
+    public ResponseEntity<List<Preference>> updateAll(@RequestBody Map<UUID, PreferenceRequest> idRequestMap) {
+        return new ResponseEntity<>(preferenceService.updateAll(idRequestMap), HttpStatus.OK);
+    }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
@@ -88,6 +86,16 @@ public class PreferenceControllerImpl implements PreferenceController {
     @Override
     public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
         preferenceService.deleteAll();
+        return new ResponseEntity<>(new MessageResponse("Preference", MessageType.DEFAULT,
+                "All preferences have been successfully deleted"), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @DeleteMapping("/bulk")
+    @Override
+    public ResponseEntity<MessageResponse> deleteAllById(@RequestHeader(value = "Authorization") String headerAuth,
+            @RequestBody Set<UUID> idSet) {
+        preferenceService.deleteAllById(idSet);
         return new ResponseEntity<>(new MessageResponse("Preference", MessageType.DEFAULT,
                 "All preferences have been successfully deleted"), HttpStatus.OK);
     }
