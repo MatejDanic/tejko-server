@@ -186,6 +186,11 @@ public class User implements UserInterface {
         if (requestBody.getPassword() != null) {
             this.setPassword(requestBody.getPassword());
         }
-
+        if (requestBody.isTestUser() != null) {
+            this.setTestUser(requestBody.isTestUser());
+        }
+        if (requestBody.getCreatedDate() != null) {
+            this.setCreatedDate(requestBody.getCreatedDate());
+        }
     }
 }
