@@ -29,14 +29,14 @@ public class PreferenceServiceImpl implements PreferenceService {
     }
 
     @Override
-	public List<Preference> getAll(Integer page, Integer size, String sort, String direction) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-		return preferenceRepository.findAll(pageable).getContent();
-	}
-	
-	@Override
-	public List<Preference> getAllByIdIn(Set<UUID> idSet) {
-		return preferenceRepository.findAllById(idSet);
+    public List<Preference> getAll(Integer page, Integer size, String sort, String direction) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
+        return preferenceRepository.findAll(pageable).getContent();
+    }
+
+    @Override
+    public List<Preference> getAllByIdIn(Set<UUID> idSet) {
+        return preferenceRepository.findAllById(idSet);
     }
 
     @Override
@@ -49,24 +49,24 @@ public class PreferenceServiceImpl implements PreferenceService {
     }
 
     @Override
-	public Preference updateById(UUID id, PreferenceRequest requestBody) {
-		Preference preference = getById(id);
-		
-		preference.updateByRequest(requestBody);
+    public Preference updateById(UUID id, PreferenceRequest requestBody) {
+        Preference preference = getById(id);
 
-		return preferenceRepository.save(preference);
-	}
-	
-	@Override
+        preference.updateByRequest(requestBody);
+
+        return preferenceRepository.save(preference);
+    }
+
+    @Override
     public List<Preference> updateAll(Map<UUID, PreferenceRequest> idRequestMap) {
-		List<Preference> preferenceList = getAllByIdIn(idRequestMap.keySet());
-		
-		for (Preference preference : preferenceList) {
-			preference.updateByRequest(idRequestMap.get(preference.getId()));
-		}
-		
-		preferenceRepository.saveAll(preferenceList);
-		return null;
+        List<Preference> preferenceList = getAllByIdIn(idRequestMap.keySet());
+
+        for (Preference preference : preferenceList) {
+            preference.updateByRequest(idRequestMap.get(preference.getId()));
+        }
+
+        preferenceRepository.saveAll(preferenceList);
+        return null;
     }
 
     @Override
@@ -77,6 +77,11 @@ public class PreferenceServiceImpl implements PreferenceService {
     @Override
     public void deleteAll() {
         preferenceRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteAllById(Set<UUID> idSet) {
+        preferenceRepository.deleteAllById(idSet);
     }
 
     @Override

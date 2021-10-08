@@ -25,6 +25,7 @@ import matej.tejkogames.interfaces.controllers.UserController;
 import matej.tejkogames.models.general.Preference;
 import matej.tejkogames.models.general.Role;
 import matej.tejkogames.models.general.User;
+import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.payload.requests.RoleRequest;
 import matej.tejkogames.models.general.payload.requests.UserRequest;
@@ -47,11 +48,9 @@ public class UserControllerImpl implements UserController {
 
 	@GetMapping("")
 	@Override
-	public ResponseEntity<List<User>> getAll(
-						@RequestParam(defaultValue = "0") Integer page, 
-                        @RequestParam(defaultValue = "10") Integer size,
-                        @RequestParam(defaultValue = "id") String sort,
-                        @RequestParam(defaultValue = "desc") String direction) {
+	public ResponseEntity<List<User>> getAll(@RequestParam(defaultValue = "0") Integer page,
+			@RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "id") String sort,
+			@RequestParam(defaultValue = "desc") String direction) {
 		return new ResponseEntity<>(userService.getAll(page, size, sort, direction), HttpStatus.OK);
 	}
 
@@ -70,7 +69,7 @@ public class UserControllerImpl implements UserController {
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
-	@PutMapping("/")
+	@PutMapping("")
 	@Override
 	public ResponseEntity<List<User>> updateAll(@RequestBody Map<UUID, UserRequest> idRequestMap) {
 		return new ResponseEntity<>(userService.updateAll(idRequestMap), HttpStatus.OK);
@@ -91,6 +90,17 @@ public class UserControllerImpl implements UserController {
 	public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
 		userService.deleteAll();
 		return new ResponseEntity<>(new MessageResponse("Svi korisnici uspješno izbrisani."), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@DeleteMapping("/bulk")
+	@Override
+	public ResponseEntity<MessageResponse> deleteAllById(@RequestHeader(value = "Authorization") String headerAuth,
+			@RequestBody Set<UUID> idSet) {
+		userService.deleteAllById(idSet);
+		return new ResponseEntity<>(
+				new MessageResponse("User", MessageType.DEFAULT, "All users have been successfully deleted"),
+				HttpStatus.OK);
 	}
 
 	@PreAuthorize("isAuthenticated()")

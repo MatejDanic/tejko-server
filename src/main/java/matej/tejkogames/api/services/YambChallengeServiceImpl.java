@@ -29,45 +29,45 @@ public class YambChallengeServiceImpl implements YambChallengeService {
         return yambChallengeRepository.findById(id).get();
     }
 
-	@Override
-	public List<YambChallenge> getAll(Integer page, Integer size, String sort, String direction) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
+    @Override
+    public List<YambChallenge> getAll(Integer page, Integer size, String sort, String direction) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
         return yambChallengeRepository.findAll(pageable).getContent();
     }
 
-	@Override
-	public List<YambChallenge> getAllByIdIn(Set<UUID> idSet) {
-		return yambChallengeRepository.findAllById(idSet);
-	}
+    @Override
+    public List<YambChallenge> getAllByIdIn(Set<UUID> idSet) {
+        return yambChallengeRepository.findAllById(idSet);
+    }
 
     @Override
     public YambChallenge create(YambChallengeRequest requestBody) {
-		YambChallenge yambChallenge = new YambChallenge();
-        
-		yambChallenge.updateByRequest(requestBody);
-		
+        YambChallenge yambChallenge = new YambChallenge();
+
+        yambChallenge.updateByRequest(requestBody);
+
         return yambChallengeRepository.save(yambChallenge);
     }
 
     @Override
-	public YambChallenge updateById(UUID id, YambChallengeRequest requestBody) {
-		YambChallenge yambChallenge = getById(id);
-		
-		yambChallenge.updateByRequest(requestBody);
-		
-		return yambChallengeRepository.save(yambChallenge);
-	}
+    public YambChallenge updateById(UUID id, YambChallengeRequest requestBody) {
+        YambChallenge yambChallenge = getById(id);
 
-	@Override
-	public List<YambChallenge> updateAll(Map<UUID, YambChallengeRequest> idRequestMap) {
-		List<YambChallenge> yambChallengeList = getAllByIdIn(idRequestMap.keySet());
-		
-		for (YambChallenge yambChallenge : yambChallengeList) {
-			yambChallenge.updateByRequest(idRequestMap.get(yambChallenge.getId()));
-		}
+        yambChallenge.updateByRequest(requestBody);
 
-		return yambChallengeRepository.saveAll(yambChallengeList);
-	}
+        return yambChallengeRepository.save(yambChallenge);
+    }
+
+    @Override
+    public List<YambChallenge> updateAll(Map<UUID, YambChallengeRequest> idRequestMap) {
+        List<YambChallenge> yambChallengeList = getAllByIdIn(idRequestMap.keySet());
+
+        for (YambChallenge yambChallenge : yambChallengeList) {
+            yambChallenge.updateByRequest(idRequestMap.get(yambChallenge.getId()));
+        }
+
+        return yambChallengeRepository.saveAll(yambChallengeList);
+    }
 
     @Override
     public void deleteById(UUID id) {
@@ -77,6 +77,11 @@ public class YambChallengeServiceImpl implements YambChallengeService {
     @Override
     public void deleteAll() {
         yambChallengeRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteAllById(Set<UUID> idSet) {
+        yambChallengeRepository.deleteAllById(idSet);
     }
 
     @Override

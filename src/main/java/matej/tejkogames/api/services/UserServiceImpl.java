@@ -65,47 +65,48 @@ public class UserServiceImpl implements UserService {
     YambFactory yambFactory;
 
     @Override
-	public User getById(UUID id) {
-		return userRepository.findById(id).get();
-	}
+    public User getById(UUID id) {
+        return userRepository.findById(id).get();
+    }
 
-	@Override
-	public List<User> getAll(Integer page, Integer size, String sort, String direction) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-		return userRepository.findAll(pageable).getContent();
-	}
-	
-	@Override
-	public List<User> getAllByIdIn(Set<UUID> idSet) {
-		return userRepository.findAllById(idSet);
-	}
-	
+    @Override
+    public List<User> getAll(Integer page, Integer size, String sort, String direction) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
+        return userRepository.findAll(pageable).getContent();
+    }
+
+    @Override
+    public List<User> getAllByIdIn(Set<UUID> idSet) {
+        return userRepository.findAllById(idSet);
+    }
+
     @Override
     public User create(UserRequest requestBody) {
-        if (requestBody.getUsername() == null || requestBody.getPassword() == null) return null;
+        if (requestBody.getUsername() == null || requestBody.getPassword() == null)
+            return null;
         User user = userFactory.createUser(requestBody.getUsername(), requestBody.getPassword());
         return userRepository.save(user);
     }
 
     @Override
-	public User updateById(UUID id, UserRequest requestBody) {
-		User user = getById(id);
+    public User updateById(UUID id, UserRequest requestBody) {
+        User user = getById(id);
 
-		user.updateByRequest(requestBody);
+        user.updateByRequest(requestBody);
 
-		return userRepository.save(user);
-	}
+        return userRepository.save(user);
+    }
 
-	@Override
-	public List<User> updateAll(Map<UUID, UserRequest> idRequestMap) {
-		List<User> userList = getAllByIdIn(idRequestMap.keySet());
+    @Override
+    public List<User> updateAll(Map<UUID, UserRequest> idRequestMap) {
+        List<User> userList = getAllByIdIn(idRequestMap.keySet());
 
-		for (User user : userList) {
-			user.updateByRequest(idRequestMap.get(user.getId()));
-		}
+        for (User user : userList) {
+            user.updateByRequest(idRequestMap.get(user.getId()));
+        }
 
-		return userRepository.saveAll(userList);
-	}
+        return userRepository.saveAll(userList);
+    }
 
     @Override
     public void deleteById(UUID id) {
@@ -115,6 +116,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteAll() {
         userRepository.deleteAll();
+    }
+
+    @Override
+    public void deleteAllById(Set<UUID> idSet) {
+        userRepository.deleteAllById(idSet);
     }
 
     public Yamb createYambByUserId(UUID id, YambRequest yambRequest) {
@@ -140,7 +146,8 @@ public class UserServiceImpl implements UserService {
             throw new YambLimitReachedException(
                     "Yamb limit of " + yambLimit + " has been reached by user " + user.getUsername());
         } else {
-            Yamb yamb = yambFactory.createYamb(user, yambRequest.getType(), yambRequest.getNumberOfColumns(), yambRequest.getNumberOfDice(), null);
+            Yamb yamb = yambFactory.createYamb(user, yambRequest.getType(), yambRequest.getNumberOfColumns(),
+                    yambRequest.getNumberOfDice(), null);
             return yambRepository.save(yamb);
         }
     }
@@ -190,8 +197,8 @@ public class UserServiceImpl implements UserService {
         return scoreRepository.findAllByUserId(id);
     }
 
-	public boolean hasPermission(UUID id, String username) {
-		return getById(id).getUsername().equals(username);
-	}
-	
+    public boolean hasPermission(UUID id, String username) {
+        return getById(id).getUsername().equals(username);
+    }
+
 }
