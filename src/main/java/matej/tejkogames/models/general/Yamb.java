@@ -23,15 +23,15 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import matej.tejkogames.interfaces.models.YambInterface;
 import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.yamb.Box;
-import matej.tejkogames.models.yamb.BoxType;
-import matej.tejkogames.models.yamb.ColumnType;
 import matej.tejkogames.models.yamb.Dice;
 import matej.tejkogames.models.yamb.YambForm;
-import matej.tejkogames.models.yamb.YambType;
+import matej.tejkogames.models.yamb.enums.BoxType;
+import matej.tejkogames.models.yamb.enums.ColumnType;
+import matej.tejkogames.models.yamb.enums.YambType;
 import matej.tejkogames.utils.YambUtil;
 
 @Entity
-@Table(name = "game_yamb")
+@Table(name = "yamb")
 @RestResource(rel = "yambs", path = "yambs")
 @TypeDef(name = "json_binary", typeClass = JsonBinaryType.class)
 public class Yamb implements YambInterface {
@@ -50,7 +50,7 @@ public class Yamb implements YambInterface {
     @Column
     private YambType type;
 
-    @Column
+    @Column(updatable = false)
     private int numberOfDice;
 
     @Type(type = "json_binary")

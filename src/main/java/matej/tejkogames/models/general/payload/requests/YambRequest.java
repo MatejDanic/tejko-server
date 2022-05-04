@@ -10,10 +10,10 @@ import javax.validation.constraints.Size;
 
 import matej.tejkogames.models.general.User;
 import matej.tejkogames.models.general.YambChallenge;
-import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.Dice;
 import matej.tejkogames.models.yamb.YambForm;
-import matej.tejkogames.models.yamb.YambType;
+import matej.tejkogames.models.yamb.enums.BoxType;
+import matej.tejkogames.models.yamb.enums.YambType;
 import matej.tejkogames.constants.YambConstants;
 
 public class YambRequest {

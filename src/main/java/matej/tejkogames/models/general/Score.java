@@ -18,7 +18,7 @@ import matej.tejkogames.interfaces.models.ScoreInterface;
 import matej.tejkogames.models.general.payload.requests.ScoreRequest;
 
 @Entity
-@Table(name = "game_score")
+@Table(name = "score")
 @RestResource(rel = "scores", path = "scores")
 public class Score implements ScoreInterface {
 

@@ -105,7 +105,7 @@ public class ScoreControllerImpl implements ScoreController {
 				HttpStatus.OK);
 	}
 
-	@GetMapping("/between")
+	@GetMapping("/interval")
 	public ResponseEntity<List<Score>> getAllByDateBetween(@RequestBody DateIntervalRequest dateIntervalRequest) {
 		return new ResponseEntity<>(
 				yambScoreService.getAllByDateBetween(dateIntervalRequest.getStart(), dateIntervalRequest.getEnd()),

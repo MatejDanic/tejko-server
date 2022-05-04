@@ -31,8 +31,8 @@ import matej.tejkogames.models.general.User;
 import matej.tejkogames.models.general.Yamb;
 import matej.tejkogames.models.general.payload.requests.UserRequest;
 import matej.tejkogames.models.general.payload.requests.YambRequest;
+import matej.tejkogames.models.yamb.enums.YambType;
 import matej.tejkogames.models.general.Score;
-import matej.tejkogames.models.yamb.YambType;
 
 @Service
 public class UserServiceImpl implements UserService {
