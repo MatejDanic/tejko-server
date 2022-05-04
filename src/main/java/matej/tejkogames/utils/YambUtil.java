@@ -9,11 +9,11 @@ import java.util.Set;
 import matej.tejkogames.constants.YambConstants;
 import matej.tejkogames.exceptions.InvalidColumnCodeException;
 import matej.tejkogames.models.yamb.Box;
-import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.Column;
-import matej.tejkogames.models.yamb.ColumnType;
 import matej.tejkogames.models.yamb.Dice;
 import matej.tejkogames.models.yamb.YambForm;
+import matej.tejkogames.models.yamb.enums.BoxType;
+import matej.tejkogames.models.yamb.enums.ColumnType;
 
 public class YambUtil {
 

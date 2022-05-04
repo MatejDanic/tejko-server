@@ -50,7 +50,7 @@ public class YambChallengeControllerImpl implements YambChallengeController {
         return new ResponseEntity<>(yambChallengeService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('USER')")
     @PostMapping("")
     @Override
     public ResponseEntity<YambChallenge> create(@RequestBody YambChallengeRequest objectRequest) {
@@ -105,7 +105,8 @@ public class YambChallengeControllerImpl implements YambChallengeController {
             @RequestBody Set<UUID> idSet) {
         yambChallengeService.deleteBulkById(idSet);
         return new ResponseEntity<>(
-                new MessageResponse("Yamb Challenge", MessageType.DEFAULT, "All users have been successfully deleted"),
+                new MessageResponse("Yamb Challenge", MessageType.DEFAULT,
+                        "All challenges have been successfully deleted"),
                 HttpStatus.OK);
     }
 }

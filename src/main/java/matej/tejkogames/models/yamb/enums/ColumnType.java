@@ -1,4 +1,4 @@
-package matej.tejkogames.models.yamb;
+package matej.tejkogames.models.yamb.enums;
 
 public enum ColumnType {
 

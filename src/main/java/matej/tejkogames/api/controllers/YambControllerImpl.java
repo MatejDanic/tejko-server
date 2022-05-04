@@ -28,9 +28,9 @@ import matej.tejkogames.models.general.Yamb;
 import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
-import matej.tejkogames.models.yamb.BoxType;
-import matej.tejkogames.models.yamb.ColumnType;
 import matej.tejkogames.models.yamb.Dice;
+import matej.tejkogames.models.yamb.enums.BoxType;
+import matej.tejkogames.models.yamb.enums.ColumnType;
 
 @RestController
 @RequestMapping("/api/yambs")
@@ -60,7 +60,7 @@ public class YambControllerImpl implements YambController {
 		return new ResponseEntity<>(yambService.getAll(page, size, sort, direction), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("")
 	@Override
 	public ResponseEntity<Yamb> create(@RequestBody YambRequest objectRequest) {

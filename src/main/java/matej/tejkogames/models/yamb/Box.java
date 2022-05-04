@@ -1,5 +1,8 @@
 package matej.tejkogames.models.yamb;
 
+import matej.tejkogames.models.yamb.enums.BoxType;
+import matej.tejkogames.models.yamb.enums.ColumnType;
+
 public class Box {
 
     private int value;

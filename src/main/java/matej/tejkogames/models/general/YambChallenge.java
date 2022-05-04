@@ -1,12 +1,12 @@
 package matej.tejkogames.models.general;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import matej.tejkogames.models.general.payload.requests.YambChallengeRequest;
@@ -32,8 +33,15 @@ public class YambChallenge implements YambChallengeInterface {
     private UUID id;
 
     @JsonIncludeProperties({ "id" })
-    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "challenge", cascade = CascadeType.ALL)
     private Set<Yamb> yambs;
+
+    @OneToMany(mappedBy = "challenge")
+    private Set<UserYambChallenge> userYambChallenges;
+
+    @Type(type = "json_binary")
+    @Column(columnDefinition = "jsonb")
+    private Map<UUID, Boolean> userIdAcceptedMap;
 
     public YambChallenge() {
     }

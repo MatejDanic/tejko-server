@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import matej.tejkogames.models.general.User;
 import matej.tejkogames.models.general.Yamb;
 import matej.tejkogames.models.general.YambChallenge;
-import matej.tejkogames.models.yamb.YambType;
+import matej.tejkogames.models.yamb.enums.YambType;
 import matej.tejkogames.utils.YambUtil;
 
 @Component

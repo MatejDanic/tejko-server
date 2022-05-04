@@ -3,8 +3,8 @@ package matej.tejkogames.constants;
 import java.util.HashMap;
 import java.util.Map;
 
-import matej.tejkogames.models.yamb.ColumnType;
-import matej.tejkogames.models.yamb.YambType;
+import matej.tejkogames.models.yamb.enums.ColumnType;
+import matej.tejkogames.models.yamb.enums.YambType;
 
 public class YambConstants {
 

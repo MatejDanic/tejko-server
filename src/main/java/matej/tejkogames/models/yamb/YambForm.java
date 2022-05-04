@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import matej.tejkogames.constants.YambConstants;
+import matej.tejkogames.models.yamb.enums.ColumnType;
 
 public class YambForm {
 

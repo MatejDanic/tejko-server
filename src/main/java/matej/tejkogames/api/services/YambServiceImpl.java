@@ -25,9 +25,9 @@ import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.Yamb;
 import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.yamb.Box;
-import matej.tejkogames.models.yamb.BoxType;
-import matej.tejkogames.models.yamb.ColumnType;
 import matej.tejkogames.models.yamb.Dice;
+import matej.tejkogames.models.yamb.enums.BoxType;
+import matej.tejkogames.models.yamb.enums.ColumnType;
 
 @Service
 public class YambServiceImpl implements YambService {

@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import matej.tejkogames.models.yamb.enums.BoxType;
+import matej.tejkogames.models.yamb.enums.ColumnType;
+
 public class Column {
 
     private ColumnType type;
