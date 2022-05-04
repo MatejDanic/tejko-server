@@ -4,7 +4,7 @@ import java.util.Set;
 
 import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.User;
-import matej.tejkogames.models.yamb.Yamb;
+import matej.tejkogames.models.general.Yamb;
 
 public class YambChallengeRequest {
 
@@ -40,5 +40,5 @@ public class YambChallengeRequest {
     public void setYambs(Set<Yamb> yambs) {
         this.yambs = yambs;
     }
-    
+
 }

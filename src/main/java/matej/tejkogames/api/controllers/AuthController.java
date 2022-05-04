@@ -31,8 +31,9 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest registerRequest)
-			throws UsernameTakenException {
-        return new ResponseEntity<>(new MessageResponse("Registration", authService.register(registerRequest)), HttpStatus.OK);
+            throws UsernameTakenException {
+        return new ResponseEntity<>(new MessageResponse("Registration", authService.register(registerRequest)),
+                HttpStatus.OK);
     }
 
 }

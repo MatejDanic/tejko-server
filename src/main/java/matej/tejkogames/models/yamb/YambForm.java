@@ -10,11 +10,11 @@ public class YambForm {
 
     private List<Column> columns;
 
-    private int sumOne;
+    private int sumA;
 
-    private int sumTwo;
+    private int sumB;
 
-    private int sumThree;
+    private int sumC;
 
     private int totalSum;
 
@@ -22,9 +22,9 @@ public class YambForm {
 
     public YambForm(List<Column> columns) {
         this.columns = columns;
-        this.sumOne = 0;
-        this.sumTwo = 0;
-        this.sumThree = 0;
+        this.sumA = 0;
+        this.sumB = 0;
+        this.sumC = 0;
         this.totalSum = 0;
         this.availableBoxes = this.columns.size() * YambConstants.NUMBER_OF_BOXES;
     }
@@ -40,28 +40,28 @@ public class YambForm {
         this.columns = columns;
     }
 
-    public int getSumOne() {
-        return this.sumOne;
+    public int getSumA() {
+        return this.sumA;
     }
 
-    public void setSumOne(int sumOne) {
-        this.sumOne = sumOne;
+    public void setSumA(int sumA) {
+        this.sumA = sumA;
     }
 
-    public int getSumTwo() {
-        return this.sumTwo;
+    public int getSumB() {
+        return this.sumB;
     }
 
-    public void setSumTwo(int sumTwo) {
-        this.sumTwo = sumTwo;
+    public void setSumB(int sumB) {
+        this.sumB = sumB;
     }
 
-    public int getSumThree() {
-        return this.sumThree;
+    public int getSumC() {
+        return this.sumC;
     }
 
-    public void setSumThree(int sumThree) {
-        this.sumThree = sumThree;
+    public void setSumC(int sumC) {
+        this.sumC = sumC;
     }
 
     public int getTotalSum() {
@@ -91,30 +91,30 @@ public class YambForm {
     }
 
     public void updateSums() {
-        this.sumOne = 0;
-        this.sumTwo = 0;
-        this.sumThree = 0;
+        this.sumA = 0;
+        this.sumB = 0;
+        this.sumC = 0;
         for (Column column : this.columns) {
             column.updateSums();
-            this.sumOne += column.getSumOne();
-            this.sumTwo += column.getSumTwo();
-            this.sumThree += column.getSumThree();
+            this.sumA += column.getSumA();
+            this.sumB += column.getSumB();
+            this.sumC += column.getSumC();
         }
-        this.totalSum = this.sumOne + this.sumTwo + this.sumThree;
+        this.totalSum = this.sumA + this.sumB + this.sumC;
     }
 
     public void updateSums(ColumnType columnType) {
-        this.sumOne = 0;
-        this.sumTwo = 0;
-        this.sumThree = 0;
+        this.sumA = 0;
+        this.sumB = 0;
+        this.sumC = 0;
         Column col = this.getColumnByType(columnType);
         col.updateSums();
         for (Column column : this.columns) {
-            this.sumOne += column.getSumOne();
-            this.sumTwo += column.getSumTwo();
-            this.sumThree += column.getSumThree();
+            this.sumA += column.getSumA();
+            this.sumB += column.getSumB();
+            this.sumC += column.getSumC();
         }
-        this.totalSum = this.sumOne + this.sumTwo + this.sumThree;
+        this.totalSum = this.sumA + this.sumB + this.sumC;
     }
 
     public Column getColumnByType(ColumnType type) {

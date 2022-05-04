@@ -54,4 +54,11 @@ public class Box {
         this.filled = true;
         this.available = false;
     }
+
+    public boolean isNext(ColumnType currentColumnType, BoxType currentBoxType) {
+        return (currentColumnType == ColumnType.DOWNWARDS && currentBoxType != BoxType.YAMB
+                && currentBoxType.ordinal() + 1 == type.ordinal())
+                || (currentColumnType == ColumnType.UPWARDS && currentBoxType != BoxType.ONES
+                        && currentBoxType.ordinal() - 1 == type.ordinal());
+    }
 }

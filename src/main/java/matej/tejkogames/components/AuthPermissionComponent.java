@@ -2,49 +2,15 @@ package matej.tejkogames.components;
 
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import matej.tejkogames.api.services.PreferenceServiceImpl;
-import matej.tejkogames.api.services.UserServiceImpl;
-import matej.tejkogames.api.services.YambChallengeServiceImpl;
-import matej.tejkogames.api.services.YambServiceImpl;
+import matej.tejkogames.interfaces.api.ModelInterface;
 
 @Component
 public class AuthPermissionComponent {
 
-    @Autowired
-    UserServiceImpl userService;
-
-    @Autowired
-    YambServiceImpl yambService;
-
-    @Autowired
-    PreferenceServiceImpl preferenceService;
-
-    @Autowired
-    YambChallengeServiceImpl yambChallengeService;
-
-    public boolean hasPermission(String username, UUID id, String object) {
-        boolean hasPermission = false;
-        switch (object) {
-            case "User":
-                hasPermission = userService.hasPermission(id, username);
-                break;
-            case "Yamb":
-                hasPermission = yambService.hasPermission(id, username);
-                break;
-            case "Preference":
-                hasPermission = preferenceService.hasPermission(id, username);
-                break;
-            case "YambChallenge":
-                hasPermission = yambChallengeService.hasPermission(id, username);
-                break;
-            case "Matej":
-                hasPermission = username.equals("Matej");
-            default:
-        }
-        return hasPermission;
+    public boolean hasPermission(UUID userId, ModelInterface<?> object) {
+        return object.hasPermission(userId);
     }
 
 }

@@ -10,18 +10,21 @@ public class Column {
 
     private List<Box> boxes;
 
-    private int sumOne;
+    private boolean locked;
 
-    private int sumTwo;
+    private int sumA;
 
-    private int sumThree;
+    private int sumB;
 
-    public Column(ColumnType type, List<Box> boxes) {
+    private int sumC;
+
+    public Column(ColumnType type, List<Box> boxes, boolean locked) {
         this.type = type;
         this.boxes = boxes;
-        this.sumOne = 0;
-        this.sumTwo = 0;
-        this.sumThree = 0;
+        this.locked = locked;
+        this.sumA = 0;
+        this.sumB = 0;
+        this.sumC = 0;
     }
 
     public ColumnType getType() {
@@ -40,28 +43,36 @@ public class Column {
         this.boxes = boxes;
     }
 
-    public int getSumOne() {
-        return this.sumOne;
+    public boolean isLocked() {
+        return locked;
     }
 
-    public void setSumOne(int sumOne) {
-        this.sumOne = sumOne;
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
-    public int getSumTwo() {
-        return this.sumTwo;
+    public int getSumA() {
+        return this.sumA;
     }
 
-    public void setSumTwo(int sumTwo) {
-        this.sumTwo = sumTwo;
+    public void setSumA(int sumA) {
+        this.sumA = sumA;
     }
 
-    public int getSumThree() {
-        return this.sumThree;
+    public int getSumB() {
+        return this.sumB;
     }
 
-    public void setSumThree(int sumThree) {
-        this.sumThree = sumThree;
+    public void setSumB(int sumB) {
+        this.sumB = sumB;
+    }
+
+    public int getSumC() {
+        return this.sumC;
+    }
+
+    public void setSumC(int sumC) {
+        this.sumC = sumC;
     }
 
     public Box getBoxByType(BoxType boxType) {
@@ -84,25 +95,25 @@ public class Column {
     }
 
     public void updateSums() {
-        this.sumOne = 0;
-        this.sumTwo = 0;
-        this.sumThree = 0;
+        this.sumA = 0;
+        this.sumB = 0;
+        this.sumC = 0;
         for (Box box : this.boxes) {
             if (box.getType() == BoxType.ONES || box.getType() == BoxType.TWOS || box.getType() == BoxType.THREES
                     || box.getType() == BoxType.FOURS || box.getType() == BoxType.FIVES
                     || box.getType() == BoxType.SIXES) {
-                sumOne += box.getValue();
+                sumA += box.getValue();
             } else if (box.getType() == BoxType.TRIPS || box.getType() == BoxType.STRAIGHT
                     || box.getType() == BoxType.BOAT || box.getType() == BoxType.CARRIAGE
                     || box.getType() == BoxType.YAMB) {
-                sumThree += box.getValue();
+                sumC += box.getValue();
             }
         }
         Box ones = this.getBoxByType(BoxType.ONES);
         Box max = this.getBoxByType(BoxType.MAX);
         Box min = this.getBoxByType(BoxType.MIN);
         if (ones.isFilled() && max.isFilled() && min.isFilled()) {
-            this.sumTwo = ones.getValue() * (max.getValue() - min.getValue());
+            this.sumB = ones.getValue() * (max.getValue() - min.getValue());
         }
     }
 

@@ -1,5 +1,6 @@
 package matej.tejkogames.api.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.RoleRepository;
 import matej.tejkogames.api.repositories.UserRepository;
-import matej.tejkogames.interfaces.services.RoleService;
+import matej.tejkogames.interfaces.api.services.RoleService;
 import matej.tejkogames.models.general.Role;
 import matej.tejkogames.models.general.User;
 import matej.tejkogames.models.general.payload.requests.RoleRequest;
@@ -39,37 +40,49 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<Role> getAllByIdIn(Set<Integer> idSet) {
+    public List<Role> getBulkById(Set<Integer> idSet) {
         return roleRepository.findAllById(idSet);
     }
 
     @Override
-    public Role create(RoleRequest requestBody) {
+    public Role create(RoleRequest objectRequest) {
         Role role = new Role();
-        if (requestBody.getLabel() != null) {
-            role.setLabel(requestBody.getLabel());
+        if (objectRequest.getLabel() != null) {
+            role.setLabel(objectRequest.getLabel());
         }
-        if (requestBody.getDescription() != null) {
-            role.setDescription(requestBody.getDescription());
+        if (objectRequest.getDescription() != null) {
+            role.setDescription(objectRequest.getDescription());
         }
         return roleRepository.save(role);
     }
 
     @Override
-    public Role updateById(Integer id, RoleRequest requestBody) {
+    public List<Role> createBulk(List<RoleRequest> objectRequestList) {
+        List<Role> roleList = new ArrayList<>();
+
+        for (RoleRequest roleRequest : objectRequestList) {
+            Role role = new Role();
+            role.updateByRequest(roleRequest);
+        }
+
+        return roleRepository.saveAll(roleList);
+    }
+
+    @Override
+    public Role updateById(Integer id, RoleRequest objectRequest) {
         Role role = getById(id);
 
-        role.updateByRequest(requestBody);
+        role.updateByRequest(objectRequest);
 
         return roleRepository.save(role);
     }
 
     @Override
-    public List<Role> updateAll(Map<Integer, RoleRequest> idRequestMap) {
-        List<Role> roleList = getAllByIdIn(idRequestMap.keySet());
+    public List<Role> updateBulkById(Map<Integer, RoleRequest> idObjectRequestMap) {
+        List<Role> roleList = getBulkById(idObjectRequestMap.keySet());
 
         for (Role role : roleList) {
-            role.updateByRequest(idRequestMap.get(role.getId()));
+            role.updateByRequest(idObjectRequestMap.get(role.getId()));
         }
 
         return roleRepository.saveAll(roleList);
@@ -86,7 +99,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void deleteAllById(Set<Integer> idSet) {
+    public void deleteBulkById(Set<Integer> idSet) {
         roleRepository.deleteAllById(idSet);
     }
 

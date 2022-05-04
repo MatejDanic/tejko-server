@@ -2,14 +2,14 @@ package matej.tejkogames.models.general.payload.requests;
 
 import java.time.LocalDateTime;
 
-import matej.tejkogames.models.general.TejkoGame;
+import matej.tejkogames.models.general.Game;
 import matej.tejkogames.models.general.User;
 
 public class ScoreRequest {
 
     private User user;
 
-    private TejkoGame game;
+    private Game game;
 
     private Integer value;
 
@@ -26,11 +26,11 @@ public class ScoreRequest {
         this.user = user;
     }
 
-    public TejkoGame getGame() {
+    public Game getGame() {
         return game;
     }
 
-    public void setGame(TejkoGame game) {
+    public void setGame(Game game) {
         this.game = game;
     }
 

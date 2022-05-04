@@ -21,17 +21,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.UserServiceImpl;
-import matej.tejkogames.interfaces.controllers.UserController;
+import matej.tejkogames.interfaces.api.controllers.UserController;
 import matej.tejkogames.models.general.Preference;
 import matej.tejkogames.models.general.Role;
 import matej.tejkogames.models.general.User;
+import matej.tejkogames.models.general.Yamb;
 import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.Score;
-import matej.tejkogames.models.general.payload.requests.RoleRequest;
 import matej.tejkogames.models.general.payload.requests.UserRequest;
 import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
-import matej.tejkogames.models.yamb.Yamb;
 
 @RestController
 @RequestMapping("/api/users")
@@ -57,31 +56,38 @@ public class UserControllerImpl implements UserController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("")
 	@Override
-	public ResponseEntity<User> create(@RequestBody UserRequest requestBody) {
-		return new ResponseEntity<>(userService.create(requestBody), HttpStatus.OK);
+	public ResponseEntity<User> create(@RequestBody UserRequest objectRequest) {
+		return new ResponseEntity<>(userService.create(objectRequest), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@PostMapping("/bulk")
+	@Override
+	public ResponseEntity<List<User>> createBulk(@RequestBody List<UserRequest> objectRequestList) {
+		return new ResponseEntity<>(userService.createBulk(objectRequestList), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), userService.getById(#id))")
 	@PutMapping("/{id}")
 	@Override
-	public ResponseEntity<User> updateById(@PathVariable UUID id, @RequestBody UserRequest requestBody) {
-		return new ResponseEntity<>(userService.updateById(id, requestBody), HttpStatus.OK);
+	public ResponseEntity<User> updateById(@PathVariable UUID id, @RequestBody UserRequest objectRequest) {
+		return new ResponseEntity<>(userService.updateById(id, objectRequest), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping("")
 	@Override
-	public ResponseEntity<List<User>> updateAll(@RequestBody Map<UUID, UserRequest> idRequestMap) {
-		return new ResponseEntity<>(userService.updateAll(idRequestMap), HttpStatus.OK);
+	public ResponseEntity<List<User>> updateBulkById(@RequestBody Map<UUID, UserRequest> idObjectRequestMap) {
+		return new ResponseEntity<>(userService.updateBulkById(idObjectRequestMap), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), userService.getById(#id))")
 	@DeleteMapping("/{id}")
 	@Override
 	public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth,
 			@PathVariable UUID id) {
 		userService.deleteById(id);
-		return new ResponseEntity<>(new MessageResponse("Korisnik uspješno izbrisan."), HttpStatus.OK);
+		return new ResponseEntity<>(new MessageResponse("User deleted successfully."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
@@ -95,36 +101,36 @@ public class UserControllerImpl implements UserController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/bulk")
 	@Override
-	public ResponseEntity<MessageResponse> deleteAllById(@RequestHeader(value = "Authorization") String headerAuth,
+	public ResponseEntity<MessageResponse> deleteBulkById(@RequestHeader(value = "Authorization") String headerAuth,
 			@RequestBody Set<UUID> idSet) {
-		userService.deleteAllById(idSet);
+		userService.deleteBulkById(idSet);
 		return new ResponseEntity<>(
 				new MessageResponse("User", MessageType.DEFAULT, "All users have been successfully deleted"),
 				HttpStatus.OK);
 	}
 
 	@PreAuthorize("isAuthenticated()")
-	@PostMapping("/{id}/yamb")
+	@PostMapping("/{id}/yambs")
 	public ResponseEntity<Yamb> createYambByUserId(@RequestHeader(value = "Authorization") String headerAuth,
-			@PathVariable UUID id, YambRequest yambRequest) {
+			@PathVariable UUID id, @RequestBody YambRequest yambRequest) {
 		return new ResponseEntity<>(userService.createYambByUserId(id, yambRequest), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), userService.getById(#id))")
 	@GetMapping("/{id}/yambs")
 	public ResponseEntity<Set<Yamb>> getYambsByUserId(@RequestHeader(value = "Authorization") String headerAuth,
 			@PathVariable UUID id) {
 		return new ResponseEntity<>(userService.getYambsByUserId(id), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'Matej')")
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), @userServiceImpl.getById(#id))")
 	@PutMapping("/{id}/assign-role")
 	public ResponseEntity<Set<Role>> assignRoleByUserId(@RequestHeader(value = "Authorization") String headerAuth,
-			@PathVariable UUID id, @RequestBody RoleRequest roleRequest) {
-		return new ResponseEntity<>(userService.assignRoleByUserId(id, roleRequest), HttpStatus.OK);
+			@PathVariable UUID id, @RequestBody Integer roleId) {
+		return new ResponseEntity<>(userService.assignRoleByUserId(id, roleId), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), userService.getById(#id))")
 	@GetMapping("/{id}/preferences")
 	public ResponseEntity<Preference> getPreferenceByUserId(@RequestHeader(value = "Authorization") String headerAuth,
 			@PathVariable UUID id) {
@@ -139,7 +145,7 @@ public class UserControllerImpl implements UserController {
 		return new ResponseEntity<>("Preference for user with id " + id + " successfully deleted.", HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'User')")
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), userService.getById(#id))")
 	@GetMapping("/{id}/scores")
 	public ResponseEntity<List<Score>> getScoresByUserId(@RequestHeader(value = "Authorization") String headerAuth,
 			@PathVariable UUID id) {

@@ -15,6 +15,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -27,8 +29,6 @@ import org.springframework.data.rest.core.annotation.RestResource;
 import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.interfaces.models.UserInterface;
 import matej.tejkogames.models.general.payload.requests.UserRequest;
-import matej.tejkogames.models.yamb.Yamb;
-import matej.tejkogames.models.yamb.YambChallenge;
 
 @Entity
 @Table(name = "auth_user")
@@ -38,24 +38,33 @@ public class User implements UserInterface {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column(updatable = false, nullable = false)
     private UUID id;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Score> scores;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private Set<ApiError> apiErrors;
+    @OneToMany(mappedBy = "user")
+    private Set<Log> logs;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Yamb> yambs;
 
     @Column(nullable = false, unique = true)
     @Size(min = TejkoGamesConstants.USERNAME_LENGTH_MIN, max = TejkoGamesConstants.USERNAME_LENGTH_MAX)
     private String username;
+
+    @Column(unique = true)
+    private String usernameLowercase;
+
+    @PrePersist
+    @PreUpdate
+    private void prepare() {
+        this.usernameLowercase = username == null ? null : username.toLowerCase();
+    }
 
     @JsonIgnore
     @Column(nullable = false)
@@ -65,10 +74,6 @@ public class User implements UserInterface {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "auth_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
-
-    @JsonIgnore
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
-    private Set<YambChallenge> challenges;
 
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
@@ -153,15 +158,6 @@ public class User implements UserInterface {
         this.isTestUser = isTestUser;
     }
 
-    @Override
-    public String toString() {
-        String string = username;
-        for (Role role : roles) {
-            string += role.getLabel() + ": " + role.getDescription() + "\n";
-        }
-        return string;
-    }
-
     public Boolean getIsTestUser() {
         return isTestUser;
     }
@@ -179,18 +175,24 @@ public class User implements UserInterface {
     }
 
     @Override
-    public void updateByRequest(UserRequest requestBody) {
-        if (requestBody.getUsername() != null) {
-            this.setUsername(requestBody.getUsername());
+    public void updateByRequest(UserRequest objectRequest) {
+        if (objectRequest.getUsername() != null) {
+            this.setUsername(objectRequest.getUsername());
         }
-        if (requestBody.getPassword() != null) {
-            this.setPassword(requestBody.getPassword());
+        if (objectRequest.getPassword() != null) {
+            this.setPassword(objectRequest.getPassword());
         }
-        if (requestBody.isTestUser() != null) {
-            this.setTestUser(requestBody.isTestUser());
+        if (objectRequest.isTestUser() != null) {
+            this.setTestUser(objectRequest.isTestUser());
         }
-        if (requestBody.getCreatedDate() != null) {
-            this.setCreatedDate(requestBody.getCreatedDate());
-        }
+    }
+
+    public void assignRole(Role role) {
+        this.roles.add(role);
+    }
+
+    @Override
+    public boolean hasPermission(UUID userId) {
+        return id.equals(userId);
     }
 }

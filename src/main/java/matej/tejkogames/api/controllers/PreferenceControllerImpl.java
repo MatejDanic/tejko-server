@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.PreferenceServiceImpl;
-import matej.tejkogames.interfaces.controllers.PreferenceController;
+import matej.tejkogames.interfaces.api.controllers.PreferenceController;
 import matej.tejkogames.models.general.Preference;
 import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.requests.PreferenceRequest;
@@ -34,7 +34,7 @@ public class PreferenceControllerImpl implements PreferenceController {
     @Autowired
     PreferenceServiceImpl preferenceService;
 
-    @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'Preference')")
+    @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), preferenceService.getById(#id))")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<Preference> getById(@PathVariable UUID id) {
@@ -53,22 +53,31 @@ public class PreferenceControllerImpl implements PreferenceController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/{id}")
     @Override
-    public ResponseEntity<Preference> create(@RequestBody PreferenceRequest requestBody) {
-        return new ResponseEntity<>(preferenceService.create(requestBody), HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtUtil.getUsernameFromHeader(#headerAuth), #id, 'Preference')")
-    @PutMapping("/{id}")
-    @Override
-    public ResponseEntity<Preference> updateById(@PathVariable UUID id, @RequestBody PreferenceRequest requestBody) {
-        return new ResponseEntity<>(preferenceService.updateById(id, requestBody), HttpStatus.OK);
+    public ResponseEntity<Preference> create(@RequestBody PreferenceRequest objectRequest) {
+        return new ResponseEntity<>(preferenceService.create(objectRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("")
+    @PostMapping("/bulk")
     @Override
-    public ResponseEntity<List<Preference>> updateAll(@RequestBody Map<UUID, PreferenceRequest> idRequestMap) {
-        return new ResponseEntity<>(preferenceService.updateAll(idRequestMap), HttpStatus.OK);
+    public ResponseEntity<List<Preference>> createBulk(@RequestBody List<PreferenceRequest> objectRequestList) {
+        return new ResponseEntity<>(preferenceService.createBulk(objectRequestList), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), preferenceService.getById(#id))")
+    @PutMapping("/{id}")
+    @Override
+    public ResponseEntity<Preference> updateById(@PathVariable UUID id,
+            @RequestBody PreferenceRequest objectRequest) {
+        return new ResponseEntity<>(preferenceService.updateById(id, objectRequest), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PutMapping("/bulk")
+    @Override
+    public ResponseEntity<List<Preference>> updateBulkById(
+            @RequestBody Map<UUID, PreferenceRequest> idObjectRequestMap) {
+        return new ResponseEntity<>(preferenceService.updateBulkById(idObjectRequestMap), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -93,9 +102,9 @@ public class PreferenceControllerImpl implements PreferenceController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/bulk")
     @Override
-    public ResponseEntity<MessageResponse> deleteAllById(@RequestHeader(value = "Authorization") String headerAuth,
+    public ResponseEntity<MessageResponse> deleteBulkById(@RequestHeader(value = "Authorization") String headerAuth,
             @RequestBody Set<UUID> idSet) {
-        preferenceService.deleteAllById(idSet);
+        preferenceService.deleteBulkById(idSet);
         return new ResponseEntity<>(new MessageResponse("Preference", MessageType.DEFAULT,
                 "All preferences have been successfully deleted"), HttpStatus.OK);
     }

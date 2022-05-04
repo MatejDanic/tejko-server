@@ -1,6 +1,7 @@
 package matej.tejkogames.api.services;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +18,7 @@ import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.payload.requests.ScoreRequest;
 import matej.tejkogames.api.repositories.ScoreRepository;
 import matej.tejkogames.factories.ScoreFactory;
-import matej.tejkogames.interfaces.services.ScoreService;
+import matej.tejkogames.interfaces.api.services.ScoreService;
 
 @Service
 public class ScoreServiceImpl implements ScoreService {
@@ -40,31 +41,43 @@ public class ScoreServiceImpl implements ScoreService {
 	}
 
 	@Override
-	public List<Score> getAllByIdIn(Set<UUID> idSet) {
+	public List<Score> getBulkById(Set<UUID> idSet) {
 		return scoreRepository.findAllById(idSet);
 	}
 
 	@Override
-	public Score create(ScoreRequest requestBody) {
-		Score score = scoreFactory.createScore(requestBody.getUser(), requestBody.getValue());
+	public Score create(ScoreRequest objectRequest) {
+		Score score = scoreFactory.createScore(objectRequest.getUser(), objectRequest.getValue());
 		return scoreRepository.save(score);
 	}
 
 	@Override
-	public Score updateById(UUID id, ScoreRequest requestBody) {
+	public List<Score> createBulk(List<ScoreRequest> objectRequestList) {
+		List<Score> scoreList = new ArrayList<>();
+
+		for (ScoreRequest scoreRequest : objectRequestList) {
+			Score score = new Score();
+			score.updateByRequest(scoreRequest);
+		}
+
+		return scoreRepository.saveAll(scoreList);
+	}
+
+	@Override
+	public Score updateById(UUID id, ScoreRequest objectRequest) {
 		Score score = getById(id);
 
-		score.updateByRequest(requestBody);
+		score.updateByRequest(objectRequest);
 
 		return scoreRepository.save(score);
 	}
 
 	@Override
-	public List<Score> updateAll(Map<UUID, ScoreRequest> idRequestMap) {
-		List<Score> scoreList = getAllByIdIn(idRequestMap.keySet());
+	public List<Score> updateBulkById(Map<UUID, ScoreRequest> idObjectRequestMap) {
+		List<Score> scoreList = getBulkById(idObjectRequestMap.keySet());
 
 		for (Score score : scoreList) {
-			score.updateByRequest(idRequestMap.get(score.getId()));
+			score.updateByRequest(idObjectRequestMap.get(score.getId()));
 		}
 
 		return scoreRepository.saveAll(scoreList);
@@ -81,7 +94,7 @@ public class ScoreServiceImpl implements ScoreService {
 	}
 
 	@Override
-	public void deleteAllById(Set<UUID> idSet) {
+	public void deleteBulkById(Set<UUID> idSet) {
 		scoreRepository.deleteAllById(idSet);
 	}
 

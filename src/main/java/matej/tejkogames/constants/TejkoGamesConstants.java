@@ -20,5 +20,4 @@ public class TejkoGamesConstants {
     public static final int VOLUME_MAX = 3;
 
     public static final Theme DEFAULT_THEME = Theme.LIGHT;
-
 }

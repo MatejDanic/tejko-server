@@ -9,7 +9,7 @@ public class Dice implements Serializable {
 
     private int order;
 
-    private boolean held;
+    private boolean frozen;
 
     public Dice() {
     }
@@ -17,7 +17,7 @@ public class Dice implements Serializable {
     public Dice(int order) {
         this.order = order;
         this.value = 6;
-        this.held = false;
+        this.frozen = false;
     }
 
     public int getValue() {
@@ -36,12 +36,12 @@ public class Dice implements Serializable {
         this.order = order;
     }
 
-    public boolean isHeld() {
-        return this.held;
+    public boolean isFrozen() {
+        return this.frozen;
     }
 
-    public void setHeld(boolean held) {
-        this.held = held;
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
     }
 
     public void roll() {

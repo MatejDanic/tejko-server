@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import matej.tejkogames.models.yamb.Yamb;
+import matej.tejkogames.models.general.Yamb;
 import matej.tejkogames.models.yamb.YambType;
 
 public interface YambRepository extends JpaRepository<Yamb, UUID> {

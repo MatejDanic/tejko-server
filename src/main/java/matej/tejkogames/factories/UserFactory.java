@@ -2,7 +2,6 @@ package matej.tejkogames.factories;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,21 +23,24 @@ public class UserFactory {
     public User createUser(String username, String password) {
         User user = new User(username, encoder.encode(password));
         user.setCreatedDate(LocalDateTime.now());
-        Set<Role> roles = new HashSet<>();
-        Role userRole = roleRepository.findByLabel("USER").orElseThrow(() -> new RuntimeException("Role not found."));
-        roles.add(userRole);
-        user.setRoles(roles);
+        user.setRoles(new HashSet<Role>() {
+            {
+                add(roleRepository.findByLabel("USER")
+                        .orElseThrow(() -> new RuntimeException("Role not found.")));
+            }
+        });
         return user;
     }
 
     public User createUserWithEncodedPassword(String username, String encodedPassword) {
         User user = new User(username, encodedPassword);
-        Set<Role> roles = new HashSet<>();
         user.setCreatedDate(LocalDateTime.now());
-        Role userRole = roleRepository.findByLabel("USER").orElseThrow(() -> new RuntimeException("Role not found."));
-        roles.add(userRole);
-        user.setRoles(roles);
-        user.setCreatedDate(LocalDateTime.now());
+        user.setRoles(new HashSet<Role>() {
+            {
+                add(roleRepository.findByLabel("USER")
+                        .orElseThrow(() -> new RuntimeException("Role not found.")));
+            }
+        });
         return user;
     }
 

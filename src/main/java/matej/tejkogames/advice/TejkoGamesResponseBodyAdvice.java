@@ -23,8 +23,8 @@ public class TejkoGamesResponseBodyAdvice implements ResponseBodyAdvice<Object> 
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
             Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request,
             ServerHttpResponse response) {
-        if (body instanceof Collection<?>){
-            response.getHeaders().add("X-Total-Count", String.valueOf(((Collection<?>)body).size()));
+        if (body instanceof Collection<?>) {
+            response.getHeaders().add("X-Total-Count", String.valueOf(((Collection<?>) body).size()));
         }
         return body;
     }

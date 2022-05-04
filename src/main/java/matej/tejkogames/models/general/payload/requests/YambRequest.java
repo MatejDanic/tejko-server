@@ -6,30 +6,29 @@ import java.util.Set;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import matej.tejkogames.models.general.User;
+import matej.tejkogames.models.general.YambChallenge;
 import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.Dice;
-import matej.tejkogames.models.yamb.YambChallenge;
 import matej.tejkogames.models.yamb.YambForm;
 import matej.tejkogames.models.yamb.YambType;
 import matej.tejkogames.constants.YambConstants;
 
 public class YambRequest {
 
-    @NotBlank
     private User user;
 
     @NotBlank
-    private YambType type;
+    private YambType type = YambType.CLASSIC;
 
-    @Min(YambConstants.NUMBER_OF_COLUMNS_MIN)
-    @Max(YambConstants.NUMBER_OF_COLUMNS_MAX)
-    private Integer numberOfColumns;
+    @Size(min = 1, max = 6)
+    private String formCode = "DUFA";
 
     @Min(YambConstants.NUMBER_OF_DICE_MIN)
     @Max(YambConstants.NUMBER_OF_DICE_MAX)
-    private Integer numberOfDice;
+    private Integer numberOfDice = 5;
 
     private YambForm form;
 
@@ -64,12 +63,12 @@ public class YambRequest {
         this.type = type;
     }
 
-    public Integer getNumberOfColumns() {
-        return numberOfColumns;
+    public String getFormCode() {
+        return formCode;
     }
 
-    public void setNumberOfColumns(Integer numberOfColumns) {
-        this.numberOfColumns = numberOfColumns;
+    public void setFormCode(String formCode) {
+        this.formCode = formCode;
     }
 
     public Integer getNumberOfDice() {
@@ -136,7 +135,9 @@ public class YambRequest {
         this.endDate = endDate;
     }
 
-    
-
+    @Override
+    public String toString() {
+        return "Yamb Request\nType: " + type + "\nForm Code: " + formCode + "\nChallenge: " + challenge;
+    }
 
 }

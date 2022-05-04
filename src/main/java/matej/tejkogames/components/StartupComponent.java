@@ -8,9 +8,9 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import matej.tejkogames.api.repositories.RoleRepository;
-import matej.tejkogames.api.repositories.TejkoGameRepository;
+import matej.tejkogames.api.repositories.GameRepository;
 import matej.tejkogames.models.general.Role;
-import matej.tejkogames.models.general.TejkoGame;
+import matej.tejkogames.models.general.Game;
 
 @Component
 public class StartupComponent implements ApplicationRunner {
@@ -19,7 +19,7 @@ public class StartupComponent implements ApplicationRunner {
     RoleRepository roleRepository;
 
     @Autowired
-    TejkoGameRepository tejkoGamesRepository;
+    GameRepository gameRepository;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -28,10 +28,10 @@ public class StartupComponent implements ApplicationRunner {
             roleRepository.saveAll(
                     Arrays.asList(new Role(1, "ADMIN", ""), new Role(2, "USER", ""), new Role(3, "MODERATOR", "")));
         }
-        
-        if (tejkoGamesRepository.findAll().size() == 0) {
-            tejkoGamesRepository.saveAll(
-                    Arrays.asList(new TejkoGame(1, "Yamb", "")));
+
+        if (gameRepository.findAll().size() == 0) {
+            gameRepository.saveAll(
+                    Arrays.asList(new Game(1, "Yamb", "")));
         }
 
     }
