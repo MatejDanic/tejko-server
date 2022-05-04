@@ -1,5 +1,6 @@
 package matej.tejkogames.api.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,7 +14,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.PreferenceRepository;
-import matej.tejkogames.interfaces.services.PreferenceService;
+import matej.tejkogames.interfaces.api.services.PreferenceService;
 import matej.tejkogames.models.general.Preference;
 import matej.tejkogames.models.general.payload.requests.PreferenceRequest;
 
@@ -35,34 +36,46 @@ public class PreferenceServiceImpl implements PreferenceService {
     }
 
     @Override
-    public List<Preference> getAllByIdIn(Set<UUID> idSet) {
+    public List<Preference> getBulkById(Set<UUID> idSet) {
         return preferenceRepository.findAllById(idSet);
     }
 
     @Override
-    public Preference create(PreferenceRequest requestBody) {
+    public Preference create(PreferenceRequest objectRequest) {
         Preference preference = new Preference();
-        preference.setTheme(requestBody.getTheme());
-        preference.setUser(requestBody.getUser());
-        preference.setVolume(requestBody.getVolume());
+        preference.setTheme(objectRequest.getTheme());
+        preference.setUser(objectRequest.getUser());
+        preference.setVolume(objectRequest.getVolume());
         return preferenceRepository.save(preference);
     }
 
     @Override
-    public Preference updateById(UUID id, PreferenceRequest requestBody) {
+    public List<Preference> createBulk(List<PreferenceRequest> objectRequestList) {
+        List<Preference> preferenceList = new ArrayList<>();
+
+        for (PreferenceRequest preferenceRequest : objectRequestList) {
+            Preference preference = new Preference();
+            preference.updateByRequest(preferenceRequest);
+        }
+
+        return preferenceRepository.saveAll(preferenceList);
+    }
+
+    @Override
+    public Preference updateById(UUID id, PreferenceRequest objectRequest) {
         Preference preference = getById(id);
 
-        preference.updateByRequest(requestBody);
+        preference.updateByRequest(objectRequest);
 
         return preferenceRepository.save(preference);
     }
 
     @Override
-    public List<Preference> updateAll(Map<UUID, PreferenceRequest> idRequestMap) {
-        List<Preference> preferenceList = getAllByIdIn(idRequestMap.keySet());
+    public List<Preference> updateBulkById(Map<UUID, PreferenceRequest> idObjectRequestMap) {
+        List<Preference> preferenceList = getBulkById(idObjectRequestMap.keySet());
 
         for (Preference preference : preferenceList) {
-            preference.updateByRequest(idRequestMap.get(preference.getId()));
+            preference.updateByRequest(idObjectRequestMap.get(preference.getId()));
         }
 
         preferenceRepository.saveAll(preferenceList);
@@ -80,13 +93,8 @@ public class PreferenceServiceImpl implements PreferenceService {
     }
 
     @Override
-    public void deleteAllById(Set<UUID> idSet) {
+    public void deleteBulkById(Set<UUID> idSet) {
         preferenceRepository.deleteAllById(idSet);
-    }
-
-    @Override
-    public boolean hasPermission(UUID id, String username) {
-        return preferenceRepository.getById(id).getUser().getUsername().equals(username);
     }
 
 }

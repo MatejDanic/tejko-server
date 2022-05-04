@@ -1,5 +1,6 @@
 package matej.tejkogames.api.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,10 +14,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.YambChallengeRepository;
-import matej.tejkogames.interfaces.services.YambChallengeService;
-import matej.tejkogames.models.general.User;
+import matej.tejkogames.interfaces.api.services.YambChallengeService;
+import matej.tejkogames.models.general.YambChallenge;
 import matej.tejkogames.models.general.payload.requests.YambChallengeRequest;
-import matej.tejkogames.models.yamb.YambChallenge;
 
 @Service
 public class YambChallengeServiceImpl implements YambChallengeService {
@@ -36,34 +36,46 @@ public class YambChallengeServiceImpl implements YambChallengeService {
     }
 
     @Override
-    public List<YambChallenge> getAllByIdIn(Set<UUID> idSet) {
+    public List<YambChallenge> getBulkById(Set<UUID> idSet) {
         return yambChallengeRepository.findAllById(idSet);
     }
 
     @Override
-    public YambChallenge create(YambChallengeRequest requestBody) {
+    public YambChallenge create(YambChallengeRequest objectRequest) {
         YambChallenge yambChallenge = new YambChallenge();
 
-        yambChallenge.updateByRequest(requestBody);
+        yambChallenge.updateByRequest(objectRequest);
 
         return yambChallengeRepository.save(yambChallenge);
     }
 
     @Override
-    public YambChallenge updateById(UUID id, YambChallengeRequest requestBody) {
+    public List<YambChallenge> createBulk(List<YambChallengeRequest> objectRequestList) {
+        List<YambChallenge> yambChallengeList = new ArrayList<>();
+
+        for (YambChallengeRequest yambChallengeRequest : objectRequestList) {
+            YambChallenge yambChallenge = new YambChallenge();
+            yambChallenge.updateByRequest(yambChallengeRequest);
+        }
+
+        return yambChallengeRepository.saveAll(yambChallengeList);
+    }
+
+    @Override
+    public YambChallenge updateById(UUID id, YambChallengeRequest objectRequest) {
         YambChallenge yambChallenge = getById(id);
 
-        yambChallenge.updateByRequest(requestBody);
+        yambChallenge.updateByRequest(objectRequest);
 
         return yambChallengeRepository.save(yambChallenge);
     }
 
     @Override
-    public List<YambChallenge> updateAll(Map<UUID, YambChallengeRequest> idRequestMap) {
-        List<YambChallenge> yambChallengeList = getAllByIdIn(idRequestMap.keySet());
+    public List<YambChallenge> updateBulkById(Map<UUID, YambChallengeRequest> idObjectRequestMap) {
+        List<YambChallenge> yambChallengeList = getBulkById(idObjectRequestMap.keySet());
 
         for (YambChallenge yambChallenge : yambChallengeList) {
-            yambChallenge.updateByRequest(idRequestMap.get(yambChallenge.getId()));
+            yambChallenge.updateByRequest(idObjectRequestMap.get(yambChallenge.getId()));
         }
 
         return yambChallengeRepository.saveAll(yambChallengeList);
@@ -80,18 +92,8 @@ public class YambChallengeServiceImpl implements YambChallengeService {
     }
 
     @Override
-    public void deleteAllById(Set<UUID> idSet) {
+    public void deleteBulkById(Set<UUID> idSet) {
         yambChallengeRepository.deleteAllById(idSet);
-    }
-
-    @Override
-    public boolean hasPermission(UUID id, String username) {
-        for (User user : getById(id).getUsers()) {
-            if (user.getUsername().equals(username)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }

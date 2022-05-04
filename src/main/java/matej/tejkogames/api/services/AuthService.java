@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import matej.tejkogames.api.repositories.UserRepository;
+import matej.tejkogames.components.JwtComponent;
 import matej.tejkogames.exceptions.UsernameTakenException;
 import matej.tejkogames.factories.UserFactory;
 import matej.tejkogames.models.general.User;
@@ -18,7 +19,6 @@ import matej.tejkogames.models.general.UserDetailsImpl;
 import matej.tejkogames.models.general.payload.requests.LoginRequest;
 import matej.tejkogames.models.general.payload.requests.RegisterRequest;
 import matej.tejkogames.models.general.payload.responses.JwtResponse;
-import matej.tejkogames.utils.JwtUtil;
 
 @Service
 public class AuthService {
@@ -33,14 +33,14 @@ public class AuthService {
     UserFactory userFactory;
 
     @Autowired
-    JwtUtil jwtUtil;
+    JwtComponent jwtComponent;
 
     public JwtResponse login(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtil.generateJwtToken(authentication);
+        String jwt = jwtComponent.generateJwt(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
@@ -50,10 +50,10 @@ public class AuthService {
 
     public String register(RegisterRequest registerRequest) throws UsernameTakenException {
         if (userRepository.existsByUsername(registerRequest.getUsername()))
-            throw new UsernameTakenException("Korisničko ime je već zauzeto!");
+            throw new UsernameTakenException("Username is already taken!");
 
-		User user = userFactory.createUser(registerRequest.getUsername(), registerRequest.getPassword());
-		userRepository.save(user);
+        User user = userFactory.createUser(registerRequest.getUsername(), registerRequest.getPassword());
+        userRepository.save(user);
         return "User " + user.getUsername() + " successfully registered.";
     }
 

@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import matej.tejkogames.api.services.RoleServiceImpl;
-import matej.tejkogames.interfaces.controllers.RoleController;
+import matej.tejkogames.interfaces.api.controllers.RoleController;
 import matej.tejkogames.models.general.Role;
 import matej.tejkogames.models.general.User;
 import matej.tejkogames.models.general.enums.MessageType;
@@ -51,22 +51,29 @@ public class RoleControllerImpl implements RoleController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/{id}")
     @Override
-    public ResponseEntity<Role> create(@RequestBody RoleRequest requestBody) {
-        return new ResponseEntity<>(roleService.create(requestBody), HttpStatus.OK);
+    public ResponseEntity<Role> create(@RequestBody RoleRequest objectRequest) {
+        return new ResponseEntity<>(roleService.create(objectRequest), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @PostMapping("/bulk")
+    @Override
+    public ResponseEntity<List<Role>> createBulk(List<RoleRequest> objectRequestList) {
+        return new ResponseEntity<>(roleService.createBulk(objectRequestList), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Role> updateById(@PathVariable Integer id, @RequestBody RoleRequest requestBody) {
-        return new ResponseEntity<>(roleService.updateById(id, requestBody), HttpStatus.OK);
+    public ResponseEntity<Role> updateById(@PathVariable Integer id, @RequestBody RoleRequest objectRequest) {
+        return new ResponseEntity<>(roleService.updateById(id, objectRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("")
+    @PutMapping("/bulk")
     @Override
-    public ResponseEntity<List<Role>> updateAll(Map<Integer, RoleRequest> idRequestMap) {
-        return new ResponseEntity<>(roleService.updateAll(idRequestMap), HttpStatus.OK);
+    public ResponseEntity<List<Role>> updateBulkById(Map<Integer, RoleRequest> idObjectRequestMap) {
+        return new ResponseEntity<>(roleService.updateBulkById(idObjectRequestMap), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -89,9 +96,9 @@ public class RoleControllerImpl implements RoleController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/bulk")
     @Override
-    public ResponseEntity<MessageResponse> deleteAllById(@RequestHeader(value = "Authorization") String headerAuth,
+    public ResponseEntity<MessageResponse> deleteBulkById(@RequestHeader(value = "Authorization") String headerAuth,
             @RequestBody Set<Integer> idSet) {
-        roleService.deleteAllById(idSet);
+        roleService.deleteBulkById(idSet);
         return new ResponseEntity<>(
                 new MessageResponse("Role", MessageType.DEFAULT, "All roles have been successfully deleted"),
                 HttpStatus.OK);

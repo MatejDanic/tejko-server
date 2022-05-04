@@ -17,7 +17,7 @@ public class AuthEntryPointComponent implements AuthenticationEntryPoint {
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
 			throws IOException, ServletException {
 
-		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Neovlašten pristup");
+		response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 	}
 
 }

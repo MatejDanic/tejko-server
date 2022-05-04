@@ -16,20 +16,20 @@ import org.springframework.http.HttpRange;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import matej.tejkogames.api.services.UserDetailsServiceImpl;
-// import matej.tejkogames.constants.TejkoGamesConstants;
-import matej.tejkogames.utils.JwtUtil;
+import matej.tejkogames.components.JwtComponent;
+
 import java.util.Arrays;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
 
 	@Autowired
-	private JwtUtil jwtUtil;
+	JwtComponent jwtComponent;
 
 	@Autowired
 	private UserDetailsServiceImpl userDetailsService;
@@ -37,21 +37,25 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		String jwt = parseJwt(request);
-		if (jwt != null && jwtUtil.validateJwtToken(jwt)) {
-			String username = jwtUtil.getUsernameFromJwtToken(jwt);
+		String jwt = jwtComponent.parseToken(request.getHeader("Authorization"));
+		if (jwt != null && jwtComponent.validateJwt(jwt)) {
+			String username = jwtComponent.getUsernameFromJwt(jwt);
+			try {
+				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+				UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+						userDetails,
+						null, userDetails.getAuthorities());
+				authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,
-					null, userDetails.getAuthorities());
-			authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+			} catch (UsernameNotFoundException exception) {
+				System.out.println(exception.getMessage());
+			}
 		}
-		
+
 		String rangeHeader = request.getHeader("Range");
 
-		// if there is no range request in the header than do the "normal" filtering
+		// if there is no range request in the header than provide default filtering
 		if (rangeHeader == null) {
 			filterChain.doFilter(request, response);
 			return;
@@ -86,13 +90,4 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 		}
 	}
 
-	private String parseJwt(HttpServletRequest request) {
-		String headerAuth = request.getHeader("Authorization");
-
-		if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-			return headerAuth.substring(7, headerAuth.length());
-		}
-
-		return null;
-	}
 }

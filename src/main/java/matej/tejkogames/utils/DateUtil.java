@@ -25,7 +25,7 @@ public final class DateUtil {
 	 */
 	public static boolean isSameWeek(LocalDateTime date1, LocalDateTime date2) {
 		if (date1 == null || date2 == null) {
-			throw new IllegalArgumentException("Datumi nisu valjani");
+			throw new IllegalArgumentException("Dates are not valid");
 		}
 		TemporalField woy = WeekFields.of(Locale.getDefault()).weekOfWeekBasedYear();
 		return (date1.getYear() == date2.getYear() && date1.get(woy) == date2.get(woy));

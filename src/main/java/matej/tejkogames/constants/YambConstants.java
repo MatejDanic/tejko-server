@@ -1,5 +1,9 @@
 package matej.tejkogames.constants;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import matej.tejkogames.models.yamb.ColumnType;
 import matej.tejkogames.models.yamb.YambType;
 
 public class YambConstants {
@@ -27,5 +31,14 @@ public class YambConstants {
 
 	public static final int CHALLENGE_LIMIT = 3;
 	public static final int YAMB_LIMIT = 1;
+
+	public static final Map<Character, ColumnType> COLUMN_CODES = new HashMap<Character, ColumnType>() {
+		{
+			put('D', ColumnType.DOWNWARDS);
+			put('U', ColumnType.UPWARDS);
+			put('F', ColumnType.FREE);
+			put('A', ColumnType.ANNOUNCEMENT);
+		};
+	};
 
 }

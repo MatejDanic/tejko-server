@@ -9,7 +9,6 @@ import matej.tejkogames.models.general.User;
 
 @Component
 public class ScoreFactory {
-    
 
     public Score createScore(User user, Integer value) {
         Score score = new Score();
@@ -18,5 +17,5 @@ public class ScoreFactory {
         score.setDate(LocalDateTime.now());
         return score;
     }
-    
+
 }

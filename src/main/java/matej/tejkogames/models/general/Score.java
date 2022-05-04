@@ -11,15 +11,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
-
 import matej.tejkogames.interfaces.models.ScoreInterface;
 import matej.tejkogames.models.general.payload.requests.ScoreRequest;
-import matej.tejkogames.models.yamb.YambChallenge;
 
 @Entity
 @Table(name = "game_score")
@@ -27,28 +23,20 @@ import matej.tejkogames.models.yamb.YambChallenge;
 public class Score implements ScoreInterface {
 
 	@Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+	@GeneratedValue(generator = "UUID")
+	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+	@Column(updatable = false, nullable = false)
+	private UUID id;
 
 	@ManyToOne
 	@JsonIncludeProperties({ "id", "name" })
 	@JoinColumn(name = "game_id")
-	private TejkoGame game;
+	private Game game;
 
 	@ManyToOne
 	@JsonIncludeProperties({ "id", "username" })
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
-
-	@ManyToOne
-	@JsonIgnore
-	@JoinColumn(name = "challenge_id")
-	private YambChallenge challenge;
 
 	@Column(nullable = false)
 	private Integer value;
@@ -70,6 +58,14 @@ public class Score implements ScoreInterface {
 
 	public void setId(UUID id) {
 		this.id = id;
+	}
+
+	public Game getGame() {
+		return game;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
 	}
 
 	public User getUser() {
@@ -97,16 +93,24 @@ public class Score implements ScoreInterface {
 	}
 
 	@Override
-	public void updateByRequest(ScoreRequest requestBody) {
-		if (requestBody.getUser() != null) {
-			this.setUser(requestBody.getUser());
+	public void updateByRequest(ScoreRequest objectRequest) {
+		if (objectRequest.getGame() != null) {
+			this.setGame(objectRequest.getGame());
 		}
-		if (requestBody.getDate() != null) {
-			this.setDate(requestBody.getDate());
+		if (objectRequest.getUser() != null) {
+			this.setUser(objectRequest.getUser());
 		}
-		if (requestBody.getValue() != null) {
-			this.setValue(requestBody.getValue());
+		if (objectRequest.getDate() != null) {
+			this.setDate(objectRequest.getDate());
 		}
+		if (objectRequest.getValue() != null) {
+			this.setValue(objectRequest.getValue());
+		}
+	}
+
+	@Override
+	public boolean hasPermission(UUID userId) {
+		return user.getId().equals(userId);
 	}
 
 }

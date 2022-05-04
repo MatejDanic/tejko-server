@@ -10,7 +10,7 @@ public class MessageResponse {
 
     private MessageType type;
 
-    private Object body;
+    private Object content;
 
     public MessageResponse(String subject) {
         this.subject = subject;
@@ -18,11 +18,11 @@ public class MessageResponse {
         this.type = MessageType.DEFAULT;
     }
 
-    public MessageResponse(String subject, Object body) {
+    public MessageResponse(String subject, Object content) {
         this.subject = subject;
         this.sender = "Server";
         this.type = MessageType.DEFAULT;
-        this.body = body;
+        this.content = content;
     }
 
     public MessageResponse(String subject, MessageType type) {
@@ -31,33 +31,19 @@ public class MessageResponse {
         this.type = type;
     }
 
-    public MessageResponse(String subject, MessageType type, Object body) {
+    public MessageResponse(String subject, MessageType type, Object content) {
         this.subject = subject;
         this.sender = "Server";
         this.type = type;
-        this.body = body;
+        this.content = content;
     }
 
-    public MessageResponse(String subject, MessageType type, Object body, String sender) {
+    public MessageResponse(String subject, MessageType type, Object content, String sender) {
         this.subject = subject;
         this.sender = sender;
         this.type = type;
-        this.body = body;
+        this.content = content;
     }
-
-    // public MessageResponse(String subject, String username, MessageType type) {
-    // this.subject = subject;
-    // this.username = username;
-    // this.type = type;
-    // }
-
-    // public MessageResponse(String subject, String username, MessageType type,
-    // Object body) {
-    // this.subject = subject;
-    // this.username = username;
-    // this.type = type;
-    // this.body = body;
-    // }
 
     public String getSubject() {
         return subject;
@@ -83,12 +69,12 @@ public class MessageResponse {
         this.type = type;
     }
 
-    public Object getBody() {
-        return body;
+    public Object getContent() {
+        return content;
     }
 
-    public void setBody(Object body) {
-        this.body = body;
+    public void setContent(Object content) {
+        this.content = content;
     }
 
 }

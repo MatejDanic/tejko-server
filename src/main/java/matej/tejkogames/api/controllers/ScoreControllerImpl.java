@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.ScoreServiceImpl;
-import matej.tejkogames.interfaces.controllers.ScoreController;
+import matej.tejkogames.interfaces.api.controllers.ScoreController;
 import matej.tejkogames.models.general.Score;
 import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.requests.DateIntervalRequest;
@@ -52,22 +52,29 @@ public class ScoreControllerImpl implements ScoreController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/{id}")
 	@Override
-	public ResponseEntity<Score> create(@RequestBody ScoreRequest requestBody) {
-		return new ResponseEntity<>(yambScoreService.create(requestBody), HttpStatus.OK);
+	public ResponseEntity<Score> create(@RequestBody ScoreRequest objectRequest) {
+		return new ResponseEntity<>(yambScoreService.create(objectRequest), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@PostMapping("/bulk")
+	@Override
+	public ResponseEntity<List<Score>> createBulk(@RequestBody List<ScoreRequest> objectRequestList) {
+		return new ResponseEntity<>(yambScoreService.createBulk(objectRequestList), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PutMapping("/{id}")
 	@Override
-	public ResponseEntity<Score> updateById(@PathVariable UUID id, @RequestBody ScoreRequest requestBody) {
-		return new ResponseEntity<>(yambScoreService.updateById(id, requestBody), HttpStatus.OK);
+	public ResponseEntity<Score> updateById(@PathVariable UUID id, @RequestBody ScoreRequest objectRequest) {
+		return new ResponseEntity<>(yambScoreService.updateById(id, objectRequest), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
-	@PutMapping("/")
+	@PutMapping("/bulk")
 	@Override
-	public ResponseEntity<List<Score>> updateAll(@RequestBody Map<UUID, ScoreRequest> idRequestMap) {
-		return new ResponseEntity<>(yambScoreService.updateAll(idRequestMap), HttpStatus.OK);
+	public ResponseEntity<List<Score>> updateBulkById(@RequestBody Map<UUID, ScoreRequest> idObjectRequestMap) {
+		return new ResponseEntity<>(yambScoreService.updateBulkById(idObjectRequestMap), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
@@ -90,9 +97,9 @@ public class ScoreControllerImpl implements ScoreController {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/bulk")
 	@Override
-	public ResponseEntity<MessageResponse> deleteAllById(@RequestHeader(value = "Authorization") String headerAuth,
+	public ResponseEntity<MessageResponse> deleteBulkById(@RequestHeader(value = "Authorization") String headerAuth,
 			@RequestBody Set<UUID> idSet) {
-		yambScoreService.deleteAllById(idSet);
+		yambScoreService.deleteBulkById(idSet);
 		return new ResponseEntity<>(
 				new MessageResponse("Score", MessageType.DEFAULT, "All scores have been successfully deleted"),
 				HttpStatus.OK);

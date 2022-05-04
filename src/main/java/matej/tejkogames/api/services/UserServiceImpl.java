@@ -1,5 +1,6 @@
 package matej.tejkogames.api.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,27 +20,20 @@ import matej.tejkogames.api.repositories.UserRepository;
 import matej.tejkogames.api.repositories.YambRepository;
 import matej.tejkogames.constants.TejkoGamesConstants;
 import matej.tejkogames.constants.YambConstants;
+import matej.tejkogames.exceptions.RoleNotFoundException;
 import matej.tejkogames.exceptions.YambLimitReachedException;
 import matej.tejkogames.factories.UserFactory;
 import matej.tejkogames.factories.YambFactory;
-import matej.tejkogames.interfaces.services.UserService;
+import matej.tejkogames.interfaces.api.services.UserService;
 import matej.tejkogames.models.general.Preference;
 import matej.tejkogames.models.general.Role;
 import matej.tejkogames.models.general.User;
-import matej.tejkogames.models.general.payload.requests.RoleRequest;
+import matej.tejkogames.models.general.Yamb;
 import matej.tejkogames.models.general.payload.requests.UserRequest;
 import matej.tejkogames.models.general.payload.requests.YambRequest;
 import matej.tejkogames.models.general.Score;
-import matej.tejkogames.models.yamb.Yamb;
 import matej.tejkogames.models.yamb.YambType;
 
-/**
- * Service Class for managing {@link User} repostiory
- *
- * @author MatejDanic
- * @version 1.0
- * @since 2020-08-20
- */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -76,33 +70,45 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAllByIdIn(Set<UUID> idSet) {
+    public List<User> getBulkById(Set<UUID> idSet) {
         return userRepository.findAllById(idSet);
     }
 
     @Override
-    public User create(UserRequest requestBody) {
-        if (requestBody.getUsername() == null || requestBody.getPassword() == null)
+    public User create(UserRequest objectRequest) {
+        if (objectRequest.getUsername() == null || objectRequest.getPassword() == null)
             return null;
-        User user = userFactory.createUser(requestBody.getUsername(), requestBody.getPassword());
+        User user = userFactory.createUser(objectRequest.getUsername(), objectRequest.getPassword());
         return userRepository.save(user);
     }
 
     @Override
-    public User updateById(UUID id, UserRequest requestBody) {
+    public List<User> createBulk(List<UserRequest> objectRequestList) {
+        List<User> userList = new ArrayList<>();
+
+        for (UserRequest userRequest : objectRequestList) {
+            User user = new User();
+            user.updateByRequest(userRequest);
+        }
+
+        return userRepository.saveAll(userList);
+    }
+
+    @Override
+    public User updateById(UUID id, UserRequest objectRequest) {
         User user = getById(id);
 
-        user.updateByRequest(requestBody);
+        user.updateByRequest(objectRequest);
 
         return userRepository.save(user);
     }
 
     @Override
-    public List<User> updateAll(Map<UUID, UserRequest> idRequestMap) {
-        List<User> userList = getAllByIdIn(idRequestMap.keySet());
+    public List<User> updateBulkById(Map<UUID, UserRequest> idObjectRequestMap) {
+        List<User> userList = getBulkById(idObjectRequestMap.keySet());
 
         for (User user : userList) {
-            user.updateByRequest(idRequestMap.get(user.getId()));
+            user.updateByRequest(idObjectRequestMap.get(user.getId()));
         }
 
         return userRepository.saveAll(userList);
@@ -119,37 +125,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteAllById(Set<UUID> idSet) {
+    public void deleteBulkById(Set<UUID> idSet) {
         userRepository.deleteAllById(idSet);
     }
 
     public Yamb createYambByUserId(UUID id, YambRequest yambRequest) {
         User user = getById(id);
-        int yambLimit = 0;
-        if (yambRequest.getType() == YambType.CLASSIC || yambRequest.getType() == YambType.CUSTOM) {
-            yambLimit = YambConstants.YAMB_LIMIT;
+        if (user.getYambs().size() >= YambConstants.YAMB_LIMIT)
+            throw new YambLimitReachedException("Yamb Limit has been reached!");
+        System.out.println(yambRequest);
+        Yamb yamb = yambFactory.createYamb(user, yambRequest.getType(), yambRequest.getFormCode(),
+                yambRequest.getNumberOfDice(), null);
+        return yambRepository.save(yamb);
 
-        } else if (yambRequest.getType() == YambType.CHALLENGE) {
-            yambLimit = YambConstants.CHALLENGE_LIMIT;
-        }
-        int yambCounter = 0;
-        boolean limitReached = false;
-        for (Yamb userYamb : getYambsByTypeAndUserId(id, yambRequest.getType())) {
-            if (userYamb.getType() == yambRequest.getType()) {
-                yambCounter++;
-                if (yambCounter >= yambLimit) {
-                    limitReached = true;
-                }
-            }
-        }
-        if (limitReached) {
-            throw new YambLimitReachedException(
-                    "Yamb limit of " + yambLimit + " has been reached by user " + user.getUsername());
-        } else {
-            Yamb yamb = yambFactory.createYamb(user, yambRequest.getType(), yambRequest.getNumberOfColumns(),
-                    yambRequest.getNumberOfDice(), null);
-            return yambRepository.save(yamb);
-        }
     }
 
     public List<Yamb> getYambsByTypeAndUserId(UUID id, YambType type) {
@@ -179,15 +167,11 @@ public class UserServiceImpl implements UserService {
                 .save(new Preference(TejkoGamesConstants.DEFAULT_VOLUME, TejkoGamesConstants.DEFAULT_THEME));
     }
 
-    public Set<Role> assignRoleByUserId(UUID id, RoleRequest roleRequest) {
+    public Set<Role> assignRoleByUserId(UUID id, Integer roleId) throws RoleNotFoundException {
 
         User user = userRepository.findById(id).get();
-        Set<Role> roles = user.getRoles();
-
-        roles.add(roleRepository.findByLabel(roleRequest.getLabel())
-                .orElseThrow(() -> new RuntimeException("Uloga '" + roleRequest.getLabel() + "' nije pronađena.")));
-
-        user.setRoles(roles);
+        user.assignRole(roleRepository.findById(roleId)
+                .orElseThrow(() -> new RoleNotFoundException("Role with ID: " + roleId + " not found.")));
         userRepository.save(user);
 
         return user.getRoles();
@@ -197,8 +181,8 @@ public class UserServiceImpl implements UserService {
         return scoreRepository.findAllByUserId(id);
     }
 
-    public boolean hasPermission(UUID id, String username) {
-        return getById(id).getUsername().equals(username);
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username).get();
     }
 
 }

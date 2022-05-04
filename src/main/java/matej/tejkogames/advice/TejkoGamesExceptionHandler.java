@@ -1,5 +1,8 @@
 package matej.tejkogames.advice;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -10,9 +13,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import matej.tejkogames.api.services.ApiErrorServiceImpl;
-import matej.tejkogames.factories.ApiErrorFactory;
-import matej.tejkogames.models.general.ApiError;
+import matej.tejkogames.api.services.LogServiceImpl;
+import matej.tejkogames.api.services.UserServiceImpl;
+import matej.tejkogames.models.general.Log;
 import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 
@@ -21,16 +24,24 @@ import matej.tejkogames.models.general.payload.responses.MessageResponse;
 public class TejkoGamesExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Autowired
-    ApiErrorServiceImpl apiErrorService;
+    LogServiceImpl logService;
 
     @Autowired
-    ApiErrorFactory apiErrorFactory;
+    UserServiceImpl userService;
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<MessageResponse> handleException(RuntimeException exception, WebRequest request) {
-        ApiError apiError = apiErrorFactory.createApiError(exception);           
-        apiErrorService.save(apiError);
-        return new ResponseEntity<>(new MessageResponse("Error", MessageType.ERROR, apiError.getMessage()),
+        try {
+            StringWriter errors = new StringWriter();
+            exception.printStackTrace(new PrintWriter(errors));
+            System.out.println(exception.getMessage());
+            // System.out.println(errors);
+            Log log = new Log(errors.toString(), userService.getByUsername(request.getRemoteUser()));
+            logService.save(log);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return new ResponseEntity<>(new MessageResponse("Error", MessageType.ERROR, exception.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 

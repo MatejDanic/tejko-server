@@ -10,7 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -24,19 +24,16 @@ import matej.tejkogames.models.general.payload.requests.PreferenceRequest;
 @RestResource(rel = "preferences", path = "preferences")
 public class Preference implements PreferenceInterface {
 
-	@Id
+    @Id
     @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-        name = "UUID",
-        strategy = "org.hibernate.id.UUIDGenerator"
-    )
-    @Column(name = "id", updatable = false, nullable = false)
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(updatable = false, nullable = false)
     private UUID id;
 
-	@OneToOne
-    @JsonIgnore
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
+    @OneToOne
+    @JsonIncludeProperties({ "id", "username" })
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column()
     private int volume;
@@ -44,12 +41,13 @@ public class Preference implements PreferenceInterface {
     @Column()
     private Theme theme;
 
+    public Preference() {
+    }
+
     public Preference(int volume, Theme theme) {
         this.volume = volume;
         this.theme = theme;
     }
-
-    public Preference() {}
 
     public UUID getId() {
         return id;
@@ -79,18 +77,23 @@ public class Preference implements PreferenceInterface {
         return theme;
     }
 
-	public void setTheme(Theme theme) {
-		this.theme = theme;
-	}
+    public void setTheme(Theme theme) {
+        this.theme = theme;
+    }
 
-	@Override
-	public void updateByRequest(PreferenceRequest preferenceRequest) {
-		if (preferenceRequest.getTheme() != null) {
+    @Override
+    public void updateByRequest(PreferenceRequest preferenceRequest) {
+        if (preferenceRequest.getTheme() != null) {
             this.setTheme(preferenceRequest.getTheme());
         }
         if (preferenceRequest.getVolume() != null) {
             this.setVolume(preferenceRequest.getVolume());
         }
-	}
+    }
+
+    @Override
+    public boolean hasPermission(UUID userId) {
+        return user.getId().equals(userId);
+    }
 
 }

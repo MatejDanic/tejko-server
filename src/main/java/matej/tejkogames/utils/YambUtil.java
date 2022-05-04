@@ -7,40 +7,36 @@ import java.util.List;
 import java.util.Set;
 
 import matej.tejkogames.constants.YambConstants;
+import matej.tejkogames.exceptions.InvalidColumnCodeException;
 import matej.tejkogames.models.yamb.Box;
 import matej.tejkogames.models.yamb.BoxType;
 import matej.tejkogames.models.yamb.Column;
 import matej.tejkogames.models.yamb.ColumnType;
 import matej.tejkogames.models.yamb.Dice;
 import matej.tejkogames.models.yamb.YambForm;
-import matej.tejkogames.models.yamb.YambType;
 
 public class YambUtil {
 
-	public static YambForm generateYambForm(YambType type, int numberOfColumns, int numberOfDice) {
-
-		List<Column> columnList = new ArrayList<>();
-		for (int i = 1; i <= numberOfColumns; i++) {
-			ColumnType columnType = type == YambType.CLASSIC || type == YambType.CHALLENGE ? ColumnType.values()[i - 1]
-					: ColumnType.FREE;
-			List<Box> boxList = generateBoxList(columnType);
-			Column column = new Column(columnType, boxList);
-			columnList.add(column);
-		}
-
+	public static YambForm generateYambForm(String formCode) {
+		List<Column> columnList = generateColumnListFromFormCode(formCode);
 		YambForm form = new YambForm(columnList);
 		return form;
 	}
 
-	public static Set<Dice> generateDiceSet(int numberOfDice) {
-		Set<Dice> diceSet = new HashSet<>();
-		for (int i = 1; i <= numberOfDice; i++) {
-			diceSet.add(new Dice(i));
+	private static List<Column> generateColumnListFromFormCode(String formCode) {
+		List<Column> columnList = new ArrayList<>();
+		for (char columnCode : formCode.toCharArray()) {
+			ColumnType columnType = YambConstants.COLUMN_CODES.get(columnCode);
+			if (columnType == null) {
+				throw new InvalidColumnCodeException("Column Type with code '" + columnCode + "' does not exist!");
+			}
+			List<Box> boxList = generateBoxListByColumnType(columnType);
+			columnList.add(new Column(columnType, boxList, false));
 		}
-		return diceSet;
+		return columnList;
 	}
 
-	public static List<Box> generateBoxList(ColumnType columnType) {
+	public static List<Box> generateBoxListByColumnType(ColumnType columnType) {
 		List<Box> boxList = new ArrayList<>();
 		for (BoxType boxType : BoxType.values()) {
 			boolean available = (columnType == ColumnType.DOWNWARDS && boxType == BoxType.ONES
@@ -50,6 +46,14 @@ public class YambUtil {
 			boxList.add(box);
 		}
 		return boxList;
+	}
+
+	public static Set<Dice> generateDiceSet(int numberOfDice) {
+		Set<Dice> diceSet = new HashSet<>();
+		for (int i = 1; i <= numberOfDice; i++) {
+			diceSet.add(new Dice(i));
+		}
+		return diceSet;
 	}
 
 	/**
@@ -163,11 +167,7 @@ public class YambUtil {
 	 *         occured and 0 otherwise.
 	 */
 	private static int calculateStraight(Set<Integer> diceValues) {
-		Set<Integer> straight = new HashSet<>();
-		straight.add(2);
-		straight.add(3);
-		straight.add(4);
-		straight.add(5);
+		Set<Integer> straight = Set.of(2, 3, 4, 5);
 		if (diceValues.containsAll(straight)) {
 			if (diceValues.contains(1)) {
 				return YambConstants.BONUS_STRAIGHT_SMALL;
