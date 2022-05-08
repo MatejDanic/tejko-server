@@ -5,27 +5,48 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
 
 public interface ControllerInterface<T, I, R> {
 
-    public ResponseEntity<T> create(R objectRequest);
+    @GetMapping("/{id}")
+    public ResponseEntity<T> getById(@PathVariable I id);
 
-    public ResponseEntity<List<T>> createBulk(List<R> objectRequestList);
+    @GetMapping("/bulk")
+    public ResponseEntity<List<T>> getBulkById(@RequestBody Set<I> idSet);
 
-    public ResponseEntity<T> getById(I id);
+    @GetMapping("")
+    public ResponseEntity<List<T>> getAll(@RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "id") String sort,
+            @RequestParam(defaultValue = "desc") String direction);
 
-    public ResponseEntity<List<T>> getAll(Integer page, Integer size, String sort, String direction);
+    @PostMapping("")
+    public ResponseEntity<T> create(@RequestBody R objectRequest);
 
-    public ResponseEntity<T> updateById(I id, R objectRequest);
+    @PostMapping("/bulk")
+    public ResponseEntity<List<T>> createBulk(@RequestBody List<R> objectRequestList);
 
-    public ResponseEntity<List<T>> updateBulkById(Map<I, R> idObjectRequestMap);
+    @PatchMapping("/{id}")
+    public ResponseEntity<T> updateById(@PathVariable I id, @RequestBody R objectRequest);
 
-    public ResponseEntity<MessageResponse> deleteById(String headerAuth, I id);
+    @PatchMapping("/bulk")
+    public ResponseEntity<List<T>> updateBulkById(@RequestBody Map<I, R> idObjectRequestMap);
 
-    public ResponseEntity<MessageResponse> deleteAll(String headerAuth);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<MessageResponse> deleteById(@PathVariable I id);
 
-    public ResponseEntity<MessageResponse> deleteBulkById(String headerAuth, Set<I> idSet);
+    @DeleteMapping("/bulk")
+    public ResponseEntity<MessageResponse> deleteBulkById(@RequestBody Set<I> idSet);
+
+    @DeleteMapping("")
+    public ResponseEntity<MessageResponse> deleteAll();
 
 }

@@ -87,13 +87,13 @@ public class GameService implements GameServiceInterface {
     }
 
     @Override
-    public void deleteAll() {
-        gameRepository.deleteAll();
+    public void deleteBulkById(Set<Integer> idSet) {
+        gameRepository.deleteAllById(idSet);
     }
 
     @Override
-    public void deleteBulkById(Set<Integer> idSet) {
-        gameRepository.deleteAllById(idSet);
+    public void deleteAll() {
+        gameRepository.deleteAll();
     }
 
     @Override

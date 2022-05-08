@@ -8,9 +8,9 @@ public interface ServiceInterface<T, I, R> {
 
     public T getById(I id);
 
-    public List<T> getAll(Integer page, Integer size, String sort, String direction);
-
     public List<T> getBulkById(Set<I> ids);
+
+    public List<T> getAll(Integer page, Integer size, String sort, String direction);
 
     public T updateById(I id, R objectRequest);
 
@@ -22,8 +22,8 @@ public interface ServiceInterface<T, I, R> {
 
     public void deleteById(I id);
 
-    public void deleteAll();
-
     public void deleteBulkById(Set<I> idSet);
+
+    public void deleteAll();
 
 }

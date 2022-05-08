@@ -9,15 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.YambChallengeService;
@@ -35,80 +27,70 @@ public class YambChallengeController implements YambChallengeControllerInterface
     YambChallengeService yambChallengeService;
 
     @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambChallengeService.getById(#id))")
-    @GetMapping("/{id}")
     @Override
     public ResponseEntity<YambChallenge> getById(UUID id) {
         return new ResponseEntity<>(yambChallengeService.getById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("")
     @Override
-    public ResponseEntity<List<YambChallenge>> getAll(@RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "id") String sort,
-            @RequestParam(defaultValue = "desc") String direction) {
+    public ResponseEntity<List<YambChallenge>> getBulkById(Set<UUID> idSet) {
+        return new ResponseEntity<>(yambChallengeService.getBulkById(idSet), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Override
+    public ResponseEntity<List<YambChallenge>> getAll(Integer page, Integer size, String sort, String direction) {
         return new ResponseEntity<>(yambChallengeService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('USER')")
-    @PostMapping("")
     @Override
-    public ResponseEntity<YambChallenge> create(@RequestBody YambChallengeRequest objectRequest) {
+    public ResponseEntity<YambChallenge> create(YambChallengeRequest objectRequest) {
         return new ResponseEntity<>(yambChallengeService.create(objectRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/bulk")
     @Override
-    public ResponseEntity<List<YambChallenge>> createBulk(
-            @RequestBody List<YambChallengeRequest> objectRequestList) {
+    public ResponseEntity<List<YambChallenge>> createBulk(List<YambChallengeRequest> objectRequestList) {
         return new ResponseEntity<>(yambChallengeService.createBulk(objectRequestList), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("/{id}")
     @Override
-    public ResponseEntity<YambChallenge> updateById(@PathVariable UUID id,
-            @RequestBody YambChallengeRequest objectRequest) {
+    public ResponseEntity<YambChallenge> updateById(UUID id, YambChallengeRequest objectRequest) {
         return new ResponseEntity<>(yambChallengeService.updateById(id, objectRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PutMapping("/bulk")
     @Override
-    public ResponseEntity<List<YambChallenge>> updateBulkById(
-            @RequestBody Map<UUID, YambChallengeRequest> idObjectRequestMap) {
+    public ResponseEntity<List<YambChallenge>> updateBulkById(Map<UUID, YambChallengeRequest> idObjectRequestMap) {
         return new ResponseEntity<>(yambChallengeService.updateBulkById(idObjectRequestMap), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<MessageResponse> deleteById(@RequestHeader(value = "Authorization") String headerAuth,
-            @PathVariable UUID id) {
+    public ResponseEntity<MessageResponse> deleteById(UUID id) {
         yambChallengeService.deleteById(id);
         return new ResponseEntity<>(new MessageResponse("Yamb Challenge", "Challenge have been successfully deleted"),
                 HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("")
     @Override
-    public ResponseEntity<MessageResponse> deleteAll(@RequestHeader(value = "Authorization") String headerAuth) {
-        yambChallengeService.deleteAll();
-        return new ResponseEntity<>(
-                new MessageResponse("Yamb Challenge", "All challenges have been successfully deleted."), HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @DeleteMapping("/bulk")
-    @Override
-    public ResponseEntity<MessageResponse> deleteBulkById(@RequestHeader(value = "Authorization") String headerAuth,
-            @RequestBody Set<UUID> idSet) {
+    public ResponseEntity<MessageResponse> deleteBulkById(Set<UUID> idSet) {
         yambChallengeService.deleteBulkById(idSet);
         return new ResponseEntity<>(
                 new MessageResponse("Yamb Challenge", MessageType.DEFAULT,
                         "All challenges have been successfully deleted."),
                 HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @Override
+    public ResponseEntity<MessageResponse> deleteAll() {
+        yambChallengeService.deleteAll();
+        return new ResponseEntity<>(
+                new MessageResponse("Yamb Challenge", "All challenges have been successfully deleted."), HttpStatus.OK);
     }
 }
