@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import matej.tejkogames.api.services.LogServiceImpl;
-import matej.tejkogames.api.services.UserServiceImpl;
+import matej.tejkogames.api.services.LogService;
+import matej.tejkogames.api.services.UserService;
 import matej.tejkogames.models.general.Log;
 import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.responses.MessageResponse;
@@ -24,17 +24,17 @@ import matej.tejkogames.models.general.payload.responses.MessageResponse;
 public class TejkoGamesExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Autowired
-    LogServiceImpl logService;
+    LogService logService;
 
     @Autowired
-    UserServiceImpl userService;
+    UserService userService;
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<MessageResponse> handleException(RuntimeException exception, WebRequest request) {
         try {
             StringWriter errors = new StringWriter();
             exception.printStackTrace(new PrintWriter(errors));
-            System.out.println(exception.getMessage());
+            exception.printStackTrace(System.out);
             // System.out.println(errors);
             Log log = new Log(errors.toString(), userService.getByUsername(request.getRemoteUser()));
             logService.save(log);

@@ -1,45 +1,62 @@
 package matej.tejkogames.models.general;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import matej.tejkogames.models.general.enums.YambChallengeStatus;
 import matej.tejkogames.models.general.ids.UserYambChallengeId;
+import matej.tejkogames.models.general.payload.requests.UserYambChallengeRequest;
 
 @Entity
 @Table(name = "user_yamb_challenge")
-@IdClass(UserYambChallengeId.class)
 public class UserYambChallenge {
 
-    @Id
+    @EmbeddedId
+    private UserYambChallengeId id;
+
+    @JsonIncludeProperties({ "id" })
+    @MapsId("userId")
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Id
+    @JsonIncludeProperties({ "id" })
+    @MapsId("challengeId")
     @ManyToOne
-    @JoinColumn(name = "challenge_id", referencedColumnName = "id")
     private YambChallenge challenge;
 
-    @Column
-    private boolean accepted;
+    @JsonIncludeProperties({ "id" })
+    @JoinColumn(name = "yamb_id", referencedColumnName = "id")
+    @OneToOne
+    private Yamb yamb;
 
     @Column
-    private YambChallengeStatus status;
+    private boolean accepted = false;
+
+    @Column
+    private YambChallengeStatus status = YambChallengeStatus.PENDING_RESPONSE;
 
     public UserYambChallenge(User user, YambChallenge challenge) {
         this.user = user;
         this.challenge = challenge;
-        this.accepted = false;
-        this.status = YambChallengeStatus.PENDING_RESPONSE;
     }
 
     public UserYambChallenge() {
+    }
+
+    public UserYambChallengeId getId() {
+        return id;
+    }
+
+    public void setId(UserYambChallengeId id) {
+        this.id = id;
     }
 
     public User getUser() {
@@ -50,12 +67,20 @@ public class UserYambChallenge {
         this.user = user;
     }
 
-    public YambChallenge getYambChallenge() {
+    public YambChallenge getChallenge() {
         return challenge;
     }
 
-    public void setYambChallenge(YambChallenge challenge) {
+    public void setChallenge(YambChallenge challenge) {
         this.challenge = challenge;
+    }
+
+    public Yamb getYamb() {
+        return yamb;
+    }
+
+    public void setYamb(Yamb yamb) {
+        this.yamb = yamb;
     }
 
     public boolean isAccepted() {
@@ -72,6 +97,24 @@ public class UserYambChallenge {
 
     public void setStatus(YambChallengeStatus status) {
         this.status = status;
+    }
+
+    public void updateByRequest(UserYambChallengeRequest objectRequest) {
+        if (objectRequest.getUser() != null) {
+            this.setUser(objectRequest.getUser());
+        }
+        if (objectRequest.getChallenge() != null) {
+            this.setChallenge(objectRequest.getChallenge());
+        }
+        if (objectRequest.getYamb() != null) {
+            this.setYamb(objectRequest.getYamb());
+        }
+        if (objectRequest.isAccepted() != null) {
+            this.setAccepted(objectRequest.isAccepted());
+        }
+        if (objectRequest.getStatus() != null) {
+            this.setStatus(objectRequest.getStatus());
+        }
     }
 
 }

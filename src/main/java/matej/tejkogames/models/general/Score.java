@@ -25,7 +25,7 @@ public class Score implements ScoreInterface {
 	@Id
 	@GeneratedValue(generator = "UUID")
 	@GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-	@Column(updatable = false, nullable = false)
+	@Column
 	private UUID id;
 
 	@ManyToOne
@@ -45,6 +45,7 @@ public class Score implements ScoreInterface {
 	private LocalDateTime date;
 
 	public Score() {
+		this.date = LocalDateTime.now();
 	}
 
 	public Score(Integer value) {

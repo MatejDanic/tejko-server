@@ -3,32 +3,22 @@ package matej.tejkogames.models.general.payload.requests;
 import java.time.LocalDateTime;
 import java.util.Set;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
-
 import matej.tejkogames.models.general.User;
-import matej.tejkogames.models.general.YambChallenge;
+import matej.tejkogames.models.general.UserYambChallenge;
 import matej.tejkogames.models.yamb.Dice;
 import matej.tejkogames.models.yamb.YambForm;
 import matej.tejkogames.models.yamb.enums.BoxType;
 import matej.tejkogames.models.yamb.enums.YambType;
-import matej.tejkogames.constants.YambConstants;
 
 public class YambRequest {
 
     private User user;
 
-    @NotBlank
-    private YambType type = YambType.CLASSIC;
+    private YambType type;
 
-    @Size(min = 1, max = 6)
-    private String formCode = "DUFA";
+    private String formCode;
 
-    @Min(YambConstants.NUMBER_OF_DICE_MIN)
-    @Max(YambConstants.NUMBER_OF_DICE_MAX)
-    private Integer numberOfDice = 5;
+    private Integer numberOfDice;
 
     private YambForm form;
 
@@ -38,7 +28,7 @@ public class YambRequest {
 
     private Integer rollCount;
 
-    private YambChallenge challenge;
+    private UserYambChallenge userYambChallenge;
 
     private LocalDateTime startDate;
 
@@ -111,12 +101,12 @@ public class YambRequest {
         this.rollCount = rollCount;
     }
 
-    public YambChallenge getChallenge() {
-        return challenge;
+    public UserYambChallenge getUserYambChallenge() {
+        return userYambChallenge;
     }
 
-    public void setChallenge(YambChallenge challenge) {
-        this.challenge = challenge;
+    public void setUserYambChallenge(UserYambChallenge userYambChallenge) {
+        this.userYambChallenge = userYambChallenge;
     }
 
     public LocalDateTime getStartDate() {
@@ -133,11 +123,6 @@ public class YambRequest {
 
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Yamb Request\nType: " + type + "\nForm Code: " + formCode + "\nChallenge: " + challenge;
     }
 
 }

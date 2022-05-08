@@ -2,21 +2,21 @@ package matej.tejkogames.models.general.payload.requests;
 
 import java.util.Set;
 
-import matej.tejkogames.models.general.Yamb;
+import matej.tejkogames.models.general.UserYambChallenge;
 
 public class YambChallengeRequest {
 
-    private Set<Yamb> yambs;
+    private Set<UserYambChallenge> userYambChallenges;
 
     public YambChallengeRequest() {
     }
 
-    public Set<Yamb> getYambs() {
-        return yambs;
+    public Set<UserYambChallenge> getUserYambChallenges() {
+        return userYambChallenges;
     }
 
-    public void setYambs(Set<Yamb> yambs) {
-        this.yambs = yambs;
+    public void setUserYambChallenges(Set<UserYambChallenge> userYambChallenges) {
+        this.userYambChallenges = userYambChallenges;
     }
 
 }

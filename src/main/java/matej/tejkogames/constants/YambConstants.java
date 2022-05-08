@@ -29,8 +29,7 @@ public class YambConstants {
 	public static final int SUM_ONE_BONUS = 30;
 	public static final YambType DEFAULT_TYPE = YambType.CLASSIC;
 
-	public static final int CHALLENGE_LIMIT = 3;
-	public static final int YAMB_LIMIT = 1;
+	public static final int YAMB_LIMIT = 3;
 
 	public static final Map<Character, ColumnType> COLUMN_CODES = new HashMap<Character, ColumnType>() {
 		{
