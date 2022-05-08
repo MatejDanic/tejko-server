@@ -89,15 +89,16 @@ public class ScoreService implements ScoreServiceInterface {
 	}
 
 	@Override
+	public void deleteBulkById(Set<UUID> idSet) {
+		scoreRepository.deleteAllById(idSet);
+	}
+
+	@Override
 	public void deleteAll() {
 		scoreRepository.deleteAll();
 	}
 
 	@Override
-	public void deleteBulkById(Set<UUID> idSet) {
-		scoreRepository.deleteAllById(idSet);
-	}
-
 	public List<Score> getAllByDateBetween(LocalDateTime start, LocalDateTime end) {
 		return scoreRepository.findAllByDateBetween(start, end);
 	}

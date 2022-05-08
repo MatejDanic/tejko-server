@@ -103,6 +103,7 @@ public class RoleService implements RoleServiceInterface {
         roleRepository.deleteAllById(idSet);
     }
 
+    @Override
     public List<User> getUsersByRolesId(Integer id) {
         return userRepository.findAllByRolesId(id);
     }

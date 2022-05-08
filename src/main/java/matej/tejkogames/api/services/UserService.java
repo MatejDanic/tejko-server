@@ -130,14 +130,17 @@ public class UserService implements UserServiceInterface {
         userRepository.deleteAllById(idSet);
     }
 
+    @Override
     public Set<Yamb> getYambsByUserId(UUID id) {
         return getById(id).getYambs();
     }
 
+    @Override
     public List<Yamb> getYambsByTypeAndUserId(UUID id, YambType type) {
         return yambRepository.findAllByTypeAndUserId(id, type);
     }
 
+    @Override
     public Preference getPreferenceByUserId(UUID id) {
         Preference preference;
         if (getById(id).getPreference() != null) {
@@ -148,15 +151,18 @@ public class UserService implements UserServiceInterface {
         return preference;
     }
 
+    @Override
     public void deletePreferenceByUserId(UUID id) {
         preferenceRepository.deleteById(getById(id).getPreference().getId());
     }
 
+    @Override
     public Preference savePreferenceByUserId(UUID id) {
         return preferenceRepository
                 .save(new Preference(TejkoGamesConstants.DEFAULT_VOLUME, TejkoGamesConstants.DEFAULT_THEME));
     }
 
+    @Override
     public Set<Role> assignRoleByUserId(UUID id, Integer roleId) throws RoleNotFoundException {
 
         User user = userRepository.findById(id).get();
@@ -167,10 +173,12 @@ public class UserService implements UserServiceInterface {
         return user.getRoles();
     }
 
+    @Override
     public List<Score> getScoresByUserId(UUID id) {
         return scoreRepository.findAllByUserId(id);
     }
 
+    @Override
     public User getByUsername(String username) {
         return userRepository.findByUsername(username).get();
     }
