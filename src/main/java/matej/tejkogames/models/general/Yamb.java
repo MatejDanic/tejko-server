@@ -4,13 +4,18 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
@@ -39,23 +44,28 @@ public class Yamb implements YambInterface {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", updatable = false, nullable = false)
+    @Column
     private UUID id;
 
-    @ManyToOne
     @JsonIncludeProperties({ "id", "username" })
     @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
     private User user;
 
     @Column
-    private YambType type;
+    private YambType type = YambType.CLASSIC;
 
+    @Min(5)
+    @Max(6)
     @Column(updatable = false)
-    private int numberOfDice;
+    private int numberOfDice = 5;
 
     @Type(type = "json_binary")
     @Column(columnDefinition = "jsonb")
     private YambForm form;
+
+    @Size(min = 1, max = 6)
+    private String formCode = "DUFA";
 
     @Column
     private BoxType announcement = null;
@@ -67,15 +77,14 @@ public class Yamb implements YambInterface {
     @Column
     private int rollCount = 0;
 
-    @ManyToOne
-    @JsonIncludeProperties("id")
-    @JoinColumn(name = "challenge_id")
-    private YambChallenge challenge;
+    @JsonIncludeProperties({ "user", "challenge" })
+    @OneToOne(mappedBy = "yamb", cascade = CascadeType.MERGE)
+    private UserYambChallenge userYambChallenge;
 
     @Column(nullable = false)
-    private LocalDateTime startDate;
+    private LocalDateTime startDate = LocalDateTime.now();
 
-    @Column(nullable = true)
+    @Column
     private LocalDateTime endDate;
 
     public Yamb() {
@@ -145,12 +154,12 @@ public class Yamb implements YambInterface {
         this.rollCount = rollCount;
     }
 
-    public YambChallenge getChallenge() {
-        return challenge;
+    public UserYambChallenge getUserYambChallenge() {
+        return userYambChallenge;
     }
 
-    public void setChallenge(YambChallenge challenge) {
-        this.challenge = challenge;
+    public void setUserYambChallenge(UserYambChallenge userYambChallenge) {
+        this.userYambChallenge = userYambChallenge;
     }
 
     public LocalDateTime getStartDate() {
@@ -173,8 +182,8 @@ public class Yamb implements YambInterface {
         if (objectRequest.getUser() != null) {
             this.setUser(objectRequest.getUser());
         }
-        if (objectRequest.getChallenge() != null) {
-            this.setChallenge(objectRequest.getChallenge());
+        if (objectRequest.getUserYambChallenge() != null) {
+            this.setUserYambChallenge(objectRequest.getUserYambChallenge());
         }
         if (objectRequest.getType() != null) {
             this.setType(objectRequest.getType());

@@ -27,7 +27,7 @@ public class Preference implements PreferenceInterface {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(updatable = false, nullable = false)
+    @Column
     private UUID id;
 
     @OneToOne

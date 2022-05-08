@@ -1,44 +1,39 @@
 package matej.tejkogames.models.general.ids;
 
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.UUID;
 
-import matej.tejkogames.models.general.User;
-import matej.tejkogames.models.general.YambChallenge;
+import javax.persistence.Embeddable;
 
+@Embeddable
 public class UserYambChallengeId implements Serializable {
 
-    private User user;
+    private UUID userId;
 
-    private YambChallenge challenge;
+    private UUID challengeId;
 
-    public UserYambChallengeId(User user, YambChallenge challenge) {
-        this.user = user;
-        this.challenge = challenge;
+    public UserYambChallengeId(UUID userId, UUID challengeId) {
+        this.userId = userId;
+        this.challengeId = challengeId;
     }
 
     public UserYambChallengeId() {
     }
 
-    public User getUser() {
-        return user;
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 
-    public YambChallenge getYambChallenge() {
-        return challenge;
+    public UUID getChallengeId() {
+        return challengeId;
     }
 
-    public void setYambChallenge(YambChallenge challenge) {
-        this.challenge = challenge;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(user, challenge);
+    public void setChallengeId(UUID challengeId) {
+        this.challengeId = challengeId;
     }
 
     @Override
@@ -50,7 +45,7 @@ public class UserYambChallengeId implements Serializable {
         }
         UserYambChallengeId other = (UserYambChallengeId) obj;
 
-        return this.challenge == other.getYambChallenge() && this.user == other.user;
+        return this.challengeId == other.getChallengeId() && this.userId == other.getUserId();
     }
 
 }

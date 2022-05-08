@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,6 +19,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -37,11 +37,11 @@ public class User implements UserInterface {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(updatable = false, nullable = false)
+    @Column
     private UUID id;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     private Set<Score> scores;
 
     @JsonIgnore
@@ -49,7 +49,7 @@ public class User implements UserInterface {
     private Set<Log> logs;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     private Set<Yamb> yambs;
 
     @Column(nullable = false, unique = true)
@@ -59,26 +59,21 @@ public class User implements UserInterface {
     @Column(unique = true)
     private String usernameLowercase;
 
-    @PrePersist
-    @PreUpdate
-    private void prepare() {
-        this.usernameLowercase = username == null ? null : username.toLowerCase();
-    }
-
     @JsonIgnore
     @Column(nullable = false)
     private String password;
 
     @JsonIncludeProperties({ "id", "label" })
-    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "auth_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @ManyToMany
     private Set<Role> roles;
 
+    @JsonIgnoreProperties({ "user" })
     @OneToMany(mappedBy = "user")
     private Set<UserYambChallenge> userYambChallenges;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({ "user" })
+    @OneToOne(mappedBy = "user")
     private Preference preference;
 
     @JsonIgnore
@@ -94,6 +89,12 @@ public class User implements UserInterface {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void prepare() {
+        this.usernameLowercase = username == null ? null : username.toLowerCase();
     }
 
     public UUID getId() {
@@ -112,6 +113,14 @@ public class User implements UserInterface {
         this.scores = scores;
     }
 
+    public Set<Log> getLogs() {
+        return logs;
+    }
+
+    public void setLogs(Set<Log> logs) {
+        this.logs = logs;
+    }
+
     public Set<Yamb> getYambs() {
         return yambs;
     }
@@ -128,6 +137,14 @@ public class User implements UserInterface {
         this.username = username;
     }
 
+    public String getUsernameLowercase() {
+        return usernameLowercase;
+    }
+
+    public void setUsernameLowercase(String usernameLowercase) {
+        this.usernameLowercase = usernameLowercase;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -142,6 +159,14 @@ public class User implements UserInterface {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public Set<UserYambChallenge> getUserYambChallenges() {
+        return userYambChallenges;
+    }
+
+    public void setUserYambChallenges(Set<UserYambChallenge> userYambChallenges) {
+        this.userYambChallenges = userYambChallenges;
     }
 
     public Preference getPreference() {

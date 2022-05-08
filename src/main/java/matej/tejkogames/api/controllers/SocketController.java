@@ -12,7 +12,7 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.RestController;
 
 import matej.tejkogames.api.services.SocketService;
-import matej.tejkogames.api.services.UserServiceImpl;
+import matej.tejkogames.api.services.UserService;
 import matej.tejkogames.components.JwtComponent;
 import matej.tejkogames.models.general.enums.MessageType;
 import matej.tejkogames.models.general.payload.requests.MessageRequest;
@@ -22,7 +22,7 @@ import matej.tejkogames.models.general.payload.responses.MessageResponse;
 public class SocketController {
 
     @Autowired
-    UserServiceImpl userService;
+    UserService userService;
 
     @Autowired
     SocketService socketService;
@@ -31,7 +31,7 @@ public class SocketController {
     SimpMessagingTemplate simpMessagingTemplate;
 
     @Autowired
-    YambChallengeControllerImpl yambChallengeController;
+    YambChallengeController yambChallengeController;
 
     @Autowired
     JwtComponent jwtComponent;
