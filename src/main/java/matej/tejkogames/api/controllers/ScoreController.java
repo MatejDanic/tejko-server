@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,48 +29,49 @@ public class ScoreController implements ScoreControllerInterface {
 	ScoreService yambScoreService;
 
 	@Override
-	public ResponseEntity<Score> getById(UUID id) {
+	public ResponseEntity<Score> getById(@PathVariable UUID id) {
 		return new ResponseEntity<>(yambScoreService.getById(id), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@Override
-	public ResponseEntity<List<Score>> getBulkById(Set<UUID> idSet) {
+	public ResponseEntity<List<Score>> getBulkById(@RequestBody Set<UUID> idSet) {
 		return new ResponseEntity<>(yambScoreService.getBulkById(idSet), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<List<Score>> getAll(Integer page, Integer size, String sort, String direction) {
+	public ResponseEntity<List<Score>> getAll(@PathVariable Integer page, @PathVariable Integer size,
+			@PathVariable String sort, @PathVariable String direction) {
 		return new ResponseEntity<>(yambScoreService.getAll(page, size, sort, direction), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@Override
-	public ResponseEntity<Score> create(ScoreRequest objectRequest) {
+	public ResponseEntity<Score> create(@RequestBody ScoreRequest objectRequest) {
 		return new ResponseEntity<>(yambScoreService.create(objectRequest), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@Override
-	public ResponseEntity<List<Score>> createBulk(List<ScoreRequest> objectRequestList) {
+	public ResponseEntity<List<Score>> createBulk(@RequestBody List<ScoreRequest> objectRequestList) {
 		return new ResponseEntity<>(yambScoreService.createBulk(objectRequestList), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@Override
-	public ResponseEntity<Score> updateById(UUID id, ScoreRequest objectRequest) {
+	public ResponseEntity<Score> updateById(@PathVariable UUID id, @RequestBody ScoreRequest objectRequest) {
 		return new ResponseEntity<>(yambScoreService.updateById(id, objectRequest), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@Override
-	public ResponseEntity<List<Score>> updateBulkById(Map<UUID, ScoreRequest> idObjectRequestMap) {
+	public ResponseEntity<List<Score>> updateBulkById(@RequestBody Map<UUID, ScoreRequest> idObjectRequestMap) {
 		return new ResponseEntity<>(yambScoreService.updateBulkById(idObjectRequestMap), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@Override
-	public ResponseEntity<MessageResponse> deleteById(UUID id) {
+	public ResponseEntity<MessageResponse> deleteById(@PathVariable UUID id) {
 		yambScoreService.deleteById(id);
 		return new ResponseEntity<>(new MessageResponse("Score", "Score has been successfully deleted."),
 				HttpStatus.OK);
@@ -76,7 +79,7 @@ public class ScoreController implements ScoreControllerInterface {
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@Override
-	public ResponseEntity<MessageResponse> deleteBulkById(Set<UUID> idSet) {
+	public ResponseEntity<MessageResponse> deleteBulkById(@RequestBody Set<UUID> idSet) {
 		yambScoreService.deleteBulkById(idSet);
 		return new ResponseEntity<>(
 				new MessageResponse("Score", "All scores have been successfully deleted."),
@@ -92,7 +95,7 @@ public class ScoreController implements ScoreControllerInterface {
 	}
 
 	@Override
-	public ResponseEntity<List<Score>> getAllByDateBetween(DateIntervalRequest dateIntervalRequest) {
+	public ResponseEntity<List<Score>> getAllByDateBetween(@RequestBody DateIntervalRequest dateIntervalRequest) {
 		return new ResponseEntity<>(
 				yambScoreService.getAllByDateBetween(dateIntervalRequest.getStart(), dateIntervalRequest.getEnd()),
 				HttpStatus.OK);

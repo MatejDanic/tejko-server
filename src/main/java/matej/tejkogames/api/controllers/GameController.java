@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,48 +28,49 @@ public class GameController implements GameControllerInterface {
     GameService gameService;
 
     @Override
-    public ResponseEntity<Game> getById(Integer id) {
+    public ResponseEntity<Game> getById(@PathVariable Integer id) {
         return new ResponseEntity<>(gameService.getById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<List<Game>> getBulkById(Set<Integer> idSet) {
+    public ResponseEntity<List<Game>> getBulkById(@RequestBody Set<Integer> idSet) {
         return new ResponseEntity<>(gameService.getBulkById(idSet), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<List<Game>> getAll(Integer page, Integer size, String sort, String direction) {
+    public ResponseEntity<List<Game>> getAll(@PathVariable Integer page, @PathVariable Integer size,
+            @PathVariable String sort, @PathVariable String direction) {
         return new ResponseEntity<>(gameService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<Game> create(GameRequest objectRequest) {
+    public ResponseEntity<Game> create(@RequestBody GameRequest objectRequest) {
         return new ResponseEntity<>(gameService.create(objectRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<List<Game>> createBulk(List<GameRequest> objectRequestList) {
+    public ResponseEntity<List<Game>> createBulk(@RequestBody List<GameRequest> objectRequestList) {
         return new ResponseEntity<>(gameService.createBulk(objectRequestList), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<Game> updateById(Integer id, GameRequest objectRequest) {
+    public ResponseEntity<Game> updateById(@PathVariable Integer id, @RequestBody GameRequest objectRequest) {
         return new ResponseEntity<>(gameService.updateById(id, objectRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<List<Game>> updateBulkById(Map<Integer, GameRequest> idObjectRequestMap) {
+    public ResponseEntity<List<Game>> updateBulkById(@RequestBody Map<Integer, GameRequest> idObjectRequestMap) {
         return new ResponseEntity<>(gameService.updateBulkById(idObjectRequestMap), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<MessageResponse> deleteById(Integer id) {
+    public ResponseEntity<MessageResponse> deleteById(@PathVariable Integer id) {
         gameService.deleteById(id);
         return new ResponseEntity<>(
                 new MessageResponse("Game", "Game has been successfully deleted"), HttpStatus.OK);
@@ -75,7 +78,7 @@ public class GameController implements GameControllerInterface {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<MessageResponse> deleteBulkById(Set<Integer> idSet) {
+    public ResponseEntity<MessageResponse> deleteBulkById(@RequestBody Set<Integer> idSet) {
         gameService.deleteBulkById(idSet);
         return new ResponseEntity<>(
                 new MessageResponse("Game", "All games have been successfully deleted"),
@@ -92,7 +95,7 @@ public class GameController implements GameControllerInterface {
     }
 
     @Override
-    public ResponseEntity<List<Score>> getScoresByGameId(Integer id) {
+    public ResponseEntity<List<Score>> getScoresByGameId(@PathVariable Integer id) {
         return new ResponseEntity<>(gameService.getScoresByGameId(id), HttpStatus.OK);
     }
 

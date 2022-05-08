@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -78,7 +77,7 @@ public class Yamb implements YambInterface {
     private int rollCount = 0;
 
     @JsonIncludeProperties({ "user", "challenge" })
-    @OneToOne(mappedBy = "yamb", cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "yamb")
     private UserYambChallenge userYambChallenge;
 
     @Column(nullable = false)

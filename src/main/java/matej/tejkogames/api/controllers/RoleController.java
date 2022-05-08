@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,48 +28,49 @@ public class RoleController implements RoleControllerInterface {
     RoleService roleService;
 
     @Override
-    public ResponseEntity<Role> getById(Integer id) {
+    public ResponseEntity<Role> getById(@PathVariable Integer id) {
         return new ResponseEntity<>(roleService.getById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<List<Role>> getBulkById(Set<Integer> idSet) {
+    public ResponseEntity<List<Role>> getBulkById(@RequestBody Set<Integer> idSet) {
         return new ResponseEntity<>(roleService.getBulkById(idSet), HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity<List<Role>> getAll(Integer page, Integer size, String sort, String direction) {
+    public ResponseEntity<List<Role>> getAll(@PathVariable Integer page, @PathVariable Integer size,
+            @PathVariable String sort, @PathVariable String direction) {
         return new ResponseEntity<>(roleService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<Role> create(RoleRequest objectRequest) {
+    public ResponseEntity<Role> create(@RequestBody RoleRequest objectRequest) {
         return new ResponseEntity<>(roleService.create(objectRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<List<Role>> createBulk(List<RoleRequest> objectRequestList) {
+    public ResponseEntity<List<Role>> createBulk(@RequestBody List<RoleRequest> objectRequestList) {
         return new ResponseEntity<>(roleService.createBulk(objectRequestList), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<Role> updateById(Integer id, RoleRequest objectRequest) {
+    public ResponseEntity<Role> updateById(@PathVariable Integer id, RoleRequest objectRequest) {
         return new ResponseEntity<>(roleService.updateById(id, objectRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<List<Role>> updateBulkById(Map<Integer, RoleRequest> idObjectRequestMap) {
+    public ResponseEntity<List<Role>> updateBulkById(@RequestBody Map<Integer, RoleRequest> idObjectRequestMap) {
         return new ResponseEntity<>(roleService.updateBulkById(idObjectRequestMap), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<MessageResponse> deleteById(Integer id) {
+    public ResponseEntity<MessageResponse> deleteById(@PathVariable Integer id) {
         roleService.deleteById(id);
         return new ResponseEntity<>(new MessageResponse("Role", "Role has been successfully deleted"), HttpStatus.OK);
     }
@@ -91,7 +93,7 @@ public class RoleController implements RoleControllerInterface {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<List<User>> getUsersByRolesId(Integer id) {
+    public ResponseEntity<List<User>> getUsersByRolesId(@PathVariable Integer id) {
         return new ResponseEntity<>(roleService.getUsersByRolesId(id), HttpStatus.OK);
     }
 

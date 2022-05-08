@@ -42,6 +42,7 @@ public class UserYambChallengeService implements UserYambChallengeServiceInterfa
 
     @Override
     public UserYambChallenge create(UserYambChallengeRequest objectRequest) {
+
         UserYambChallenge userYambChallenge = new UserYambChallenge();
         userYambChallenge.setId(new UserYambChallengeId());
 

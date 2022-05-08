@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,19 +29,20 @@ public class PreferenceController implements PreferenceControllerInterface {
 
     @PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), preferenceService.getById(#id))")
     @Override
-    public ResponseEntity<Preference> getById(UUID id) {
+    public ResponseEntity<Preference> getById(@PathVariable UUID id) {
         return new ResponseEntity<>(preferenceService.getById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<List<Preference>> getBulkById(Set<UUID> idSet) {
+    public ResponseEntity<List<Preference>> getBulkById(@RequestBody Set<UUID> idSet) {
         return new ResponseEntity<>(preferenceService.getBulkById(idSet), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<List<Preference>> getAll(Integer page, Integer size, String sort, String direction) {
+    public ResponseEntity<List<Preference>> getAll(@PathVariable Integer page, @PathVariable Integer size,
+            @PathVariable String sort, @PathVariable String direction) {
         return new ResponseEntity<>(preferenceService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
 
@@ -70,8 +72,7 @@ public class PreferenceController implements PreferenceControllerInterface {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @Override
-    public ResponseEntity<MessageResponse> deleteById(
-            @PathVariable UUID id) {
+    public ResponseEntity<MessageResponse> deleteById(@PathVariable UUID id) {
         preferenceService.deleteById(id);
         return new ResponseEntity<>(new MessageResponse("Preference",
                 "Preference has been successfully deleted."), HttpStatus.OK);

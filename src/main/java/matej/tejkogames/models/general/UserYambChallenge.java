@@ -1,5 +1,6 @@
 package matej.tejkogames.models.general;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -24,17 +25,18 @@ public class UserYambChallenge {
 
     @JsonIncludeProperties({ "id" })
     @MapsId("userId")
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.REMOVE })
     private User user;
 
     @JsonIncludeProperties({ "id" })
     @MapsId("challengeId")
-    @ManyToOne
+    @ManyToOne(cascade = { CascadeType.REMOVE })
     private YambChallenge challenge;
 
     @JsonIncludeProperties({ "id" })
     @JoinColumn(name = "yamb_id", referencedColumnName = "id")
-    @OneToOne
+    @OneToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH,
+            CascadeType.PERSIST })
     private Yamb yamb;
 
     @Column
