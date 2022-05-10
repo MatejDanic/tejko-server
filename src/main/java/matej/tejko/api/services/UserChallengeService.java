@@ -71,18 +71,22 @@ public class UserChallengeService implements UserChallengeServiceInterface {
     @Override
     public UserChallenge updateById(UserChallengeId id, JsonPatch objectPatch)
             throws JsonProcessingException, JsonPatchException {
-        UserChallenge challenge = getById(id);
+        UserChallenge userChallenge = getById(id);
 
-        challenge = applyPatch(challenge, objectPatch);
+        userChallenge = applyPatch(userChallenge, objectPatch);
 
-        return userChallengeRepository.save(challenge);
+        return userChallengeRepository.save(userChallenge);
     }
 
     @Override
     public List<UserChallenge> updateBulkById(
-            Map<UserChallengeId, JsonPatch> idObjectPatchMap) {
-        // TODO: implement
-        return null;
+            Map<UserChallengeId, JsonPatch> idObjectPatchMap) throws JsonProcessingException, JsonPatchException {
+        List<UserChallenge> userChallengeList = getBulkById(idObjectPatchMap.keySet());
+
+        for (UserChallenge userChallenge : userChallengeList) {
+            userChallenge = applyPatch(userChallenge, idObjectPatchMap.get(userChallenge.getId()));
+        }
+        return userChallengeRepository.saveAll(userChallengeList);
     }
 
     @Override
