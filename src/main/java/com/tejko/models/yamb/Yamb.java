@@ -37,7 +37,7 @@ public class Yamb extends Game {
     private YambForm form;
 
     @Size(min = 1, max = 6)
-    private String formCode = "DUFA";
+    private String formCode;
 
     @Column
     private BoxType announcement = null;
@@ -50,7 +50,7 @@ public class Yamb extends Game {
     private int rollCount = 0;
 
     @Column(nullable = false)
-    private LocalDateTime startDate = LocalDateTime.now();
+    private LocalDateTime startDate;
 
     @Column
     private LocalDateTime endDate;

@@ -1,39 +1,34 @@
 package com.tejko.models.general.payload.responses;
 
+import com.tejko.constants.TejkoConstants;
 import com.tejko.models.general.enums.MessageType;
 
 public class MessageResponse {
 
     private String subject;
 
-    private String sender;
+    private String sender = TejkoConstants.DEFAULT_SENDER;
 
-    private MessageType type;
+    private MessageType type = MessageType.DEFAULT;
 
     private Object content;
 
     public MessageResponse(String subject) {
         this.subject = subject;
-        this.sender = "Server";
-        this.type = MessageType.DEFAULT;
     }
 
     public MessageResponse(String subject, Object content) {
         this.subject = subject;
-        this.sender = "Server";
-        this.type = MessageType.DEFAULT;
         this.content = content;
     }
 
     public MessageResponse(String subject, MessageType type) {
         this.subject = subject;
-        this.sender = "Server";
         this.type = type;
     }
 
     public MessageResponse(String subject, MessageType type, Object content) {
         this.subject = subject;
-        this.sender = "Server";
         this.type = type;
         this.content = content;
     }

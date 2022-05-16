@@ -43,12 +43,6 @@ public class Score {
 	private LocalDateTime date;
 
 	public Score() {
-		this.date = LocalDateTime.now();
-	}
-
-	public Score(Integer value) {
-		this.value = value;
-		this.date = LocalDateTime.now();
 	}
 
 	public UUID getId() {

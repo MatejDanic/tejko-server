@@ -32,7 +32,7 @@ public class Log {
     private UUID id;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
-    private LocalDateTime timestamp;
+    private LocalDateTime timestamp = LocalDateTime.now();
 
     @ManyToOne
     @JsonIncludeProperties({ "id", "username" })
@@ -48,7 +48,6 @@ public class Log {
     public Log(String content, User user) {
         this.content = content;
         this.user = user;
-        this.timestamp = LocalDateTime.now();
     }
 
     public UUID getId() {

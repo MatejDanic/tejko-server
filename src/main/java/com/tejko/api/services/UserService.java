@@ -24,13 +24,14 @@ import com.tejko.api.repositories.RoleRepository;
 import com.tejko.api.repositories.ScoreRepository;
 import com.tejko.api.repositories.UserChallengeRepository;
 import com.tejko.api.repositories.UserRepository;
-import com.tejko.constants.TejkoConstants;
 import com.tejko.exceptions.RoleNotFoundException;
+import com.tejko.factories.PreferenceFactory;
 import com.tejko.factories.UserFactory;
 import com.tejko.interfaces.api.services.UserServiceInterface;
 import com.tejko.models.general.Preference;
 import com.tejko.models.general.Role;
 import com.tejko.models.general.User;
+import com.tejko.models.general.payload.requests.PreferenceRequest;
 import com.tejko.models.general.payload.requests.UserRequest;
 import com.tejko.models.general.Score;
 
@@ -54,6 +55,9 @@ public class UserService implements UserServiceInterface {
 
     @Autowired
     UserFactory userFactory;
+
+    @Autowired
+    PreferenceFactory preferenceFactory;
 
     @Override
     public User getById(UUID id) {
@@ -126,13 +130,7 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public Preference getPreferenceByUserId(UUID id) {
-        Preference preference;
-        if (getById(id).getPreference() != null) {
-            preference = getById(id).getPreference();
-        } else {
-            preference = savePreferenceByUserId(id);
-        }
-        return preference;
+        return getById(id).getPreference();
     }
 
     @Override
@@ -141,9 +139,8 @@ public class UserService implements UserServiceInterface {
     }
 
     @Override
-    public Preference savePreferenceByUserId(UUID id) {
-        return preferenceRepository
-                .save(new Preference(TejkoConstants.DEFAULT_VOLUME, TejkoConstants.DEFAULT_THEME));
+    public Preference savePreferenceByUserId(UUID id, PreferenceRequest preferenceRequest) {
+        return preferenceRepository.save(preferenceFactory.create(preferenceRequest));
     }
 
     @Override

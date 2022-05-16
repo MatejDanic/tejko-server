@@ -42,11 +42,6 @@ public class Preference {
     public Preference() {
     }
 
-    public Preference(int volume, Theme theme) {
-        this.volume = volume;
-        this.theme = theme;
-    }
-
     public UUID getId() {
         return id;
     }

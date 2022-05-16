@@ -37,4 +37,5 @@ public class TejkoConstants {
     public static final int VOLUME_MAX = 3;
 
     public static final Theme DEFAULT_THEME = Theme.LIGHT;
+    public static final String DEFAULT_SENDER = "Server";
 }
