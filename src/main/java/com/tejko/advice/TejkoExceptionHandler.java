@@ -35,13 +35,17 @@ public class TejkoExceptionHandler extends ResponseEntityExceptionHandler {
             StringWriter errors = new StringWriter();
             exception.printStackTrace(new PrintWriter(errors));
             exception.printStackTrace(System.out);
-            // System.out.println(errors);
+            System.out.println(errors);
             Log log = new Log(errors.toString(), userService.getByUsername(request.getRemoteUser()));
             logService.save(log);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return new ResponseEntity<>(new MessageResponse("Error", MessageType.ERROR, exception.getMessage()),
+        return new ResponseEntity<>(
+                new MessageResponse(
+                        "Error",
+                        MessageType.ERROR,
+                        exception.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 

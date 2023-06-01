@@ -37,6 +37,11 @@ public class LogService implements LogServiceInterface {
     }
 
     @Override
+    public List<Log> getBulkById(Set<UUID> idSet) {
+        return logRepository.findAllById(idSet);
+    }
+
+    @Override
     public List<Log> getBulkByIdIn(Set<UUID> idList) {
         return logRepository.findAllById(idList);
     }

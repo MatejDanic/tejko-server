@@ -12,6 +12,8 @@ public interface LogServiceInterface {
 
     public List<Log> getAll(Integer page, Integer size, String sort, String direction);
 
+    public List<Log> getBulkById(Set<UUID> idSet);
+
     public void deleteById(UUID id);
 
     public void deleteAll();

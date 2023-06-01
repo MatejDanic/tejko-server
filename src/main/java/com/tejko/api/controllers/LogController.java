@@ -1,6 +1,7 @@
 package com.tejko.api.controllers;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,12 +36,19 @@ public class LogController implements LogControllerInterface {
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
-	@GetMapping("/bulk")
+	@GetMapping("")
 	@Override
 	public ResponseEntity<List<Log>> getAll(@RequestParam(defaultValue = "0") Integer page,
 			@RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "id") String sort,
 			@RequestParam(defaultValue = "desc") String direction) {
 		return new ResponseEntity<>(logService.getAll(page, size, sort, direction), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN')")
+	@GetMapping("/bulk")
+	@Override
+	public ResponseEntity<List<Log>> getBulkById(@RequestBody Set<UUID> idSet) {
+		return new ResponseEntity<>(logService.getBulkById(idSet), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")

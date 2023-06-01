@@ -10,9 +10,9 @@ import com.tejko.models.general.Score;
 
 public interface ScoreRepository extends JpaRepository<Score, UUID> {
 
-    List<Score> findAllByUserId(UUID id);
+    List<Score> findAllByUserId(UUID userId);
 
-    List<Score> findAllByAppId(Integer id);
+    List<Score> findAllByAppId(Integer appId);
 
     List<Score> findAllByDateBetween(LocalDateTime start, LocalDateTime end);
 

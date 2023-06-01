@@ -1,1 +1,1 @@
-# tejko-games-server
+# tejko-server
