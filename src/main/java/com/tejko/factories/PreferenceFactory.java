@@ -16,16 +16,14 @@ public class PreferenceFactory implements PreferenceFactoryInterface {
     UserRepository userRepository;
 
     @Override
-    public Preference create(PreferenceRequest objectRequest) {
-
+    public Preference getObject(PreferenceRequest objectRequest) {
         Preference preference = new Preference();
 
         User user = userRepository.findById(objectRequest.getUserId()).get();
         preference.setUser(user);
-
+        
         preference.setVolume(objectRequest.getVolume());
         preference.setTheme(objectRequest.getTheme());
-
         return preference;
     }
 

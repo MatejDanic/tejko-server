@@ -1,7 +1,5 @@
 package com.tejko.factories;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +10,6 @@ import com.tejko.interfaces.factories.GameFactoryInterface;
 import com.tejko.models.general.App;
 import com.tejko.models.general.Game;
 import com.tejko.models.general.User;
-import com.tejko.utils.YambUtil;
 import com.tejko.models.general.payload.requests.GameRequest;
 import com.tejko.models.general.payload.requests.YambRequest;
 import com.tejko.models.yamb.Yamb;
@@ -30,29 +27,25 @@ public class GameFactory implements GameFactoryInterface {
     AppRepository appRepository;
 
     @Override
-    public Game create(GameRequest objectRequest) {
-
+    public Game getObject(GameRequest objectRequest) {
         App app = appRepository.findById(objectRequest.getAppId()).get();
 
         switch (app.getName()) {
             case "Yamb":
-                return createYamb((YambRequest) objectRequest);
+                return getYambObject((YambRequest) objectRequest, app);
         }
+
         return null;
     }
 
-    private Yamb createYamb(YambRequest objectRequest) {
+    private Yamb getYambObject(YambRequest objectRequest, App app) {
+        Yamb yamb = Yamb.createYamb();
 
-        Yamb yamb = new Yamb();
-
+        
+        yamb.setApp(app);
         User user = userRepository.findById(objectRequest.getUserId()).get();
         yamb.setUser(user);
-        yamb.setNumberOfDice(objectRequest.getNumberOfDice());
-        yamb.setFormCode(objectRequest.getFormCode());
-        yamb.setForm(YambUtil.generateYambForm(objectRequest.getFormCode()));
-        yamb.setDiceSet(YambUtil.generateDiceSet(objectRequest.getNumberOfDice()));
-        yamb.setStartDate(LocalDateTime.now());
-
+        
         return yamb;
     }
 

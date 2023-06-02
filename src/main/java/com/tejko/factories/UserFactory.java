@@ -23,14 +23,14 @@ public class UserFactory implements UserFactoryInterface {
     PasswordEncoder encoder;
 
     @Override
-    public User create(UserRequest objectRequest) {
-
+    public User getObject(UserRequest objectRequest) {
         User user = new User();
 
         user.setUsername(objectRequest.getUsername());
         user.setPassword(encoder.encode(objectRequest.getPassword()));
         user.setTestUser(objectRequest.isTestUser());
         user.setCreatedDate(LocalDateTime.now());
+        
         user.setRoles(new HashSet<Role>() {
             {
                 add(roleRepository.findByLabel("USER").orElseThrow(() -> new RuntimeException("Role not found.")));

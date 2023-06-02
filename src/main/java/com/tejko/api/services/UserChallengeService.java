@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Resource;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,7 +34,7 @@ public class UserChallengeService implements UserChallengeServiceInterface {
     @Autowired
     UserChallengeRepository userChallengeRepository;
 
-    @Autowired
+    @Resource
     UserChallengeFactory userChallengeFactory;
 
     @Override
@@ -53,7 +55,7 @@ public class UserChallengeService implements UserChallengeServiceInterface {
 
     @Override
     public UserChallenge create(UserChallengeRequest objectRequest) {
-        UserChallenge userChallenge = userChallengeFactory.create(objectRequest);
+        UserChallenge userChallenge = userChallengeFactory.getObject(objectRequest);
         return userChallengeRepository.save(userChallenge);
     }
 
@@ -62,7 +64,7 @@ public class UserChallengeService implements UserChallengeServiceInterface {
         List<UserChallenge> userChallengeList = new ArrayList<>();
 
         for (UserChallengeRequest objectRequest : objectRequestList) {
-            userChallengeList.add(userChallengeFactory.create(objectRequest));
+            userChallengeList.add(userChallengeFactory.getObject(objectRequest));
         }
 
         return userChallengeRepository.saveAll(userChallengeList);

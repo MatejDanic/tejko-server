@@ -3,6 +3,8 @@ package com.tejko.api.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,31 +32,28 @@ public class AuthService {
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
+    @Resource
     UserFactory userFactory;
 
     @Autowired
     JwtComponent jwtComponent;
 
     public JwtResponse login(LoginRequest loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtComponent.generateJwt(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
-                .collect(Collectors.toList());
+        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
         return new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles);
     }
 
     public String register(RegisterRequest registerRequest) throws UsernameTakenException {
-        if (userRepository.existsByUsername(registerRequest.getUsername()))
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
             throw new UsernameTakenException("Username is already taken!");
-
-        User user = userFactory
-                .create(new UserRequest(registerRequest.getUsername(), registerRequest.getPassword(), false));
+        }
+        User user = userFactory.getObject(new UserRequest(registerRequest.getUsername(), registerRequest.getPassword(), false));
         userRepository.save(user);
         return "User " + user.getUsername() + " successfully registered.";
     }

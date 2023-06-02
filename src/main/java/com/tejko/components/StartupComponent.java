@@ -35,15 +35,15 @@ public class StartupComponent implements ApplicationRunner {
 
                 if (roleRepository.findAll().size() == 0) {
                         roleRepository.saveAll(Arrays.asList(
-                                        roleFactory.create(new RoleRequest(
+                                        roleFactory.getObject(new RoleRequest(
                                                         TejkoConstants.ROLE_USER_ID,
                                                         TejkoConstants.ROLE_USER_LABEL,
                                                         TejkoConstants.ROLE_USER_DESCRIPTION)),
-                                        roleFactory.create(new RoleRequest(
+                                        roleFactory.getObject(new RoleRequest(
                                                         TejkoConstants.ROLE_ADMIN_ID,
                                                         TejkoConstants.ROLE_ADMIN_LABEL,
                                                         TejkoConstants.ROLE_ADMIN_DESCRIPTION)),
-                                        roleFactory.create(new RoleRequest(
+                                        roleFactory.getObject(new RoleRequest(
                                                         TejkoConstants.ROLE_MODERATOR_ID,
                                                         TejkoConstants.ROLE_MODERATOR_LABEL,
                                                         TejkoConstants.ROLE_MODERATOR_DESCRIPTION))));
@@ -51,7 +51,7 @@ public class StartupComponent implements ApplicationRunner {
 
                 if (appRepository.findAll().size() == 0) {
                         appRepository.saveAll(Arrays.asList(
-                                        appFactory.create(new AppRequest(
+                                        appFactory.getObject(new AppRequest(
                                                         TejkoConstants.APP_YAMB_ID,
                                                         TejkoConstants.APP_YAMB_NAME,
                                                         TejkoConstants.APP_YAMB_DESCRIPTION))));

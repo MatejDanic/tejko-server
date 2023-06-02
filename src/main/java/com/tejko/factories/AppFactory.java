@@ -9,10 +9,9 @@ import com.tejko.models.general.payload.requests.AppRequest;
 public class AppFactory implements AppFactoryInterface {
 
     @Override
-    public App create(AppRequest objectRequest) {
-
+    public App getObject(AppRequest objectRequest) {
         App app = new App();
-
+        
         app.setId(objectRequest.getId());
         app.setName(objectRequest.getName());
         app.setDescription(objectRequest.getDescription());

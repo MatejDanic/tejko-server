@@ -16,14 +16,12 @@ public class ChallengeFactory implements ChallengeFactoryInterface {
     AppRepository appRepository;
 
     @Override
-    public Challenge create(ChallengeRequest objectRequest) {
-
+    public Challenge getObject(ChallengeRequest objectRequest) {
         Challenge challenge = new Challenge();
 
         App app = appRepository.findById(objectRequest.getAppId()).get();
-
         challenge.setApp(app);
-
+        
         return challenge;
     }
 

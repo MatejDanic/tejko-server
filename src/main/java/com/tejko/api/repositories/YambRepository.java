@@ -6,10 +6,9 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.tejko.models.yamb.Yamb;
-import com.tejko.models.yamb.enums.YambType;
 
 public interface YambRepository extends JpaRepository<Yamb, UUID> {
 
-    public List<Yamb> findAllByTypeAndUserId(UUID id, YambType type);
+    public List<Yamb> findAllByUserId(UUID id);
 
 }

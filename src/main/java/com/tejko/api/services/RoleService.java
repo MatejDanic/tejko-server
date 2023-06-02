@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Resource;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +32,7 @@ import com.tejko.models.general.payload.requests.RoleRequest;
 @Service
 public class RoleService implements RoleServiceInterface {
 
-    @Autowired
+    @Resource
     RoleFactory roleFactory;
 
     @Autowired
@@ -57,7 +59,7 @@ public class RoleService implements RoleServiceInterface {
 
     @Override
     public Role create(RoleRequest objectRequest) {
-        Role role = roleFactory.create(objectRequest);
+        Role role = roleFactory.getObject(objectRequest);
         return roleRepository.save(role);
     }
 
@@ -66,7 +68,7 @@ public class RoleService implements RoleServiceInterface {
         List<Role> roleList = new ArrayList<>();
 
         for (RoleRequest objectRequest : objectRequestList) {
-            roleList.add(roleFactory.create(objectRequest));
+            roleList.add(roleFactory.getObject(objectRequest));
         }
 
         return roleRepository.saveAll(roleList);

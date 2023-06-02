@@ -5,63 +5,58 @@ import com.tejko.models.yamb.enums.ColumnType;
 
 public class Box {
 
-    private int value;
-
     private BoxType type;
 
-    private boolean filled;
+    private int value = 0;
+
+    private boolean filled = false;
 
     private boolean available;
 
-    public Box(BoxType type, boolean available) {
+    private Box() {}
+
+    private Box(BoxType type, boolean available) {
         this.type = type;
         this.available = available;
-        this.value = 0;
-        this.filled = false;
     }
 
+    public static Box createBox(ColumnType columnType, BoxType type) {
+        return new Box(type, Box.isAvailableAtStart(columnType, type));
+    }
+    
     public int getValue() {
-        return this.value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
+        return value;
     }
 
     public BoxType getType() {
-        return this.type;
-    }
-
-    public void setType(BoxType type) {
-        this.type = type;
+        return type;
     }
 
     public boolean isFilled() {
-        return this.filled;
-    }
-
-    public void setFilled(boolean filled) {
-        this.filled = filled;
+        return filled;
     }
 
     public boolean isAvailable() {
-        return this.available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
+        return available;
     }
 
     public void fill(int value) {
         this.value = value;
-        this.filled = true;
-        this.available = false;
+        filled = true;
+        available = false;
     }
 
-    public boolean isNext(ColumnType currentColumnType, BoxType currentBoxType) {
-        return (currentColumnType == ColumnType.DOWNWARDS && currentBoxType != BoxType.YAMB
-                && currentBoxType.ordinal() + 1 == type.ordinal())
-                || (currentColumnType == ColumnType.UPWARDS && currentBoxType != BoxType.ONES
-                        && currentBoxType.ordinal() - 1 == type.ordinal());
+    public void makeAvailable() {
+        available = true;
     }
+
+    private static boolean isAvailableAtStart(ColumnType columnType, BoxType boxType) {
+        return columnType == ColumnType.FREE
+            || columnType == ColumnType.ANNOUNCEMENT
+            || columnType == ColumnType.DOWNWARDS
+                && boxType == BoxType.ONES
+            || columnType == ColumnType.UPWARDS
+                && boxType == BoxType.YAMB;
+    }
+
 }

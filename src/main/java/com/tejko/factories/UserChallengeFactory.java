@@ -26,12 +26,11 @@ public class UserChallengeFactory implements UserChallengeFactoryInterface {
     GameRepository gameRepository;
 
     @Override
-    public UserChallenge create(UserChallengeRequest objectRequest) {
+    public UserChallenge getObject(UserChallengeRequest objectRequest) {
 
         UserChallenge userChallenge = new UserChallenge();
-
         userChallenge.setId(new UserChallengeId(objectRequest.getUserId(), objectRequest.getChallengeId()));
-
+        
         User user = userRepository.findById(objectRequest.getUserId()).get();
         userChallenge.setUser(user);
 

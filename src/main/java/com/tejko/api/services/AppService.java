@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Resource;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +32,7 @@ import com.tejko.models.general.payload.requests.AppRequest;
 @Service
 public class AppService implements AppServiceInterface {
 
-    @Autowired
+    @Resource
     AppFactory appFactory;
 
     @Autowired
@@ -57,7 +59,7 @@ public class AppService implements AppServiceInterface {
 
     @Override
     public App create(AppRequest objectRequest) {
-        App app = appFactory.create(objectRequest);
+        App app = appFactory.getObject(objectRequest);
         return appRepository.save(app);
     }
 
@@ -66,7 +68,7 @@ public class AppService implements AppServiceInterface {
         List<App> appList = new ArrayList<>();
 
         for (AppRequest objectRequest : objectRequestList) {
-            appList.add(appFactory.create(objectRequest));
+            appList.add(appFactory.getObject(objectRequest));
         }
 
         return appRepository.saveAll(appList);

@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Resource;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -31,8 +33,6 @@ import com.tejko.interfaces.api.services.YambServiceInterface;
 import com.tejko.models.general.Score;
 import com.tejko.models.general.payload.requests.ScoreRequest;
 import com.tejko.models.general.payload.requests.YambRequest;
-import com.tejko.models.yamb.Box;
-import com.tejko.models.yamb.Dice;
 import com.tejko.models.yamb.Yamb;
 import com.tejko.models.yamb.enums.BoxType;
 import com.tejko.models.yamb.enums.ColumnType;
@@ -54,10 +54,10 @@ public class YambService implements YambServiceInterface {
     @Autowired
     GameRepository gamesRepository;
 
-    @Autowired
+    @Resource
     GameFactory gameFactory;
 
-    @Autowired
+    @Resource
     ScoreFactory scoreFactory;
 
     @Override
@@ -78,7 +78,7 @@ public class YambService implements YambServiceInterface {
 
     @Override
     public Yamb create(YambRequest objectRequest) {
-        Yamb yamb = (Yamb) gameFactory.create(objectRequest);
+        Yamb yamb = (Yamb) gameFactory.getObject(objectRequest);
         return yambRepository.save(yamb);
     }
 
@@ -87,7 +87,7 @@ public class YambService implements YambServiceInterface {
         List<Yamb> yambList = new ArrayList<>();
 
         for (YambRequest objectRequest : objectRequestList) {
-            yambList.add((Yamb) gameFactory.create(objectRequest));
+            yambList.add((Yamb) gameFactory.getObject(objectRequest));
         }
 
         return yambRepository.saveAll(yambList);
@@ -129,84 +129,43 @@ public class YambService implements YambServiceInterface {
         yambRepository.deleteAllById(idSet);
     }
 
-    public Set<Dice> rollDiceById(UUID id) throws IllegalActionException {
-
+    public Yamb rollDiceById(UUID id, List<Integer> diceToRoll) throws IllegalActionException {
         Yamb yamb = getById(id);
 
-        if (yamb.getRollCount() == 0) {
-            yamb.unfreezeAllDice();
-        } else if (yamb.getRollCount() == 3) {
-            throw new IllegalActionException("Roll limit has been reached!");
-        } else if (yamb.getRollCount() == 1 && yamb.getAnnouncement() == null
-                && yamb.getForm().isAnnouncementRequired()) {
-            throw new IllegalActionException("Announcement is required!");
-        }
+        yamb.rollDice(diceToRoll);
 
-        yamb.rollDice();
-        yambRepository.save(yamb);
-
-        return yamb.getDiceSet();
+        return yambRepository.save(yamb);
     }
 
-    public Set<Dice> freezeDiceById(UUID id, int order) {
+    @Override
+    public Yamb announceById(UUID id, BoxType boxType) throws IllegalActionException {
         Yamb yamb = getById(id);
 
-        for (Dice dice : yamb.getDiceSet()) {
-            if (dice.getOrder() == order) {
-                dice.setFrozen(!dice.isFrozen());
-                break;
-            }
-        }
-        yambRepository.save(yamb);
+        yamb.announce(boxType);
 
-        return yamb.getDiceSet();
+        return yambRepository.save(yamb);
     }
 
-    public BoxType announceById(UUID id, BoxType announcement) throws IllegalActionException {
-
-        Yamb yamb = getById(id);
-
-        if (yamb.getAnnouncement() != null) {
-            throw new IllegalActionException("Announcement is already declared!");
-        } else if (yamb.getRollCount() != 1) {
-            throw new IllegalActionException("Announcement is available only after first roll!");
-        }
-
-        yamb.setAnnouncement(announcement);
-        yambRepository.save(yamb);
-
-        return yamb.getAnnouncement();
-    }
-
+    @Override
     public Yamb fillById(UUID id, ColumnType columnType, BoxType boxType) throws IllegalActionException {
 
         Yamb yamb = getById(id);
 
-        Box selectedBox = yamb.getForm().getColumnByType(columnType).getBoxByType(boxType);
+        yamb.fillBox(columnType, boxType);
 
-        if (selectedBox.isFilled()) {
-            throw new IllegalActionException("Box is already filled!");
-        } else if (!selectedBox.isAvailable()) {
-            throw new IllegalActionException("Box is currently unavailable!");
-        } else if (yamb.getRollCount() == 0) {
-            throw new IllegalActionException("First roll is mandatory!");
-        } else if (yamb.getAnnouncement() != null && yamb.getAnnouncement() != selectedBox.getType()) {
-            throw new IllegalActionException("Announcement is different from selected box!");
-        } else if (yamb.getForm().getColumnByType(columnType).isLocked()) {
-            throw new IllegalActionException("Column is currently locked");
-        }
-
-        yamb.fill(columnType, boxType);
-
-        if (yamb.getForm().getAvailableBoxes() == 0) {
-            Score score = scoreFactory.create(new ScoreRequest(yamb.getUser().getId(), TejkoConstants.APP_YAMB_ID,
-                    yamb.getForm().getTotalSum()));
+        if (yamb.getSheet().isCompleted()) {
+            Score score = scoreFactory.getObject(new ScoreRequest(yamb.getUser().getId(), TejkoConstants.APP_YAMB_ID, yamb.getSheet().getTotalSum()));
             scoreRepository.save(score);
         }
 
-        yambRepository.save(yamb);
+        return yambRepository.save(yamb);
+    }
 
-        return yamb;
+    @Override
+    public Yamb restartById(UUID id) {
+        Yamb yamb = getById(id);
+        yamb.restart();
+        return yambRepository.save(yamb);
     }
 
     @Override

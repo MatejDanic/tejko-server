@@ -23,14 +23,14 @@ public class ScoreFactory implements ScoreFactoryInterface {
     AppRepository appRepository;
 
     @Override
-    public Score create(ScoreRequest objectRequest) {
-
+    public Score getObject(ScoreRequest objectRequest) {
         Score score = new Score();
-
         User user = userRepository.findById(objectRequest.getUserId()).get();
         score.setUser(user);
+
         App app = appRepository.findById(objectRequest.getAppId()).get();
         score.setApp(app);
+        
         score.setValue(objectRequest.getValue());
         score.setDate(LocalDateTime.now());
 

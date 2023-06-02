@@ -59,6 +59,14 @@ public abstract class Game {
         this.user = user;
     }
 
+    public App getApp() {
+        return app;
+    }
+
+    public void setApp(App app) {
+        this.app = app;
+    }
+
     public UserChallenge getUserChallenges() {
         return userChallenges;
     }

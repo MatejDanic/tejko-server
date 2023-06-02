@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Resource;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +30,7 @@ import com.tejko.models.general.payload.requests.PreferenceRequest;
 @Service
 public class PreferenceService implements PreferenceServiceInterface {
 
-    @Autowired
+    @Resource
     PreferenceFactory preferenceFactory;
 
     @Autowired
@@ -52,7 +54,7 @@ public class PreferenceService implements PreferenceServiceInterface {
 
     @Override
     public Preference create(PreferenceRequest objectRequest) {
-        Preference preference = preferenceFactory.create(objectRequest);
+        Preference preference = preferenceFactory.getObject(objectRequest);
 
         return preferenceRepository.save(preference);
     }
@@ -62,7 +64,7 @@ public class PreferenceService implements PreferenceServiceInterface {
         List<Preference> preferenceList = new ArrayList<>();
 
         for (PreferenceRequest objectRequest : objectRequestList) {
-            preferenceList.add(preferenceFactory.create(objectRequest));
+            preferenceList.add(preferenceFactory.getObject(objectRequest));
         }
 
         return preferenceRepository.saveAll(preferenceList);

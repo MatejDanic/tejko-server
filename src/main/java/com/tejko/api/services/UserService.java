@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Resource;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,10 +55,10 @@ public class UserService implements UserServiceInterface {
     @Autowired
     ScoreRepository scoreRepository;
 
-    @Autowired
+    @Resource
     UserFactory userFactory;
 
-    @Autowired
+    @Resource
     PreferenceFactory preferenceFactory;
 
     @Override
@@ -77,7 +79,7 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public User create(UserRequest objectRequest) {
-        User user = userFactory.create(objectRequest);
+        User user = userFactory.getObject(objectRequest);
         return userRepository.save(user);
     }
 
@@ -86,7 +88,7 @@ public class UserService implements UserServiceInterface {
         List<User> userList = new ArrayList<>();
 
         for (UserRequest objectRequest : objectRequestList) {
-            userList.add(userFactory.create(objectRequest));
+            userList.add(userFactory.getObject(objectRequest));
         }
 
         return userRepository.saveAll(userList);
@@ -140,7 +142,7 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public Preference savePreferenceByUserId(UUID id, PreferenceRequest preferenceRequest) {
-        return preferenceRepository.save(preferenceFactory.create(preferenceRequest));
+        return preferenceRepository.save(preferenceFactory.getObject(preferenceRequest));
     }
 
     @Override

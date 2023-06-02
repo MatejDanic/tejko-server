@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Resource;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +31,7 @@ import com.tejko.interfaces.api.services.ScoreServiceInterface;
 @Service
 public class ScoreService implements ScoreServiceInterface {
 
-	@Autowired
+	@Resource
 	ScoreFactory scoreFactory;
 
 	@Autowired
@@ -53,7 +55,7 @@ public class ScoreService implements ScoreServiceInterface {
 
 	@Override
 	public Score create(ScoreRequest objectRequest) {
-		Score score = scoreFactory.create(objectRequest);
+		Score score = scoreFactory.getObject(objectRequest);
 		return scoreRepository.save(score);
 	}
 
@@ -62,7 +64,7 @@ public class ScoreService implements ScoreServiceInterface {
 		List<Score> scoreList = new ArrayList<>();
 
 		for (ScoreRequest objectRequest : objectRequestList) {
-			scoreList.add(scoreFactory.create(objectRequest));
+			scoreList.add(scoreFactory.getObject(objectRequest));
 		}
 
 		return scoreRepository.saveAll(scoreList);

@@ -1,176 +1,145 @@
 package com.tejko.models.yamb;
 
-import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tejko.constants.YambConstants;
+import com.tejko.exceptions.IllegalActionException;
 import com.tejko.models.general.Game;
 import com.tejko.models.yamb.enums.BoxType;
 import com.tejko.models.yamb.enums.ColumnType;
-import com.tejko.models.yamb.enums.YambType;
 import com.tejko.utils.YambUtil;
 
 @Entity
 @TypeDef(name = "json_binary", typeClass = JsonBinaryType.class)
 public class Yamb extends Game {
 
-    @Column
-    private YambType type = YambType.CLASSIC;
-
-    @Min(5)
-    @Max(6)
-    @Column(updatable = false)
-    private int numberOfDice = 5;
+    @Type(type = "json_binary")
+    @Column(columnDefinition = "jsonb")
+    private Sheet sheet;
 
     @Type(type = "json_binary")
     @Column(columnDefinition = "jsonb")
-    private YambForm form;
-
-    @Size(min = 1, max = 6)
-    private String formCode;
-
-    @Column
-    private BoxType announcement = null;
-
-    @Type(type = "json_binary")
-    @Column(columnDefinition = "jsonb")
-    private Set<Dice> diceSet;
+    private Map<Integer, Dice> diceMap;
 
     @Column
     private int rollCount = 0;
-
-    @Column(nullable = false)
-    private LocalDateTime startDate;
-
+    
     @Column
-    private LocalDateTime endDate;
+    public BoxType announcement = null;
 
-    public Yamb() {
+    private Yamb() {}
+
+    private Yamb(Sheet sheet, Map<Integer, Dice> diceMap) {
+        this.sheet = sheet;
+        this.diceMap = diceMap;
     }
 
-    public YambType getType() {
-        return type;
+    public static Yamb createYamb() {
+        return new Yamb(Sheet.createSheet(), generateDiceMap());
     }
 
-    public void setType(YambType type) {
-        this.type = type;
+    public Sheet getSheet() {
+        return sheet;
     }
 
-    public int getNumberOfDice() {
-        return numberOfDice;
-    }
-
-    public void setNumberOfDice(int numberOfDice) {
-        this.numberOfDice = numberOfDice;
-    }
-
-    public YambForm getForm() {
-        return form;
-    }
-
-    public void setForm(YambForm form) {
-        this.form = form;
-    }
-
-    public String getForCodem() {
-        return formCode;
-    }
-
-    public void setFormCode(String formCode) {
-        this.formCode = formCode;
-    }
-
-    public BoxType getAnnouncement() {
-        return announcement;
-    }
-
-    public void setAnnouncement(BoxType announcement) {
-        this.announcement = announcement;
-    }
-
-    public Set<Dice> getDiceSet() {
-        return diceSet;
-    }
-
-    public void setDiceSet(Set<Dice> diceSet) {
-        this.diceSet = diceSet;
-    }
-
-    public int getRollCount() {
-        return rollCount;
-    }
-
-    public void setRollCount(int rollCount) {
-        this.rollCount = rollCount;
-    }
-
-    public LocalDateTime getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(LocalDateTime startDate) {
-        this.startDate = startDate;
-    }
-
-    public LocalDateTime getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(LocalDateTime endDate) {
-        this.endDate = endDate;
-    }
-
-    public void unfreezeAllDice() {
-        for (Dice dice : diceSet) {
-            dice.setFrozen(false);
+    private static Map<Integer, Dice> generateDiceMap() {
+        Map<Integer, Dice> diceMap = new HashMap<>();
+        for (int i = 0; i < YambConstants.NUMBER_OF_DICE; i++) {
+            diceMap.put(i, Dice.createDice(i));
         }
+        return diceMap;
     }
 
-    public void freezeAllDice() {
-        for (Dice dice : diceSet) {
-            dice.setFrozen(true);
-        }
+    @JsonProperty("diceList")
+    public Collection<Dice> getDiceList() { 
+        return diceMap.values();
     }
 
-    public void rollDice() {
-        rollCount++;
 
-        for (Dice dice : diceSet) {
-            if (!dice.isFrozen()) {
+    @JsonProperty("announcementRequired")
+    public boolean isAnnouncementRequired() {
+        return announcement != null && sheet.areAllNonAnnouncementColumnsCompleted();
+    }
+    
+    public void rollDice(List<Integer> diceToRoll) {
+        validateRollAction();
+        // always roll all dice for the first roll
+        if (rollCount == 0) {
+            for (Dice dice : diceMap.values()) {
+                dice.roll();
+            }
+        } else {
+            for (int diceOrder : diceToRoll) {
+                Dice dice = diceMap.get(diceOrder);
                 dice.roll();
             }
         }
+        rollCount += 1;
+    }   
+    
+    public void fillBox(ColumnType columnType, BoxType boxType) {
+        validateFillBoxAction(columnType, boxType);
+        sheet.fillBox(columnType, boxType, YambUtil.calculateScore(diceMap.values(), boxType));
+    }
+    
+    public void announce(BoxType boxType) {
+        validateAnnouncementAction(boxType);
+        announcement = boxType;
     }
 
-    public void fill(ColumnType columnType, BoxType boxType) {
-
-        int score = YambUtil.calculateScore(diceSet, boxType);
-
-        for (Box box : form.getColumnByType(columnType).getBoxes()) {
-            if (box.getType() == boxType) {
-                box.fill(score);
-            } else if (box.isNext(columnType, boxType)) {
-                box.setAvailable(true);
-            }
-        }
-
-        form.updateSums(columnType);
-        form.setAvailableBoxes(form.getAvailableBoxes() - 1);
-
-        unfreezeAllDice();
+    public void restart() {
+        validateRestartAction();
         rollCount = 0;
         announcement = null;
+        sheet = Sheet.createSheet();
+        diceMap = generateDiceMap();
+    }
 
+    private void validateRollAction() {
+        if (rollCount == 3) {
+            throw new IllegalActionException(YambConstants.ERROR_MESSAGE_ROLL_LIMIT_REACHED);
+        } else if (rollCount == 1 && isAnnouncementRequired()) {
+            throw new IllegalActionException(YambConstants.ERROR_MESSAGE_ANNOUNCEMENT_REQUIRED);
+        }
+    }
+
+    private void validateFillBoxAction(ColumnType columnType, BoxType boxType) {
+        Box box = sheet.getColumnMap().get(columnType).getBoxMap().get(boxType);
+        if (box.isFilled()) {
+            throw new IllegalActionException(YambConstants.ERROR_MESSAGE_BOX_ALREADY_FILLED);
+        } else if (!box.isAvailable()) {
+			throw new IllegalActionException(YambConstants.ERROR_MESSAGE_BOX_NOT_AVAILABLE);
+        } else if (rollCount == 0) {
+			throw new IllegalActionException(YambConstants.ERROR_MESSAGE_DICE_ROLL_REQUIRED);
+        } else if (announcement != null && (columnType != ColumnType.ANNOUNCEMENT || boxType != announcement)) {
+			throw new IllegalActionException(YambConstants.ERROR_MESSAGE_BOX_NOT_ANNOUNCED);
+        }
+    }
+
+    private void validateAnnouncementAction(BoxType boxType) {
+        if (announcement != null) {
+            throw new IllegalActionException(YambConstants.ERROR_MESSAGE_ANNOUNCEMENT_ALREADY_DECLARED);
+        } else if (rollCount > 1) {
+            throw new IllegalActionException(YambConstants.ERROR_MESSAGE_ANNOUNCEMENT_NOT_AVAILABLE);
+        }
+    }
+
+    private void validateRestartAction() {
+        if (sheet.isCompleted()) {
+            throw new IllegalActionException(YambConstants.ERROR_MESSAGE_RESTART_COMPLETED_SHEET);
+        }
     }
 
 }

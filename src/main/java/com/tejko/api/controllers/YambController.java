@@ -28,7 +28,6 @@ import com.tejko.exceptions.IllegalActionException;
 import com.tejko.interfaces.api.controllers.YambControllerInterface;
 import com.tejko.models.general.payload.requests.YambRequest;
 import com.tejko.models.general.payload.responses.MessageResponse;
-import com.tejko.models.yamb.Dice;
 import com.tejko.models.yamb.Yamb;
 import com.tejko.models.yamb.enums.BoxType;
 import com.tejko.models.yamb.enums.ColumnType;
@@ -60,8 +59,7 @@ public class YambController implements YambControllerInterface {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("")
 	@Override
-	public ResponseEntity<List<Yamb>> getAll(@PathVariable Integer page, @PathVariable Integer size,
-			@PathVariable String sort, @PathVariable String direction) {
+	public ResponseEntity<List<Yamb>> getAll(@PathVariable Integer page, @PathVariable Integer size, @PathVariable String sort, @PathVariable String direction) {
 		return new ResponseEntity<>(yambService.getAll(page, size, sort, direction), HttpStatus.OK);
 	}
 
@@ -108,9 +106,7 @@ public class YambController implements YambControllerInterface {
 	@Override
 	public ResponseEntity<MessageResponse> deleteBulkById(@RequestBody Set<UUID> idSet) {
 		yambService.deleteBulkById(idSet);
-		return new ResponseEntity<>(
-				new MessageResponse("Yamb", "All yambs have been successfully deleted."),
-				HttpStatus.OK);
+		return new ResponseEntity<>(new MessageResponse("Yamb", "All yambs have been successfully deleted."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
@@ -118,34 +114,36 @@ public class YambController implements YambControllerInterface {
 	@Override
 	public ResponseEntity<MessageResponse> deleteAll() {
 		yambService.deleteAll();
-		return new ResponseEntity<>(new MessageResponse("Yamb", "All yambs have been successfully deleted."),
-				HttpStatus.OK);
+		return new ResponseEntity<>(new MessageResponse("Yamb", "All yambs have been successfully deleted."), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambService.getById(#id))")
 	@PutMapping("/{id}/roll")
 	@Override
-	public ResponseEntity<Set<Dice>> rollDiceById(@PathVariable UUID id) throws IllegalActionException {
-		return new ResponseEntity<>(yambService.rollDiceById(id), HttpStatus.OK);
+	public ResponseEntity<Yamb> rollDiceById(@PathVariable UUID id, @RequestBody List<Integer> diceToRoll) throws IllegalActionException {
+		return new ResponseEntity<>(yambService.rollDiceById(id, diceToRoll), HttpStatus.OK);
 
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambService.getById(#id))")
-	@PutMapping("/{id}/columns/{columnType}/boxes/{boxType}/announce")
+	@PutMapping("/{id}/announce")
 	@Override
-	public ResponseEntity<BoxType> announceById(@PathVariable UUID id, @PathVariable ColumnType columnType,
-			@PathVariable BoxType boxType)
-			throws IllegalActionException {
+	public ResponseEntity<Yamb> announceById(@PathVariable UUID id, @RequestBody BoxType boxType) throws IllegalActionException {
 		return new ResponseEntity<>(yambService.announceById(id, boxType), HttpStatus.OK);
-
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambService.getById(#id))")
 	@PutMapping("/{id}/columns/{columnType}/boxes/{boxType}/fill")
 	@Override
-	public ResponseEntity<Yamb> fillById(@PathVariable UUID id, @PathVariable ColumnType columnType,
-			@PathVariable BoxType boxType) throws IllegalActionException {
+	public ResponseEntity<Yamb> fillById(@PathVariable UUID id, @PathVariable ColumnType columnType, @PathVariable BoxType boxType) throws IllegalActionException {
 		return new ResponseEntity<>(yambService.fillById(id, columnType, boxType), HttpStatus.OK);
+	}
+
+	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambService.getById(#id))")
+	@PutMapping("/{id}/restart")
+	@Override
+	public ResponseEntity<Yamb> restartById(@PathVariable UUID id) throws IllegalActionException {
+		return new ResponseEntity<>(yambService.restartById(id), HttpStatus.OK);
 	}
 
 }
