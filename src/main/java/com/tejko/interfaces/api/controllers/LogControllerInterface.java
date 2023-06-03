@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.tejko.models.general.Log;
-import com.tejko.models.general.payload.responses.MessageResponse;
+import com.tejko.models.general.payload.responses.ApiResponse;
 
 public interface LogControllerInterface {
 
@@ -26,9 +26,9 @@ public interface LogControllerInterface {
     public ResponseEntity<List<Log>> getBulkById(@RequestBody Set<UUID> idSet);
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<MessageResponse> deleteById(@PathVariable UUID id);
+    public ResponseEntity<ApiResponse<Log>> deleteById(@PathVariable UUID id);
 
     @DeleteMapping("")
-    public ResponseEntity<MessageResponse> deleteAll();
+    public ResponseEntity<ApiResponse<Log>> deleteAll();
 
 }

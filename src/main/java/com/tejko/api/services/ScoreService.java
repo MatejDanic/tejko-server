@@ -1,19 +1,13 @@
 package com.tejko.api.services;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -23,7 +17,10 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.tejko.models.general.Score;
+import com.tejko.models.general.payload.requests.DateIntervalRequest;
 import com.tejko.models.general.payload.requests.ScoreRequest;
+import com.tejko.models.general.payload.responses.ApiResponse;
+import com.tejko.models.general.payload.responses.ScoreResponse;
 import com.tejko.api.repositories.ScoreRepository;
 import com.tejko.factories.ScoreFactory;
 import com.tejko.interfaces.api.services.ScoreServiceInterface;
@@ -38,78 +35,85 @@ public class ScoreService implements ScoreServiceInterface {
 	ScoreRepository scoreRepository;
 
 	@Override
-	public Score getById(UUID id) {
-		return scoreRepository.findById(id).get();
+	public ScoreResponse getById(UUID id) {
+		return toApiResponse(scoreRepository.getById(id));
 	}
 
 	@Override
-	public List<Score> getAll(Integer page, Integer size, String sort, String direction) {
+	public List<ScoreResponse> getAll(Integer page, Integer size, String sort, String direction) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-		return scoreRepository.findAll(pageable).getContent();
+		return toApiResponseList(scoreRepository.findAll(pageable).getContent());
 	}
 
 	@Override
-	public List<Score> getBulkById(Set<UUID> idSet) {
-		return scoreRepository.findAllById(idSet);
+	public List<ScoreResponse> getBulkById(Set<UUID> idSet) {
+		return toApiResponseList(scoreRepository.findAllById(idSet));
 	}
 
 	@Override
-	public Score create(ScoreRequest objectRequest) {
+	public ScoreResponse create(ScoreRequest objectRequest) {
 		Score score = scoreFactory.getObject(objectRequest);
-		return scoreRepository.save(score);
+		return toApiResponse(scoreRepository.save(score));
 	}
 
 	@Override
-	public List<Score> createBulk(List<ScoreRequest> objectRequestList) {
+	public List<ScoreResponse> createBulk(List<ScoreRequest> objectRequestList) {
 		List<Score> scoreList = new ArrayList<>();
 
 		for (ScoreRequest objectRequest : objectRequestList) {
 			scoreList.add(scoreFactory.getObject(objectRequest));
 		}
 
-		return scoreRepository.saveAll(scoreList);
+		return toApiResponseList(scoreRepository.saveAll(scoreList));
 	}
 
 	@Override
-	public Score updateById(UUID id, JsonPatch objectPatch) throws JsonProcessingException, JsonPatchException {
-		Score score = getById(id);
+	public ScoreResponse updateById(UUID id, ScoreRequest scoreRequest) {
+		Score score = scoreRepository.getById(id);
 
-		score = applyPatch(score, objectPatch);
+		score = applyPatch(score, scoreRequest);
 
-		return scoreRepository.save(score);
+		return toApiResponse(scoreRepository.save(score));
 	}
 
 	@Override
-	public List<Score> updateBulkById(Map<UUID, JsonPatch> idObjectPatchMap)
-			throws JsonProcessingException, JsonPatchException {
-		List<Score> scoreList = getBulkById(idObjectPatchMap.keySet());
+	public List<ScoreResponse> updateBulkById(Map<UUID, ScoreRequest> idScoreRequestMap) {
+		List<Score> scoreList = scoreRepository.findAllById(idScoreRequestMap.keySet());
 
 		for (Score score : scoreList) {
-			score = applyPatch(score, idObjectPatchMap.get(score.getId()));
+			score = applyPatch(score, idScoreRequestMap.get(score.getId()));
 		}
 
-		return scoreRepository.saveAll(scoreList);
+		return toApiResponseList(scoreRepository.saveAll(scoreList));
 	}
 
 	@Override
-	public void deleteById(UUID id) {
+	public ApiResponse<?> deleteById(UUID id) {
 		scoreRepository.deleteById(id);
+		return new ApiResponse<>("Score has been deleted successfully.");
 	}
 
 	@Override
-	public void deleteBulkById(Set<UUID> idSet) {
+	public ApiResponse<?> deleteBulkById(Set<UUID> idSet) {
 		scoreRepository.deleteAllById(idSet);
+		return new ApiResponse<>("Scores have been deleted successfully.");
 	}
 
 	@Override
-	public void deleteAll() {
+	public ApiResponse<?> deleteAll() {
 		scoreRepository.deleteAll();
+		return new ApiResponse<>("All Scores have been deleted successfully.");
 	}
 
 	@Override
-	public List<Score> getAllByDateBetween(LocalDateTime start, LocalDateTime end) {
-		return scoreRepository.findAllByDateBetween(start, end);
+	public List<ScoreResponse> getAllByDateInterval(DateIntervalRequest dateIntervalRequest) {
+		return toApiResponseList(scoreRepository.findAllByDateBetween(dateIntervalRequest.getStartDate(), dateIntervalRequest.getEndDate()));
 	}
+	
+	@Override
+    public List<ScoreResponse> getScoresByUserId(UUID userId) {
+        return toApiResponseList(scoreRepository.findAllByUserId(userId));
+    }
 
 	@Override
 	public boolean hasPermission(UUID userId, UUID objectId) {
@@ -117,10 +121,18 @@ public class ScoreService implements ScoreServiceInterface {
 	}
 
 	@Override
-	public Score applyPatch(Score object, JsonPatch patch) throws JsonPatchException, JsonProcessingException {
-		ObjectMapper objectMapper = new ObjectMapper();
-		JsonNode patched = patch.apply(objectMapper.convertValue(object, JsonNode.class));
-		return objectMapper.treeToValue(patched, Score.class);
+	public Score applyPatch(Score score, ScoreRequest scoreRequest) {
+		return score;
+	}
+
+	@Override
+	public ScoreResponse toApiResponse(Score object) {
+		return new ScoreResponse(object);
+	}
+
+	@Override
+	public List<ScoreResponse> toApiResponseList(List<Score> objectList) {
+        return objectList.stream().map(this::toApiResponse).collect(Collectors.toList());
 	}
 
 }

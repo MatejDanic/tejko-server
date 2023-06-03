@@ -18,31 +18,16 @@ public class PreferenceRequest {
 
     private Theme theme;
 
-    protected PreferenceRequest() {
-    }
-
     public UUID getUserId() {
         return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
     }
 
     public Integer getVolume() {
         return volume;
     }
 
-    public void setVolume(Integer volume) {
-        this.volume = volume;
-    }
-
     public Theme getTheme() {
         return theme;
-    }
-
-    public void setTheme(Theme theme) {
-        this.theme = theme;
     }
 
 }

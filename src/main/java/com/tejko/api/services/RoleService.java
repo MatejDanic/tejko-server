@@ -5,14 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -22,12 +17,13 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.tejko.api.repositories.RoleRepository;
-import com.tejko.api.repositories.UserRepository;
 import com.tejko.factories.RoleFactory;
 import com.tejko.interfaces.api.services.RoleServiceInterface;
 import com.tejko.models.general.Role;
-import com.tejko.models.general.User;
 import com.tejko.models.general.payload.requests.RoleRequest;
+import com.tejko.models.general.payload.responses.ApiResponse;
+import com.tejko.models.general.payload.responses.RoleResponse;
+import com.tejko.models.general.payload.responses.UserResponse;
 
 @Service
 public class RoleService implements RoleServiceInterface {
@@ -39,80 +35,82 @@ public class RoleService implements RoleServiceInterface {
     RoleRepository roleRepository;
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     @Override
-    public Role getById(Integer id) {
-        return roleRepository.findById(id).get();
+    public RoleResponse getById(Integer id) {
+        return toApiResponse(roleRepository.getById(id));
     }
 
     @Override
-    public List<Role> getAll(Integer page, Integer size, String sort, String direction) {
+    public List<RoleResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return roleRepository.findAll(pageable).getContent();
+        return toApiResponseList(roleRepository.findAll(pageable).getContent());
     }
 
     @Override
-    public List<Role> getBulkById(Set<Integer> idSet) {
-        return roleRepository.findAllById(idSet);
+    public List<RoleResponse> getBulkById(Set<Integer> idSet) {
+        return toApiResponseList(roleRepository.findAllById(idSet));
     }
 
     @Override
-    public Role create(RoleRequest objectRequest) {
+    public RoleResponse create(RoleRequest objectRequest) {
         Role role = roleFactory.getObject(objectRequest);
-        return roleRepository.save(role);
+        return toApiResponse(roleRepository.save(role));
     }
 
     @Override
-    public List<Role> createBulk(List<RoleRequest> objectRequestList) {
+    public List<RoleResponse> createBulk(List<RoleRequest> objectRequestList) {
         List<Role> roleList = new ArrayList<>();
 
         for (RoleRequest objectRequest : objectRequestList) {
             roleList.add(roleFactory.getObject(objectRequest));
         }
 
-        return roleRepository.saveAll(roleList);
+        return toApiResponseList(roleRepository.saveAll(roleList));
     }
 
     @Override
-    public Role updateById(Integer id, JsonPatch objectPatch) throws JsonProcessingException, JsonPatchException {
-        Role role = getById(id);
+    public RoleResponse updateById(Integer id, RoleRequest roleRequest) {
+        Role role = roleRepository.getById(id);
 
-        role = applyPatch(role, objectPatch);
+        role = applyPatch(role, roleRequest);
 
-        return roleRepository.save(role);
+        return toApiResponse(roleRepository.save(role));
     }
 
     @Override
-    public List<Role> updateBulkById(Map<Integer, JsonPatch> idObjectPatchMap)
-            throws JsonProcessingException, JsonPatchException {
-        List<Role> roleList = getBulkById(idObjectPatchMap.keySet());
+    public List<RoleResponse> updateBulkById(Map<Integer, RoleRequest> idRoleRequestMap) {
+        List<Role> roleList = roleRepository.findAllById(idRoleRequestMap.keySet());
 
         for (Role role : roleList) {
-            role = applyPatch(role, idObjectPatchMap.get(role.getId()));
+            role = applyPatch(role, idRoleRequestMap.get(role.getId()));
         }
 
-        return roleRepository.saveAll(roleList);
+        return toApiResponseList(roleRepository.saveAll(roleList));
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public ApiResponse<?> deleteById(Integer id) {
         roleRepository.deleteById(id);
+        return new ApiResponse<>("Role has been deleted successfully.");
     }
 
     @Override
-    public void deleteAll() {
+    public ApiResponse<?> deleteAll() {
         roleRepository.deleteAll();
+        return new ApiResponse<>("Roles have been deleted successfully.");
     }
 
     @Override
-    public void deleteBulkById(Set<Integer> idSet) {
+    public ApiResponse<?> deleteBulkById(Set<Integer> idSet) {
         roleRepository.deleteAllById(idSet);
+        return new ApiResponse<>("All Roles have been deleted successfully.");
     }
 
     @Override
-    public List<User> getUsersByRolesId(Integer id) {
-        return userRepository.findAllByRolesId(id);
+    public List<UserResponse> getUsersByRoleId(Integer roleId) {
+        return userService.findAllByRolesId(roleId);
     }
 
     @Override
@@ -121,10 +119,24 @@ public class RoleService implements RoleServiceInterface {
     }
 
     @Override
-    public Role applyPatch(Role object, JsonPatch patch) throws JsonPatchException, JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode patched = patch.apply(objectMapper.convertValue(object, JsonNode.class));
-        return objectMapper.treeToValue(patched, Role.class);
+    public Role applyPatch(Role role, RoleRequest roleRequest) {
+        if (roleRequest.getLabel() != null) {
+            role.setLabel(roleRequest.getLabel());
+        }
+        if (roleRequest.getDescription() != null) {
+            role.setDescription(roleRequest.getDescription());
+        }
+        return role;
+    }
+
+    @Override
+    public RoleResponse toApiResponse(Role object) {
+        return new RoleResponse(object);
+    }
+
+    @Override
+    public List<RoleResponse> toApiResponseList(List<Role> objectList) {
+        return objectList.stream().map(this::toApiResponse).collect(Collectors.toList());
     }
 
 }

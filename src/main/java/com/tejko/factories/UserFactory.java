@@ -23,12 +23,12 @@ public class UserFactory implements UserFactoryInterface {
     PasswordEncoder encoder;
 
     @Override
-    public User getObject(UserRequest objectRequest) {
+    public User getObject(UserRequest userRequest) {
         User user = new User();
 
-        user.setUsername(objectRequest.getUsername());
-        user.setPassword(encoder.encode(objectRequest.getPassword()));
-        user.setTestUser(objectRequest.isTestUser());
+        user.setUsername(userRequest.getUsername());
+        user.setPassword(encoder.encode(userRequest.getPassword()));
+        user.setTestUser(userRequest.isTestUser());
         user.setCreatedDate(LocalDateTime.now());
         
         user.setRoles(new HashSet<Role>() {

@@ -15,10 +15,9 @@ public class UserRequest {
     public UserRequest() {
     }
 
-    public UserRequest(String username, String password, Boolean testUser) {
+    public UserRequest(String username, String password) {
         this.username = username;
         this.password = password;
-        this.testUser = testUser;
     }
 
     public String getUsername() {

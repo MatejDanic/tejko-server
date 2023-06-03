@@ -25,25 +25,24 @@ public class App {
 
     @JsonIgnore
     @OneToMany(mappedBy = "app")
-    private Set<Game> games;
+    private Set<Game> gameSet;
 
-    public App() {
+    private App(int id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
+    public static App create(int id, String name, String description) {
+        return new App(id, name, description);
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getDescription() {

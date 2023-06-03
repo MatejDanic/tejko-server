@@ -5,16 +5,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,8 +24,8 @@ import com.tejko.api.services.YambService;
 import com.tejko.exceptions.IllegalActionException;
 import com.tejko.interfaces.api.controllers.YambControllerInterface;
 import com.tejko.models.general.payload.requests.YambRequest;
-import com.tejko.models.general.payload.responses.MessageResponse;
-import com.tejko.models.yamb.Yamb;
+import com.tejko.models.general.payload.responses.ApiResponse;
+import com.tejko.models.general.payload.responses.YambResponse;
 import com.tejko.models.yamb.enums.BoxType;
 import com.tejko.models.yamb.enums.ColumnType;
 
@@ -45,82 +42,77 @@ public class YambController implements YambControllerInterface {
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambService.getById(#id))")
 	@GetMapping("/{id}")
 	@Override
-	public ResponseEntity<Yamb> getById(@PathVariable UUID id) {
+	public ResponseEntity<YambResponse> getById(@PathVariable UUID id) {
 		return new ResponseEntity<>(yambService.getById(id), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/bulk")
 	@Override
-	public ResponseEntity<List<Yamb>> getBulkById(@RequestBody Set<UUID> idSet) {
+	public ResponseEntity<List<YambResponse>> getBulkById(@RequestBody Set<UUID> idSet) {
 		return new ResponseEntity<>(yambService.getBulkById(idSet), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("")
 	@Override
-	public ResponseEntity<List<Yamb>> getAll(@PathVariable Integer page, @PathVariable Integer size, @PathVariable String sort, @PathVariable String direction) {
+	public ResponseEntity<List<YambResponse>> getAll(@PathVariable Integer page, @PathVariable Integer size, @PathVariable String sort, @PathVariable String direction) {
 		return new ResponseEntity<>(yambService.getAll(page, size, sort, direction), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('USER')")
 	@PostMapping("")
 	@Override
-	public ResponseEntity<Yamb> create(@RequestBody YambRequest objectRequest) {
+	public ResponseEntity<YambResponse> create(@RequestBody YambRequest objectRequest) {
 		return new ResponseEntity<>(yambService.create(objectRequest), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/bulk")
 	@Override
-	public ResponseEntity<List<Yamb>> createBulk(@RequestBody List<YambRequest> objectRequestList) {
+	public ResponseEntity<List<YambResponse>> createBulk(@RequestBody List<YambRequest> objectRequestList) {
 		return new ResponseEntity<>(yambService.createBulk(objectRequestList), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
-	@PutMapping("/{id}")
+	@PatchMapping("/{id}")
 	@Override
-	public ResponseEntity<Yamb> updateById(@PathVariable UUID id, @RequestBody JsonPatch objectPatch)
-			throws JsonProcessingException, JsonPatchException {
-		return new ResponseEntity<>(yambService.updateById(id, objectPatch), HttpStatus.OK);
+	public ResponseEntity<YambResponse> updateById(@PathVariable UUID id, @RequestBody YambRequest yambRequest) {
+		return new ResponseEntity<>(yambService.updateById(id, yambRequest), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
-	@PutMapping("/bulk")
+	@PatchMapping("/bulk")
 	@Override
-	public ResponseEntity<List<Yamb>> updateBulkById(@RequestBody Map<UUID, JsonPatch> idObjectPatchMap)
-			throws JsonProcessingException, JsonPatchException {
-		return new ResponseEntity<>(yambService.updateBulkById(idObjectPatchMap), HttpStatus.OK);
+	public ResponseEntity<List<YambResponse>> updateBulkById(@RequestBody Map<UUID, YambRequest> idYambRequestMap) {
+		return new ResponseEntity<>(yambService.updateBulkById(idYambRequestMap), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambService.getById(#id))")
 	@DeleteMapping("/{id}")
 	@Override
-	public ResponseEntity<MessageResponse> deleteById(@PathVariable UUID id) {
-		yambService.deleteById(id);
-		return new ResponseEntity<>(new MessageResponse("Yamb", "Yamb has been successfully deleted."), HttpStatus.OK);
+	public ResponseEntity<ApiResponse<?>> deleteById(@PathVariable UUID id) {
+		return new ResponseEntity<>(yambService.deleteById(id), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/bulk")
 	@Override
-	public ResponseEntity<MessageResponse> deleteBulkById(@RequestBody Set<UUID> idSet) {
-		yambService.deleteBulkById(idSet);
-		return new ResponseEntity<>(new MessageResponse("Yamb", "All yambs have been successfully deleted."), HttpStatus.OK);
+	public ResponseEntity<ApiResponse<?>> deleteBulkById(@RequestBody Set<UUID> idSet) {
+		return new ResponseEntity<>(yambService.deleteBulkById(idSet), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("")
 	@Override
-	public ResponseEntity<MessageResponse> deleteAll() {
-		yambService.deleteAll();
-		return new ResponseEntity<>(new MessageResponse("Yamb", "All yambs have been successfully deleted."), HttpStatus.OK);
+	public ResponseEntity<ApiResponse<?>> deleteAll() {
+		return new ResponseEntity<>(yambService.deleteAll(), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambService.getById(#id))")
 	@PutMapping("/{id}/roll")
 	@Override
-	public ResponseEntity<Yamb> rollDiceById(@PathVariable UUID id, @RequestBody List<Integer> diceToRoll) throws IllegalActionException {
+	public ResponseEntity<YambResponse> rollDiceById(@PathVariable UUID id, @RequestBody List<Integer> diceToRoll) throws IllegalActionException {
 		return new ResponseEntity<>(yambService.rollDiceById(id, diceToRoll), HttpStatus.OK);
 
 	}
@@ -128,21 +120,21 @@ public class YambController implements YambControllerInterface {
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambService.getById(#id))")
 	@PutMapping("/{id}/announce")
 	@Override
-	public ResponseEntity<Yamb> announceById(@PathVariable UUID id, @RequestBody BoxType boxType) throws IllegalActionException {
+	public ResponseEntity<YambResponse> announceById(@PathVariable UUID id, @RequestBody BoxType boxType) throws IllegalActionException {
 		return new ResponseEntity<>(yambService.announceById(id, boxType), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambService.getById(#id))")
 	@PutMapping("/{id}/columns/{columnType}/boxes/{boxType}/fill")
 	@Override
-	public ResponseEntity<Yamb> fillById(@PathVariable UUID id, @PathVariable ColumnType columnType, @PathVariable BoxType boxType) throws IllegalActionException {
+	public ResponseEntity<YambResponse> fillById(@PathVariable UUID id, @PathVariable ColumnType columnType, @PathVariable BoxType boxType) throws IllegalActionException {
 		return new ResponseEntity<>(yambService.fillById(id, columnType, boxType), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambService.getById(#id))")
 	@PutMapping("/{id}/restart")
 	@Override
-	public ResponseEntity<Yamb> restartById(@PathVariable UUID id) throws IllegalActionException {
+	public ResponseEntity<YambResponse> restartById(@PathVariable UUID id) throws IllegalActionException {
 		return new ResponseEntity<>(yambService.restartById(id), HttpStatus.OK);
 	}
 

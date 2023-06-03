@@ -1,29 +1,31 @@
 package com.tejko.interfaces.api.services;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import com.tejko.exceptions.RoleNotFoundException;
-import com.tejko.models.general.Preference;
-import com.tejko.models.general.Role;
-import com.tejko.models.general.Score;
 import com.tejko.models.general.User;
 import com.tejko.models.general.payload.requests.PreferenceRequest;
 import com.tejko.models.general.payload.requests.UserRequest;
+import com.tejko.models.general.payload.responses.ApiResponse;
+import com.tejko.models.general.payload.responses.PreferenceResponse;
+import com.tejko.models.general.payload.responses.ScoreResponse;
+import com.tejko.models.general.payload.responses.UserResponse;
 
-public interface UserServiceInterface extends ServiceInterface<UUID, User, UserRequest> {
+public interface UserServiceInterface extends ServiceInterface<UUID, User, UserRequest, UserResponse> {
 
-    public Preference getPreferenceByUserId(UUID id);
+    public PreferenceResponse getPreferenceByUserId(UUID id);
 
-    public void deletePreferenceByUserId(UUID id);
+    public ApiResponse<?> deletePreferenceByUserId(UUID id);
 
-    public Preference savePreferenceByUserId(UUID id, PreferenceRequest preferenceRequest);
+    public PreferenceResponse updatePreferenceByUserId(UUID id, PreferenceRequest preferenceRequest);
 
-    public Set<Role> assignRoleByUserId(UUID id, Integer roleId) throws RoleNotFoundException;
+    public UserResponse assignRoleByUserId(UUID id, Integer roleId) throws RoleNotFoundException;
 
-    public List<Score> getScoresByUserId(UUID id);
+    public List<ScoreResponse> getScoresByUserId(UUID id);
+    
+    public List<UserResponse> findAllByRolesId(Integer id);
 
-    public User getByUsername(String username);
+    public UserResponse getByUsername(String username);
 
 }

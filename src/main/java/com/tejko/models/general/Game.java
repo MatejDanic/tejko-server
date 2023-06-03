@@ -40,9 +40,6 @@ public abstract class Game {
     @OneToOne(mappedBy = "game")
     private UserChallenge userChallenges;
 
-    public Game() {
-    }
-
     public UUID getId() {
         return id;
     }

@@ -10,10 +10,11 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import com.tejko.models.general.Score;
 import com.tejko.models.general.payload.requests.DateIntervalRequest;
 import com.tejko.models.general.payload.requests.ScoreRequest;
+import com.tejko.models.general.payload.responses.ScoreResponse;
 
-public interface ScoreControllerInterface extends ControllerInterface<UUID, Score, ScoreRequest> {
+public interface ScoreControllerInterface extends ControllerInterface<UUID, Score, ScoreRequest, ScoreResponse> {
 
     @GetMapping("/interval")
-    public ResponseEntity<List<Score>> getAllByDateBetween(@RequestBody DateIntervalRequest dateIntervalRequest);
+    public ResponseEntity<List<ScoreResponse>> getAllByDateInterval(@RequestBody DateIntervalRequest dateIntervalRequest);
 
 }

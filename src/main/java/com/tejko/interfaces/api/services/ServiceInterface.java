@@ -5,34 +5,36 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
+import com.tejko.models.general.payload.responses.ApiResponse;
 
-public interface ServiceInterface<I, T, R> {
+public interface ServiceInterface<I, T, R, A extends ApiResponse<T>> {
 
-    public T getById(I id);
+    public A getById(I id);
 
-    public List<T> getBulkById(Set<I> ids);
+    public List<A> getBulkById(Set<I> ids);
 
-    public List<T> getAll(Integer page, Integer size, String sort, String direction);
+    public List<A> getAll(Integer page, Integer size, String sort, String direction);
 
-    public T updateById(I id, JsonPatch object) throws JsonProcessingException, JsonPatchException;
+    public A updateById(I id, R objectRequest);
 
-    public List<T> updateBulkById(Map<I, JsonPatch> idObjectMap) throws JsonProcessingException, JsonPatchException;
+    public List<A> updateBulkById(Map<I, R> idObjectRequestMap);
 
-    public T create(R objectRequest);
+    public A create(R objectRequest);
 
-    public List<T> createBulk(List<R> objectRequestList);
+    public List<A> createBulk(List<R> objectRequestList);
 
-    public void deleteById(I id);
+    public ApiResponse<?> deleteById(I id);
 
-    public void deleteBulkById(Set<I> idSet);
+    public ApiResponse<?> deleteBulkById(Set<I> idSet);
 
-    public void deleteAll();
+    public ApiResponse<?> deleteAll();
+
+    public T applyPatch(T object, R objectRequest);
 
     public boolean hasPermission(UUID userId, I objectId);
 
-    public T applyPatch(T object, JsonPatch patch) throws JsonPatchException, JsonProcessingException;
+    public A toApiResponse(T object);
+
+    public List<A> toApiResponseList(List<T> objectList);
 
 }

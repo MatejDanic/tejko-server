@@ -26,7 +26,8 @@ import com.tejko.interfaces.api.controllers.AppControllerInterface;
 import com.tejko.models.general.Score;
 import com.tejko.models.general.App;
 import com.tejko.models.general.payload.requests.AppRequest;
-import com.tejko.models.general.payload.responses.MessageResponse;
+import com.tejko.models.general.payload.responses.ApiResponse;
+import com.tejko.models.general.payload.responses.AppResponse;
 
 @RestController
 @RequestMapping("/api/apps")
@@ -37,20 +38,20 @@ public class AppController implements AppControllerInterface {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<App> getById(@PathVariable Integer id) {
+    public ResponseEntity<AppResponse> getById(@PathVariable Integer id) {
         return new ResponseEntity<>(appService.getById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/bulk")
     @Override
-    public ResponseEntity<List<App>> getBulkById(@RequestBody Set<Integer> idSet) {
+    public ResponseEntity<List<AppResponse>> getBulkById(@RequestBody Set<Integer> idSet) {
         return new ResponseEntity<>(appService.getBulkById(idSet), HttpStatus.OK);
     }
 
     @GetMapping("")
     @Override
-    public ResponseEntity<List<App>> getAll(@PathVariable Integer page, @PathVariable Integer size,
+    public ResponseEntity<List<AppResponse>> getAll(@PathVariable Integer page, @PathVariable Integer size,
             @PathVariable String sort, @PathVariable String direction) {
         return new ResponseEntity<>(appService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
@@ -58,21 +59,21 @@ public class AppController implements AppControllerInterface {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("")
     @Override
-    public ResponseEntity<App> create(@RequestBody AppRequest objectRequest) {
+    public ResponseEntity<AppResponse> create(@RequestBody AppRequest objectRequest) {
         return new ResponseEntity<>(appService.create(objectRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/bulk")
     @Override
-    public ResponseEntity<List<App>> createBulk(@RequestBody List<AppRequest> objectRequestList) {
+    public ResponseEntity<List<AppResponse>> createBulk(@RequestBody List<AppRequest> objectRequestList) {
         return new ResponseEntity<>(appService.createBulk(objectRequestList), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("/{id}")
     @Override
-    public ResponseEntity<App> updateById(@PathVariable Integer id, @RequestBody JsonPatch objectPatch)
+    public ResponseEntity<AppResponse> updateById(@PathVariable Integer id, @RequestBody JsonPatch objectPatch)
             throws JsonProcessingException, JsonPatchException {
         return new ResponseEntity<>(appService.updateById(id, objectPatch), HttpStatus.OK);
     }
@@ -80,7 +81,7 @@ public class AppController implements AppControllerInterface {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("/bulk")
     @Override
-    public ResponseEntity<List<App>> updateBulkById(@RequestBody Map<Integer, JsonPatch> idObjectPatchMap)
+    public ResponseEntity<List<AppResponse>> updateBulkById(@RequestBody Map<Integer, JsonPatch> idObjectPatchMap)
             throws JsonProcessingException, JsonPatchException {
         return new ResponseEntity<>(appService.updateBulkById(idObjectPatchMap), HttpStatus.OK);
     }
@@ -88,26 +89,26 @@ public class AppController implements AppControllerInterface {
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<MessageResponse> deleteById(@PathVariable Integer id) {
+    public ResponseEntity<AppResponse> deleteById(@PathVariable Integer id) {
         appService.deleteById(id);
-        return new ResponseEntity<>(new MessageResponse("App", "App has been successfully deleted"), HttpStatus.OK);
+        return new ResponseEntity<>(new AppResponse("App", "App has been successfully deleted"), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/bulk")
     @Override
-    public ResponseEntity<MessageResponse> deleteBulkById(@RequestBody Set<Integer> idSet) {
+    public ResponseEntity<AppResponse> deleteBulkById(@RequestBody Set<Integer> idSet) {
         appService.deleteBulkById(idSet);
-        return new ResponseEntity<>(new MessageResponse("App", "All apps have been successfully deleted"),
+        return new ResponseEntity<>(new AppResponse("App", "All apps have been successfully deleted"),
                 HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("")
     @Override
-    public ResponseEntity<MessageResponse> deleteAll() {
+    public ResponseEntity<ApiResponse> deleteAll() {
         appService.deleteAll();
-        return new ResponseEntity<>(new MessageResponse("App", "All apps have been successfully deleted"),
+        return new ResponseEntity<>(new AppResponse("App", "All apps have been successfully deleted"),
                 HttpStatus.OK);
     }
 

@@ -53,7 +53,7 @@ public class AuthService {
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
             throw new UsernameTakenException("Username is already taken!");
         }
-        User user = userFactory.getObject(new UserRequest(registerRequest.getUsername(), registerRequest.getPassword(), false));
+        User user = userFactory.getObject(new UserRequest(registerRequest.getUsername(), registerRequest.getPassword()));
         userRepository.save(user);
         return "User " + user.getUsername() + " successfully registered.";
     }

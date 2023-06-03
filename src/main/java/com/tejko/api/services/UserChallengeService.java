@@ -5,14 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +22,8 @@ import com.tejko.interfaces.api.services.UserChallengeServiceInterface;
 import com.tejko.models.general.UserChallenge;
 import com.tejko.models.general.ids.UserChallengeId;
 import com.tejko.models.general.payload.requests.UserChallengeRequest;
+import com.tejko.models.general.payload.responses.ApiResponse;
+import com.tejko.models.general.payload.responses.UserChallengeResponse;
 
 @Service
 public class UserChallengeService implements UserChallengeServiceInterface {
@@ -38,85 +35,93 @@ public class UserChallengeService implements UserChallengeServiceInterface {
     UserChallengeFactory userChallengeFactory;
 
     @Override
-    public UserChallenge getById(UserChallengeId id) {
-        return userChallengeRepository.findById(id).get();
+    public UserChallengeResponse getById(UserChallengeId id) {
+        return toApiResponse(userChallengeRepository.getById(id));
     }
 
     @Override
-    public List<UserChallenge> getBulkById(Set<UserChallengeId> idSet) {
-        return userChallengeRepository.findAllById(idSet);
+    public List<UserChallengeResponse> getBulkById(Set<UserChallengeId> idSet) {
+        return toApiResponseList(userChallengeRepository.findAllById(idSet));
     }
 
     @Override
-    public List<UserChallenge> getAll(Integer page, Integer size, String sort, String direction) {
+    public List<UserChallengeResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return userChallengeRepository.findAll(pageable).getContent();
+        return toApiResponseList(userChallengeRepository.findAll(pageable).getContent());
     }
 
     @Override
-    public UserChallenge create(UserChallengeRequest objectRequest) {
+    public UserChallengeResponse create(UserChallengeRequest objectRequest) {
         UserChallenge userChallenge = userChallengeFactory.getObject(objectRequest);
-        return userChallengeRepository.save(userChallenge);
+        return toApiResponse(userChallengeRepository.save(userChallenge));
     }
 
     @Override
-    public List<UserChallenge> createBulk(List<UserChallengeRequest> objectRequestList) {
+    public List<UserChallengeResponse> createBulk(List<UserChallengeRequest> objectRequestList) {
         List<UserChallenge> userChallengeList = new ArrayList<>();
 
         for (UserChallengeRequest objectRequest : objectRequestList) {
             userChallengeList.add(userChallengeFactory.getObject(objectRequest));
         }
 
-        return userChallengeRepository.saveAll(userChallengeList);
+        return toApiResponseList(userChallengeRepository.saveAll(userChallengeList));
     }
 
     @Override
-    public UserChallenge updateById(UserChallengeId id, JsonPatch objectPatch)
-            throws JsonProcessingException, JsonPatchException {
-        UserChallenge userChallenge = getById(id);
+    public UserChallengeResponse updateById(UserChallengeId id, UserChallengeRequest userChallengeRequest) {
+        UserChallenge userChallenge = userChallengeRepository.getById(id);
 
-        userChallenge = applyPatch(userChallenge, objectPatch);
+        userChallenge = applyPatch(userChallenge, userChallengeRequest);
 
-        return userChallengeRepository.save(userChallenge);
+        return toApiResponse(userChallengeRepository.save(userChallenge));
     }
 
     @Override
-    public List<UserChallenge> updateBulkById(
-            Map<UserChallengeId, JsonPatch> idObjectPatchMap) throws JsonProcessingException, JsonPatchException {
-        List<UserChallenge> userChallengeList = getBulkById(idObjectPatchMap.keySet());
+    public List<UserChallengeResponse> updateBulkById(Map<UserChallengeId, UserChallengeRequest> idUserChallengeRequestMap) {
+        List<UserChallenge> userChallengeList = userChallengeRepository.findAllById(idUserChallengeRequestMap.keySet());
 
         for (UserChallenge userChallenge : userChallengeList) {
-            userChallenge = applyPatch(userChallenge, idObjectPatchMap.get(userChallenge.getId()));
+            userChallenge = applyPatch(userChallenge, idUserChallengeRequestMap.get(userChallenge.getId()));
         }
-        return userChallengeRepository.saveAll(userChallengeList);
+        return toApiResponseList(userChallengeRepository.saveAll(userChallengeList));
     }
 
     @Override
-    public void deleteById(UserChallengeId id) {
+    public ApiResponse<?> deleteById(UserChallengeId id) {
         userChallengeRepository.deleteById(id);
+        return new ApiResponse<>("User Challenge has been deleted successfully");
     }
 
     @Override
-    public void deleteAll() {
+    public ApiResponse<?> deleteAll() {
         userChallengeRepository.deleteAll();
+        return new ApiResponse<>("User Challenges have been deleted successfully");
     }
 
     @Override
-    public void deleteBulkById(Set<UserChallengeId> idSet) {
+    public ApiResponse<?> deleteBulkById(Set<UserChallengeId> idSet) {
         userChallengeRepository.deleteAllById(idSet);
+        return new ApiResponse<>("All User Challenges have been deleted successfully");
     }
 
     @Override
     public boolean hasPermission(UUID userId, UserChallengeId objectId) {
-        return getById(objectId).getUser().getId().equals(userId);
+        return userChallengeRepository.getById(objectId).getUser().getId().equals(userId);
     }
 
     @Override
-    public UserChallenge applyPatch(UserChallenge object, JsonPatch patch)
-            throws JsonPatchException, JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode patched = patch.apply(objectMapper.convertValue(object, JsonNode.class));
-        return objectMapper.treeToValue(patched, UserChallenge.class);
+    public UserChallenge applyPatch(UserChallenge userChallenge, UserChallengeRequest userChallengeRequest) {
+        return userChallenge;
+    }
+
+    @Override
+    public UserChallengeResponse toApiResponse(UserChallenge object) {
+        return new UserChallengeResponse(object);
+    }
+
+    @Override
+    public List<UserChallengeResponse> toApiResponseList(List<UserChallenge> objectList) {
+        return objectList.stream().map(this::toApiResponse).collect(Collectors.toList());
     }
 
 }

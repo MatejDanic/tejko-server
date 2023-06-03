@@ -37,7 +37,8 @@ public class Challenge {
     @OneToMany(mappedBy = "challenge")
     private Set<UserChallenge> userChallenges;
 
-    public Challenge() {
+    public static Challenge create() {
+        return new Challenge();
     }
 
     public UUID getId() {

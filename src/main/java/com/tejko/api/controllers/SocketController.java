@@ -3,23 +3,23 @@ package com.tejko.api.controllers;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tejko.api.services.SocketService;
 import com.tejko.api.services.UserService;
-import com.tejko.components.JwtComponent;
-import com.tejko.models.general.enums.MessageType;
+import com.tejko.interfaces.api.controllers.SocketControllerInterface;
 import com.tejko.models.general.payload.requests.MessageRequest;
-import com.tejko.models.general.payload.responses.MessageResponse;
+import com.tejko.models.general.payload.responses.ApiResponse;
 
 @RestController
-public class SocketController {
+public class SocketController implements SocketControllerInterface {
 
     @Autowired
     UserService userService;
@@ -27,56 +27,31 @@ public class SocketController {
     @Autowired
     SocketService socketService;
 
-    @Autowired
-    SimpMessagingTemplate simpMessagingTemplate;
-
-    @Autowired
-    JwtComponent jwtComponent;
-
-    @MessageMapping("/greeting")
+    @MessageMapping("/greet")
     @SendTo("/topic/greetings")
-    public MessageResponse greeting(MessageRequest message, Principal principal) throws Exception {
-        if (message.getType() == MessageType.GREETING && message.getToken() != null
-                && jwtComponent.getUsernameFromJwt(message.getToken()).equals(message.getSender())) {
-            socketService.addUUID(message.getSender(), principal.getName());
-        }
-        return new MessageResponse(message.getSubject() + ", " + message.getSender() + "!", MessageType.GREETING);
-    }
-
-    @MessageMapping("/text")
-    @SendTo("/topic/everyone")
-    public MessageResponse sendChatMessageToEveryone(MessageRequest message) throws Exception {
-        if (message.getToken() != null
-                && jwtComponent.getUsernameFromJwt(message.getToken()).equals(message.getSender())) {
-            return new MessageResponse(message.getSubject(), MessageType.CHAT, message.getBody(), message.getSender());
-        }
-        return null;
+    @Override
+    public ResponseEntity<ApiResponse<?>> greet(MessageRequest messageRequest, Principal principal) {
+        return new ResponseEntity<>(socketService.greet(messageRequest, principal), HttpStatus.OK);
     }
 
     @MessageMapping("/chat")
     @SendToUser("/topic/user")
-    public void sendChatMessage(@Payload MessageRequest message, @Header("simpSessionId") String sessionId)
-            throws Exception {
-        if (message.getToken() != null
-                && jwtComponent.getUsernameFromJwt(message.getToken()).equals(message.getSender())) {
-            MessageResponse response = new MessageResponse(message.getSubject(), MessageType.CHAT, message.getBody(),
-                    message.getSender());
-            simpMessagingTemplate.convertAndSendToUser(socketService.getUUIDFromUsername(message.getReceiver()),
-                    "/topic/user", response);
-        }
+    @Override
+    public ResponseEntity<ApiResponse<?>> sendMessage(@Payload MessageRequest messageRequest, @Header("simpSessionId") String sessionId) {
+        return new ResponseEntity<>(socketService.sendMessage(messageRequest, sessionId), HttpStatus.OK);
     }
 
     @MessageMapping("/challenge")
     @SendToUser("/topic/challenge")
-    public void sendChallenge(@Payload MessageRequest message, @Header("simpSessionId") String sessionId)
-            throws Exception {
-        if (message.getToken() != null
-                && jwtComponent.getUsernameFromJwt(message.getToken()).equals(message.getSender())) {
-            MessageResponse response = new MessageResponse(message.getSubject(), MessageType.CHALLENGE,
-                    message.getBody(),
-                    message.getSender());
-            simpMessagingTemplate.convertAndSendToUser(socketService.getUUIDFromUsername(message.getReceiver()),
-                    "/topic/challenge", response);
-        }
+    @Override
+    public ResponseEntity<ApiResponse<?>> challenge(@Payload MessageRequest messageRequest, @Header("simpSessionId") String sessionId) {
+        return new ResponseEntity<>(socketService.challenge(messageRequest, sessionId), HttpStatus.OK);
+    }
+
+    @MessageMapping("/accept")
+    @SendToUser("/topic/accept")
+    @Override
+    public ResponseEntity<ApiResponse<?>> accept(MessageRequest messageRequest, String sessionId) {
+        return new ResponseEntity<>(socketService.accept(messageRequest, sessionId), HttpStatus.OK);
     }
 }

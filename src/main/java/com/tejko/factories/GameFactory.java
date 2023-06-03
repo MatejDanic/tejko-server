@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.tejko.api.repositories.AppRepository;
 import com.tejko.api.repositories.RoleRepository;
 import com.tejko.api.repositories.UserRepository;
+import com.tejko.constants.TejkoConstants;
 import com.tejko.interfaces.factories.GameFactoryInterface;
 import com.tejko.models.general.App;
 import com.tejko.models.general.Game;
@@ -27,22 +28,21 @@ public class GameFactory implements GameFactoryInterface {
     AppRepository appRepository;
 
     @Override
-    public Game getObject(GameRequest objectRequest) {
+    public Game getObject(GameRequest<? extends Game> objectRequest) {
         App app = appRepository.findById(objectRequest.getAppId()).get();
 
         switch (app.getName()) {
             case "Yamb":
-                return getYambObject((YambRequest) objectRequest, app);
+                return getYambObject((YambRequest) objectRequest);
         }
 
         return null;
     }
 
-    private Yamb getYambObject(YambRequest objectRequest, App app) {
+    private Yamb getYambObject(YambRequest objectRequest) {
         Yamb yamb = Yamb.createYamb();
-
         
-        yamb.setApp(app);
+        yamb.setApp(appRepository.getById(TejkoConstants.APP_YAMB_ID));
         User user = userRepository.findById(objectRequest.getUserId()).get();
         yamb.setUser(user);
         

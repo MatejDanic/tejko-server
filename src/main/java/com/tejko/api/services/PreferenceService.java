@@ -5,14 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -26,6 +21,8 @@ import com.tejko.factories.PreferenceFactory;
 import com.tejko.interfaces.api.services.PreferenceServiceInterface;
 import com.tejko.models.general.Preference;
 import com.tejko.models.general.payload.requests.PreferenceRequest;
+import com.tejko.models.general.payload.responses.ApiResponse;
+import com.tejko.models.general.payload.responses.PreferenceResponse;
 
 @Service
 public class PreferenceService implements PreferenceServiceInterface {
@@ -37,55 +34,54 @@ public class PreferenceService implements PreferenceServiceInterface {
     PreferenceRepository preferenceRepository;
 
     @Override
-    public Preference getById(UUID id) {
-        return preferenceRepository.findById(id).get();
+    public PreferenceResponse getById(UUID id) {
+        return toApiResponse(preferenceRepository.getById(id));
     }
 
     @Override
-    public List<Preference> getAll(Integer page, Integer size, String sort, String direction) {
+    public List<PreferenceResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return preferenceRepository.findAll(pageable).getContent();
+        return toApiResponseList(preferenceRepository.findAll(pageable).getContent());
     }
 
     @Override
-    public List<Preference> getBulkById(Set<UUID> idSet) {
-        return preferenceRepository.findAllById(idSet);
+    public List<PreferenceResponse> getBulkById(Set<UUID> idSet) {
+        return toApiResponseList(preferenceRepository.findAllById(idSet));
     }
 
     @Override
-    public Preference create(PreferenceRequest objectRequest) {
+    public PreferenceResponse create(PreferenceRequest objectRequest) {
         Preference preference = preferenceFactory.getObject(objectRequest);
 
-        return preferenceRepository.save(preference);
+        return toApiResponse(preferenceRepository.save(preference));
     }
 
     @Override
-    public List<Preference> createBulk(List<PreferenceRequest> objectRequestList) {
+    public List<PreferenceResponse> createBulk(List<PreferenceRequest> objectRequestList) {
         List<Preference> preferenceList = new ArrayList<>();
 
         for (PreferenceRequest objectRequest : objectRequestList) {
             preferenceList.add(preferenceFactory.getObject(objectRequest));
         }
 
-        return preferenceRepository.saveAll(preferenceList);
+        return toApiResponseList(preferenceRepository.saveAll(preferenceList));
     }
 
     @Override
-    public Preference updateById(UUID id, JsonPatch objectPatch) throws JsonProcessingException, JsonPatchException {
-        Preference preference = getById(id);
+    public PreferenceResponse updateById(UUID id, PreferenceRequest preferenceRequest) {
+        Preference preference = preferenceRepository.getById(id);
 
-        preference = applyPatch(preference, objectPatch);
+        preference = applyPatch(preference, preferenceRequest);
 
-        return preferenceRepository.save(preference);
+        return toApiResponse(preferenceRepository.save(preference));
     }
 
     @Override
-    public List<Preference> updateBulkById(Map<UUID, JsonPatch> idObjectPatchMap)
-            throws JsonProcessingException, JsonPatchException {
-        List<Preference> preferenceList = getBulkById(idObjectPatchMap.keySet());
+    public List<PreferenceResponse> updateBulkById(Map<UUID, PreferenceRequest> idPreferenceRequestMap) {
+        List<Preference> preferenceList = preferenceRepository.findAllById(idPreferenceRequestMap.keySet());
 
         for (Preference preference : preferenceList) {
-            preference = applyPatch(preference, idObjectPatchMap.get(preference.getId()));
+            preference = applyPatch(preference, idPreferenceRequestMap.get(preference.getId()));
         }
 
         preferenceRepository.saveAll(preferenceList);
@@ -93,31 +89,62 @@ public class PreferenceService implements PreferenceServiceInterface {
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public ApiResponse<?> deleteById(UUID id) {
         preferenceRepository.deleteById(id);
+        return new ApiResponse<>("Preference has been deleted successfully");
     }
 
     @Override
-    public void deleteAll() {
+    public ApiResponse<?> deleteAll() {
         preferenceRepository.deleteAll();
+        return new ApiResponse<>("Preferences have been deleted successfully");
     }
 
     @Override
-    public void deleteBulkById(Set<UUID> idSet) {
+    public ApiResponse<?> deleteBulkById(Set<UUID> idSet) {
         preferenceRepository.deleteAllById(idSet);
+        return new ApiResponse<>("All Preferences have been deleted successfully");
+    }
+
+    @Override
+    public PreferenceResponse getByUserId(UUID userId) {
+        return toApiResponse(preferenceRepository.getByUserId(userId));
+    }
+
+    @Override
+    public ApiResponse<?> deleteByUserId(UUID userId) {
+        preferenceRepository.deleteByUserId(userId);
+        return new ApiResponse<>("User's Preference has been deleted successfully");
+    }
+    
+    @Override
+    public PreferenceResponse updateByUserId(UUID userId, PreferenceRequest preferenceRequest) {
+        Preference preference = preferenceRepository.getByUserId(userId);
+
+        preference = applyPatch(preference, preferenceRequest);
+
+        return toApiResponse(preferenceRepository.save(preference));
+    }
+
+    @Override
+    public Preference applyPatch(Preference preference, PreferenceRequest preferenceRequest) {
+
+        return preference;
     }
 
     @Override
     public boolean hasPermission(UUID userId, UUID objectId) {
-        return getById(objectId).getUser().getId().equals(userId);
+        return preferenceRepository.getById(objectId).getUser().getId().equals(userId);
     }
 
     @Override
-    public Preference applyPatch(
-            Preference object, JsonPatch patch) throws JsonPatchException, JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode patched = patch.apply(objectMapper.convertValue(object, JsonNode.class));
-        return objectMapper.treeToValue(patched, Preference.class);
+    public PreferenceResponse toApiResponse(Preference object) {
+        return new PreferenceResponse(object);
+    }
+
+    @Override
+    public List<PreferenceResponse> toApiResponseList(List<Preference> objectList) {
+        return objectList.stream().map(this::toApiResponse).collect(Collectors.toList());
     }
 
 }

@@ -17,7 +17,7 @@ public class ChallengeFactory implements ChallengeFactoryInterface {
 
     @Override
     public Challenge getObject(ChallengeRequest objectRequest) {
-        Challenge challenge = new Challenge();
+        Challenge challenge = Challenge.create();
 
         App app = appRepository.findById(objectRequest.getAppId()).get();
         challenge.setApp(app);

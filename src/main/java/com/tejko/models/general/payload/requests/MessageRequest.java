@@ -1,67 +1,34 @@
 package com.tejko.models.general.payload.requests;
 
+import javax.validation.constraints.NotBlank;
+
 import com.tejko.models.general.enums.MessageType;
 
 public class MessageRequest {
 
+    @NotBlank
     private MessageType type;
-
+    @NotBlank
     private String sender;
-
+    @NotBlank
     private String receiver;
-
-    private String subject;
-
-    private Object body;
-
-    private String token;
+    @NotBlank
+    private Object content;
 
     public MessageType getType() {
         return type;
-    }
-
-    public void setType(MessageType type) {
-        this.type = type;
     }
 
     public String getSender() {
         return sender;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
-    }
-
     public String getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public Object getBody() {
-        return body;
-    }
-
-    public void setBody(Object body) {
-        this.body = body;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
+    public Object getContent() {
+        return content;
     }
 
 }

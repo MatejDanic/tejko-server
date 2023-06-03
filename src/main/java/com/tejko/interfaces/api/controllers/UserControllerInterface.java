@@ -1,34 +1,39 @@
 package com.tejko.interfaces.api.controllers;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.tejko.models.general.Preference;
-import com.tejko.models.general.Role;
-import com.tejko.models.general.Score;
 import com.tejko.models.general.User;
+import com.tejko.models.general.payload.requests.PreferenceRequest;
 import com.tejko.models.general.payload.requests.UserRequest;
+import com.tejko.models.general.payload.responses.ApiResponse;
+import com.tejko.models.general.payload.responses.PreferenceResponse;
+import com.tejko.models.general.payload.responses.ScoreResponse;
+import com.tejko.models.general.payload.responses.UserResponse;
 
-public interface UserControllerInterface extends ControllerInterface<UUID, User, UserRequest> {
+public interface UserControllerInterface extends ControllerInterface<UUID, User, UserRequest, UserResponse> {
 
     @PutMapping("/{id}/assign-role")
-    public ResponseEntity<Set<Role>> assignRoleByUserId(@PathVariable UUID id, @RequestBody Integer roleId);
+    public ResponseEntity<UserResponse> assignRoleByUserId(@PathVariable UUID id, @RequestBody Integer roleId);
 
-    @GetMapping("/{id}/preferences")
-    public ResponseEntity<Preference> getPreferenceByUserId(UUID id);
+    @GetMapping("/{id}/preference")
+    public ResponseEntity<PreferenceResponse> getPreferenceByUserId(UUID id);
 
-    @DeleteMapping("/{id}/preferences")
-    public ResponseEntity<String> deletePreferenceByUserId(UUID id);
+    @PatchMapping("/{id}/preference")
+    public ResponseEntity<PreferenceResponse> updatePreferenceByUserId(UUID id, PreferenceRequest preferenceRequest);
+
+    @DeleteMapping("/{id}/preference")
+    public ResponseEntity<ApiResponse<?>> deletePreferenceByUserId(UUID id);
 
     @GetMapping("/{id}/scores")
-    public ResponseEntity<List<Score>> getScoresByUserId(UUID id);
+    public ResponseEntity<List<ScoreResponse>> getScoresByUserId(UUID id);
 
 }

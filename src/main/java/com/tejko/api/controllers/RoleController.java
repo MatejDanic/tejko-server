@@ -4,10 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tejko.api.services.RoleService;
 import com.tejko.interfaces.api.controllers.RoleControllerInterface;
-import com.tejko.models.general.Role;
-import com.tejko.models.general.User;
 import com.tejko.models.general.payload.requests.RoleRequest;
-import com.tejko.models.general.payload.responses.MessageResponse;
+import com.tejko.models.general.payload.responses.ApiResponse;
+import com.tejko.models.general.payload.responses.RoleResponse;
+import com.tejko.models.general.payload.responses.UserResponse;
 
 @RestController
 @RequestMapping("/api/roles")
@@ -37,20 +33,20 @@ public class RoleController implements RoleControllerInterface {
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<Role> getById(@PathVariable Integer id) {
+    public ResponseEntity<RoleResponse> getById(@PathVariable Integer id) {
         return new ResponseEntity<>(roleService.getById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/bulk")
     @Override
-    public ResponseEntity<List<Role>> getBulkById(@RequestBody Set<Integer> idSet) {
+    public ResponseEntity<List<RoleResponse>> getBulkById(@RequestBody Set<Integer> idSet) {
         return new ResponseEntity<>(roleService.getBulkById(idSet), HttpStatus.OK);
     }
 
     @GetMapping("")
     @Override
-    public ResponseEntity<List<Role>> getAll(@PathVariable Integer page, @PathVariable Integer size,
+    public ResponseEntity<List<RoleResponse>> getAll(@PathVariable Integer page, @PathVariable Integer size,
             @PathVariable String sort, @PathVariable String direction) {
         return new ResponseEntity<>(roleService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
@@ -58,65 +54,57 @@ public class RoleController implements RoleControllerInterface {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("")
     @Override
-    public ResponseEntity<Role> create(@RequestBody RoleRequest objectRequest) {
+    public ResponseEntity<RoleResponse> create(@RequestBody RoleRequest objectRequest) {
         return new ResponseEntity<>(roleService.create(objectRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/bulk")
     @Override
-    public ResponseEntity<List<Role>> createBulk(@RequestBody List<RoleRequest> objectRequestList) {
+    public ResponseEntity<List<RoleResponse>> createBulk(@RequestBody List<RoleRequest> objectRequestList) {
         return new ResponseEntity<>(roleService.createBulk(objectRequestList), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("/{id}")
     @Override
-    public ResponseEntity<Role> updateById(@PathVariable Integer id, @RequestBody JsonPatch objectPatch)
-            throws JsonProcessingException, JsonPatchException {
-        return new ResponseEntity<>(roleService.updateById(id, objectPatch), HttpStatus.OK);
+    public ResponseEntity<RoleResponse> updateById(@PathVariable Integer id, @RequestBody RoleRequest roleRequest) {
+        return new ResponseEntity<>(roleService.updateById(id, roleRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("/bulk")
     @Override
-    public ResponseEntity<List<Role>> updateBulkById(@RequestBody Map<Integer, JsonPatch> idObjectPatchMap)
-            throws JsonProcessingException, JsonPatchException {
-        return new ResponseEntity<>(roleService.updateBulkById(idObjectPatchMap), HttpStatus.OK);
+    public ResponseEntity<List<RoleResponse>> updateBulkById(@RequestBody Map<Integer, RoleRequest> idRoleRequestMap) {
+        return new ResponseEntity<>(roleService.updateBulkById(idRoleRequestMap), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<MessageResponse> deleteById(@PathVariable Integer id) {
-        roleService.deleteById(id);
-        return new ResponseEntity<>(new MessageResponse("Role", "Role has been successfully deleted"), HttpStatus.OK);
+    public ResponseEntity<ApiResponse<?>> deleteById(@PathVariable Integer id) {
+        return new ResponseEntity<>(roleService.deleteById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/bulk")
     @Override
-    public ResponseEntity<MessageResponse> deleteBulkById(@RequestBody Set<Integer> idSet) {
-        roleService.deleteBulkById(idSet);
-        return new ResponseEntity<>(
-                new MessageResponse("Role", "All roles have been successfully deleted."),
-                HttpStatus.OK);
+    public ResponseEntity<ApiResponse<?>> deleteBulkById(@RequestBody Set<Integer> idSet) {
+        return new ResponseEntity<>(roleService.deleteBulkById(idSet), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("")
     @Override
-    public ResponseEntity<MessageResponse> deleteAll() {
-        roleService.deleteAll();
-        return new ResponseEntity<>(new MessageResponse("Role", "All roles have been successfully deleted."),
-                HttpStatus.OK);
+    public ResponseEntity<ApiResponse<?>> deleteAll() {
+        return new ResponseEntity<>(roleService.deleteAll(), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}/users")
     @Override
-    public ResponseEntity<List<User>> getUsersByRolesId(@PathVariable Integer id) {
-        return new ResponseEntity<>(roleService.getUsersByRolesId(id), HttpStatus.OK);
+    public ResponseEntity<List<UserResponse>> getUsersByRoleId(@PathVariable Integer id) {
+        return new ResponseEntity<>(roleService.getUsersByRoleId(id), HttpStatus.OK);
     }
 
 }

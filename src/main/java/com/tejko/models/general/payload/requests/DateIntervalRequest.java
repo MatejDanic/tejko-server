@@ -7,25 +7,17 @@ import javax.validation.constraints.NotBlank;
 public class DateIntervalRequest {
 
     @NotBlank
-    private LocalDateTime start;
+    private LocalDateTime startDate;
 
     @NotBlank
-    private LocalDateTime end;
+    private LocalDateTime endDate;
 
-    public LocalDateTime getStart() {
-        return start;
+    public LocalDateTime getStartDate() {
+        return startDate;
     }
 
-    public void setStart(LocalDateTime start) {
-        this.start = start;
-    }
-
-    public LocalDateTime getEnd() {
-        return end;
-    }
-
-    public void setEnd(LocalDateTime end) {
-        this.end = end;
+    public LocalDateTime getEndDate() {
+        return endDate;
     }
 
 }
