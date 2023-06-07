@@ -21,7 +21,6 @@ import com.tejko.api.services.UserChallengeService;
 import com.tejko.interfaces.api.controllers.UserChallengeControllerInterface;
 import com.tejko.models.general.ids.UserChallengeId;
 import com.tejko.models.general.payload.requests.UserChallengeRequest;
-import com.tejko.models.general.payload.responses.ApiResponse;
 import com.tejko.models.general.payload.responses.UserChallengeResponse;
 
 @RestController
@@ -83,22 +82,25 @@ public class UserChallengeController implements UserChallengeControllerInterface
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<ApiResponse<?>> deleteById(@PathVariable UserChallengeId id) {
-        return new ResponseEntity<>(userChallengeService.deleteById(id), HttpStatus.OK);
+    public ResponseEntity<?> deleteById(@PathVariable UserChallengeId id) {
+        userChallengeService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/bulk")
     @Override
-    public ResponseEntity<ApiResponse<?>> deleteBulkById(@RequestBody Set<UserChallengeId> idSet) {
-        return new ResponseEntity<>(userChallengeService.deleteBulkById(idSet), HttpStatus.OK);
+    public ResponseEntity<?> deleteBulkById(@RequestBody Set<UserChallengeId> idSet) {
+        userChallengeService.deleteBulkById(idSet);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("")
     @Override
-    public ResponseEntity<ApiResponse<?>> deleteAll() {
-        return new ResponseEntity<>(userChallengeService.deleteAll(), HttpStatus.OK);
+    public ResponseEntity<?> deleteAll() {
+        userChallengeService.deleteAll();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

@@ -4,10 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tejko.api.services.AppService;
 import com.tejko.interfaces.api.controllers.AppControllerInterface;
-import com.tejko.models.general.Score;
-import com.tejko.models.general.App;
 import com.tejko.models.general.payload.requests.AppRequest;
-import com.tejko.models.general.payload.responses.ApiResponse;
 import com.tejko.models.general.payload.responses.AppResponse;
+import com.tejko.models.general.payload.responses.ScoreResponse;
 
 @RestController
 @RequestMapping("/api/apps")
@@ -51,8 +45,7 @@ public class AppController implements AppControllerInterface {
 
     @GetMapping("")
     @Override
-    public ResponseEntity<List<AppResponse>> getAll(@PathVariable Integer page, @PathVariable Integer size,
-            @PathVariable String sort, @PathVariable String direction) {
+    public ResponseEntity<List<AppResponse>> getAll(@PathVariable Integer page, @PathVariable Integer size, @PathVariable String sort, @PathVariable String direction) {
         return new ResponseEntity<>(appService.getAll(page, size, sort, direction), HttpStatus.OK);
     }
 
@@ -73,48 +66,44 @@ public class AppController implements AppControllerInterface {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("/{id}")
     @Override
-    public ResponseEntity<AppResponse> updateById(@PathVariable Integer id, @RequestBody JsonPatch objectPatch)
-            throws JsonProcessingException, JsonPatchException {
-        return new ResponseEntity<>(appService.updateById(id, objectPatch), HttpStatus.OK);
+    public ResponseEntity<AppResponse> updateById(@PathVariable Integer id, @RequestBody AppRequest appRequest) {
+        return new ResponseEntity<>(appService.updateById(id, appRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("/bulk")
     @Override
-    public ResponseEntity<List<AppResponse>> updateBulkById(@RequestBody Map<Integer, JsonPatch> idObjectPatchMap)
-            throws JsonProcessingException, JsonPatchException {
-        return new ResponseEntity<>(appService.updateBulkById(idObjectPatchMap), HttpStatus.OK);
+    public ResponseEntity<List<AppResponse>> updateBulkById(@RequestBody Map<Integer, AppRequest> idAppRequestMap) {
+        return new ResponseEntity<>(appService.updateBulkById(idAppRequestMap), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<AppResponse> deleteById(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteById(@PathVariable Integer id) {
         appService.deleteById(id);
-        return new ResponseEntity<>(new AppResponse("App", "App has been successfully deleted"), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/bulk")
     @Override
-    public ResponseEntity<AppResponse> deleteBulkById(@RequestBody Set<Integer> idSet) {
+    public ResponseEntity<?> deleteBulkById(@RequestBody Set<Integer> idSet) {
         appService.deleteBulkById(idSet);
-        return new ResponseEntity<>(new AppResponse("App", "All apps have been successfully deleted"),
-                HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("")
     @Override
-    public ResponseEntity<ApiResponse> deleteAll() {
+    public ResponseEntity<?> deleteAll() {
         appService.deleteAll();
-        return new ResponseEntity<>(new AppResponse("App", "All apps have been successfully deleted"),
-                HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/{id}/scores")
     @Override
-    public ResponseEntity<List<Score>> getScoresByAppId(@PathVariable Integer id) {
+    public ResponseEntity<List<ScoreResponse>> getScoresByAppId(@PathVariable Integer id) {
         return new ResponseEntity<>(appService.getScoresByAppId(id), HttpStatus.OK);
     }
 

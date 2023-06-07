@@ -2,7 +2,9 @@ package com.tejko.models.general.payload.requests;
 
 import javax.validation.constraints.NotBlank;
 
-public class ChallengeRequest {
+import com.tejko.models.general.Challenge;
+
+public class ChallengeRequest extends ApiRequest<Challenge> {
 
     @NotBlank
     private Integer appId;

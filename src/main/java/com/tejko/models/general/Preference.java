@@ -15,12 +15,14 @@ import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
+import com.tejko.models.DatabaseEntity;
 import com.tejko.models.general.enums.Theme;
+import com.tejko.models.general.enums.VolumeLevel;
 
 @Entity
 @Table(name = "user_preference")
 @RestResource(rel = "preferences", path = "preferences")
-public class Preference {
+public class Preference extends DatabaseEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -34,22 +36,27 @@ public class Preference {
     private User user;
 
     @Column()
-    private int volume;
+    private VolumeLevel volumeLevel;
 
     @Column()
     private Theme theme;
 
-    public Preference() {
+    private Preference() { }
+
+    private Preference(User user, VolumeLevel volumeLevel, Theme theme) {
+        this.user = user;
+        this.volumeLevel = volumeLevel;
+        this.theme = theme;
+    }
+
+    public static Preference create(User user, VolumeLevel volumeLevel, Theme theme) {
+        return new Preference(user, volumeLevel, theme);
     }
 
     public UUID getId() {
         return id;
     }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
+    
     public User getUser() {
         return user;
     }
@@ -58,12 +65,12 @@ public class Preference {
         this.user = user;
     }
 
-    public int getVolume() {
-        return volume;
+    public VolumeLevel getVolumeLevel() {
+        return volumeLevel;
     }
 
-    public void setVolume(int volume) {
-        this.volume = volume;
+    public void setVolumeLevel(VolumeLevel volumeLevel) {
+        this.volumeLevel = volumeLevel;
     }
 
     public Theme getTheme() {

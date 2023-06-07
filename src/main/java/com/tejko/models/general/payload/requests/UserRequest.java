@@ -1,47 +1,33 @@
 package com.tejko.models.general.payload.requests;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
-public class UserRequest {
+import com.tejko.constants.TejkoConstants;
+import com.tejko.models.general.User;
+
+public class UserRequest extends ApiRequest<User> {
 
     @NotBlank
+    @Size(min = TejkoConstants.USERNAME_LENGTH_MIN, max = TejkoConstants.USERNAME_LENGTH_MAX)
     private String username;
 
     @NotBlank
+    @Size(min = TejkoConstants.PASSWORD_LENGTH_MIN)
     private String password;
 
-    private Boolean testUser = false;
-
-    public UserRequest() {
-    }
-
-    public UserRequest(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
+    private Boolean testUser;
 
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public Boolean isTestUser() {
         return testUser;
-    }
-
-    public void setTestUser(Boolean testUser) {
-        this.testUser = testUser;
     }
 
 }

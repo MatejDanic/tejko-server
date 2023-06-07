@@ -28,7 +28,7 @@ public class GameFactory implements GameFactoryInterface {
     AppRepository appRepository;
 
     @Override
-    public Game getObject(GameRequest<? extends Game> objectRequest) {
+    public Game getObject(GameRequest objectRequest) {
         App app = appRepository.findById(objectRequest.getAppId()).get();
 
         switch (app.getName()) {
@@ -39,14 +39,11 @@ public class GameFactory implements GameFactoryInterface {
         return null;
     }
 
-    private Yamb getYambObject(YambRequest objectRequest) {
-        Yamb yamb = Yamb.createYamb();
-        
-        yamb.setApp(appRepository.getById(TejkoConstants.APP_YAMB_ID));
+    private Yamb getYambObject(YambRequest objectRequest) {        
+        App app = appRepository.getById(TejkoConstants.APP_YAMB_ID);
         User user = userRepository.findById(objectRequest.getUserId()).get();
-        yamb.setUser(user);
         
-        return yamb;
+        return Yamb.create(app, user);
     }
 
 }

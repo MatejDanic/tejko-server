@@ -19,14 +19,12 @@ public class RoleFactory implements RoleFactoryInterface {
     PasswordEncoder encoder;
 
     @Override
-    public Role getObject(RoleRequest objectRequest) {
-        Role role = new Role();
-
-        role.setId(objectRequest.getId());
-        role.setLabel(objectRequest.getLabel());
-        role.setDescription(objectRequest.getDescription());
-        
-        return role;
+    public Role getObject(RoleRequest roleRequest) {
+        return Role.create(
+            roleRequest.getId(), 
+            roleRequest.getLabel(), 
+            roleRequest.getDescription()
+        );
     }
 
 }

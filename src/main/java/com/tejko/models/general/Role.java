@@ -9,13 +9,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tejko.models.DatabaseEntity;
 
 import org.springframework.data.rest.core.annotation.RestResource;
 
 @Entity
 @Table(name = "auth_role")
 @RestResource(rel = "roles", path = "roles")
-public class Role {
+public class Role extends DatabaseEntity {
 
     @Id
     private int id;
@@ -30,23 +31,24 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
-    public Role() {
+    private Role() { }
+
+    private Role(int id, String label, String description) {
+        this.id = id;
+        this.label = label;
+        this.description = description;
+    }
+
+    public static Role create(int id, String label, String description) {
+        return new Role(id, label, description);
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getLabel() {
         return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
     }
 
     public String getDescription() {

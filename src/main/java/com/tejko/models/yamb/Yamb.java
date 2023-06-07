@@ -16,7 +16,9 @@ import org.hibernate.annotations.TypeDef;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tejko.constants.YambConstants;
 import com.tejko.exceptions.IllegalActionException;
+import com.tejko.models.general.App;
 import com.tejko.models.general.Game;
+import com.tejko.models.general.User;
 import com.tejko.models.yamb.enums.BoxType;
 import com.tejko.models.yamb.enums.ColumnType;
 import com.tejko.utils.YambUtil;
@@ -39,19 +41,28 @@ public class Yamb extends Game {
     @Column
     public BoxType announcement = null;
 
-    private Yamb() {}
+    private Yamb() { }
 
-    private Yamb(Sheet sheet, Map<Integer, Dice> diceMap) {
+    private Yamb(App app, User user, Sheet sheet, Map<Integer, Dice> diceMap) {
+        super(app, user);
         this.sheet = sheet;
         this.diceMap = diceMap;
     }
 
-    public static Yamb createYamb() {
-        return new Yamb(Sheet.createSheet(), generateDiceMap());
+    public static Yamb create(App app, User user) {
+        return new Yamb(app, user, Sheet.create(), generateDiceMap());
     }
 
     public Sheet getSheet() {
         return sheet;
+    }
+
+    public int getRollCount() {
+        return rollCount;
+    }
+
+    public BoxType getAnnouncement() {
+        return announcement;
     }
 
     private static Map<Integer, Dice> generateDiceMap() {
@@ -103,7 +114,7 @@ public class Yamb extends Game {
         validateRestartAction();
         rollCount = 0;
         announcement = null;
-        sheet = Sheet.createSheet();
+        sheet = Sheet.create();
         diceMap = generateDiceMap();
     }
 
@@ -116,12 +127,7 @@ public class Yamb extends Game {
     }
 
     private void validateFillBoxAction(ColumnType columnType, BoxType boxType) {
-        Box box = sheet.getColumnMap().get(columnType).getBoxMap().get(boxType);
-        if (box.isFilled()) {
-            throw new IllegalActionException(YambConstants.ERROR_MESSAGE_BOX_ALREADY_FILLED);
-        } else if (!box.isAvailable()) {
-			throw new IllegalActionException(YambConstants.ERROR_MESSAGE_BOX_NOT_AVAILABLE);
-        } else if (rollCount == 0) {
+        if (rollCount == 0) {
 			throw new IllegalActionException(YambConstants.ERROR_MESSAGE_DICE_ROLL_REQUIRED);
         } else if (announcement != null && (columnType != ColumnType.ANNOUNCEMENT || boxType != announcement)) {
 			throw new IllegalActionException(YambConstants.ERROR_MESSAGE_BOX_NOT_ANNOUNCED);

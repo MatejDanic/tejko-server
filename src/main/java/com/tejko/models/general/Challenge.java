@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.tejko.models.DatabaseEntity;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
@@ -20,7 +21,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 @Entity
 @Table(name = "challenge")
 @RestResource(rel = "challenges", path = "challenges")
-public class Challenge {
+public class Challenge extends DatabaseEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -37,24 +38,26 @@ public class Challenge {
     @OneToMany(mappedBy = "challenge")
     private Set<UserChallenge> userChallenges;
 
-    public static Challenge create() {
-        return new Challenge();
+    private Challenge() { }
+
+    private Challenge(App app) {
+        this.app = app;
+    }
+
+    public static Challenge create(App app) {
+        return new Challenge(app);
     }
 
     public UUID getId() {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public App getApp() {
         return app;
     }
 
-    public void setApp(App app) {
-        this.app = app;
+    public Set<UserChallenge> getUserChallenges() {
+        return userChallenges;
     }
 
 }

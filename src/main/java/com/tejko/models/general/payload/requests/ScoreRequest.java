@@ -4,7 +4,9 @@ import java.util.UUID;
 
 import javax.validation.constraints.NotBlank;
 
-public class ScoreRequest {
+import com.tejko.models.general.Score;
+
+public class ScoreRequest extends ApiRequest<Score> {
 
     @NotBlank
     private UUID userId;

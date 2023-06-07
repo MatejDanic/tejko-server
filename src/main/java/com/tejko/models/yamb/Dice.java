@@ -6,7 +6,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Dice implements Serializable {
 
     private int value = 6;
-
     private int order;
 
     private Dice() {}

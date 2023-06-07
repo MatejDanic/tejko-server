@@ -6,15 +6,17 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import com.tejko.constants.TejkoConstants;
+import com.tejko.models.general.Preference;
 import com.tejko.models.general.enums.Theme;
+import com.tejko.models.general.enums.VolumeLevel;
 
-public class PreferenceRequest {
+public class PreferenceRequest extends ApiRequest<Preference> {
 
     @NotBlank
     private UUID userId;
 
     @Size(min = TejkoConstants.VOLUME_MIN, max = TejkoConstants.VOLUME_MAX)
-    private Integer volume;
+    private VolumeLevel volumeLevel;
 
     private Theme theme;
 
@@ -22,8 +24,8 @@ public class PreferenceRequest {
         return userId;
     }
 
-    public Integer getVolume() {
-        return volume;
+    public VolumeLevel getVolumeLevel() {
+        return volumeLevel;
     }
 
     public Theme getTheme() {

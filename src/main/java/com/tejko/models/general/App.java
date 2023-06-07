@@ -8,11 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tejko.models.DatabaseEntity;
 
 @Entity
 @Table(name = "app")
-public class App {
+public class App extends DatabaseEntity {
 
     @Id
     private int id;
@@ -23,9 +23,10 @@ public class App {
     @Column
     private String description;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "app")
     private Set<Game> gameSet;
+
+    private App() {}
 
     private App(int id, String name, String description) {
         this.id = id;

@@ -8,6 +8,7 @@ import com.tejko.api.repositories.GameRepository;
 import com.tejko.api.repositories.UserRepository;
 import com.tejko.interfaces.factories.UserChallengeFactoryInterface;
 import com.tejko.models.general.Challenge;
+import com.tejko.models.general.Game;
 import com.tejko.models.general.User;
 import com.tejko.models.general.UserChallenge;
 import com.tejko.models.general.ids.UserChallengeId;
@@ -26,18 +27,18 @@ public class UserChallengeFactory implements UserChallengeFactoryInterface {
     GameRepository gameRepository;
 
     @Override
-    public UserChallenge getObject(UserChallengeRequest objectRequest) {
-
-        UserChallenge userChallenge = new UserChallenge();
-        userChallenge.setId(new UserChallengeId(objectRequest.getUserId(), objectRequest.getChallengeId()));
+    public UserChallenge getObject(UserChallengeRequest userChallengeRequest) {
+        UserChallengeId id = new UserChallengeId(userChallengeRequest.getUserId(), userChallengeRequest.getChallengeId());
+        User user = userRepository.findById(userChallengeRequest.getUserId()).get();
+        Challenge challenge = challengeRepository.findById(userChallengeRequest.getChallengeId()).get();
+        Game game = gameRepository.findById(userChallengeRequest.getGameId()).get();
         
-        User user = userRepository.findById(objectRequest.getUserId()).get();
-        userChallenge.setUser(user);
-
-        Challenge challenge = challengeRepository.findById(objectRequest.getChallengeId()).get();
-        userChallenge.setChallenge(challenge);
-
-        return userChallenge;
+        return UserChallenge.create(
+            id, 
+            user, 
+            challenge, 
+            game
+        );
     }
 
 }

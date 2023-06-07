@@ -1,9 +1,7 @@
 package com.tejko.api.services;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,50 +10,42 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.tejko.api.repositories.UserRepository;
 import com.tejko.components.JwtComponent;
 import com.tejko.exceptions.UsernameTakenException;
-import com.tejko.factories.UserFactory;
-import com.tejko.models.general.User;
+import com.tejko.interfaces.api.services.AuthServiceInterface;
 import com.tejko.models.general.UserDetailsImpl;
 import com.tejko.models.general.payload.requests.LoginRequest;
-import com.tejko.models.general.payload.requests.RegisterRequest;
 import com.tejko.models.general.payload.requests.UserRequest;
-import com.tejko.models.general.payload.responses.JwtResponse;
+import com.tejko.models.general.payload.responses.LoginResponse;
+import com.tejko.models.general.payload.responses.UserResponse;
 
 @Service
-public class AuthService {
+public class AuthService implements AuthServiceInterface {
 
     @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Resource
-    UserFactory userFactory;
+    UserService userService;
 
     @Autowired
     JwtComponent jwtComponent;
 
-    public JwtResponse login(LoginRequest loginRequest) {
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtComponent.generateJwt(authentication);
-
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
-        return new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles);
+
+        Set<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toSet());
+        return new LoginResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles);
     }
 
-    public String register(RegisterRequest registerRequest) throws UsernameTakenException {
-        if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            throw new UsernameTakenException("Username is already taken!");
-        }
-        User user = userFactory.getObject(new UserRequest(registerRequest.getUsername(), registerRequest.getPassword()));
-        userRepository.save(user);
-        return "User " + user.getUsername() + " successfully registered.";
+    @Override
+    public UserResponse register(UserRequest userRequest) throws UsernameTakenException {
+        return userService.create(userRequest);
     }
 
 }

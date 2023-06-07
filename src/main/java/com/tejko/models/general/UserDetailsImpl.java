@@ -17,7 +17,6 @@ public class UserDetailsImpl implements UserDetails {
 	private static final long serialVersionUID = 1L;
 
 	private UUID id;
-
 	private String username;
 
 	@JsonIgnore
@@ -33,9 +32,7 @@ public class UserDetailsImpl implements UserDetails {
 	}
 
 	public static UserDetailsImpl build(User user) {
-		List<GrantedAuthority> authorities = user.getRoles().stream()
-				.map(role -> new SimpleGrantedAuthority(role.getLabel())).collect(Collectors.toList());
-
+		List<GrantedAuthority> authorities = user.getRoles().stream().map(role -> new SimpleGrantedAuthority(role.getLabel())).collect(Collectors.toList());
 		return new UserDetailsImpl(user.getId(), user.getUsername(), user.getPassword(), authorities);
 	}
 
@@ -80,10 +77,12 @@ public class UserDetailsImpl implements UserDetails {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if (o == null || getClass() != o.getClass()) {
 			return false;
+		}
 		UserDetailsImpl user = (UserDetailsImpl) o;
 		return Objects.equals(id, user.id);
 	}

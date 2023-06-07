@@ -1,8 +1,11 @@
 package com.tejko.models.yamb;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,11 +13,10 @@ import com.tejko.constants.YambConstants;
 import com.tejko.models.yamb.enums.BoxType;
 import com.tejko.models.yamb.enums.ColumnType;
 
-public class Column {
+public class Column implements Serializable {
 
     private ColumnType type;
 
-    @JsonIgnore
     private Map<BoxType, Box> boxMap;
 
     private Column() {}
@@ -24,7 +26,7 @@ public class Column {
         this.boxMap = boxMap;
     }
 
-    public static Column createColumn(ColumnType type) {
+    public static Column create(ColumnType type) {
         Column column = new Column(type, Column.generateBoxMap(type));
         return column;
     }
@@ -41,11 +43,12 @@ public class Column {
         return type;
     }
 
-    public Map<BoxType, Box> getBoxMap() {
-        return boxMap;
+    @JsonProperty
+    private void setBoxMap(Map<BoxType, Box> boxMap) {
+        this.boxMap = boxMap;
     }
 
-    @JsonProperty("boxList")
+    @Transient
     public Collection<Box> getBoxList() {
         return boxMap.values();
     }
@@ -99,7 +102,7 @@ public class Column {
         return numOfAvailableBoxes;
     }  
 
-    public void fillBox(BoxType boxType, int value) {
+    public void fillBox(BoxType boxType, int value) { 
         Box selectedBox = boxMap.get(boxType);
         selectedBox.fill(value);
         makeNextBoxAvailable(boxType);

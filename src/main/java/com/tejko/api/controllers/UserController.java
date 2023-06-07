@@ -21,9 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tejko.api.services.UserService;
 import com.tejko.interfaces.api.controllers.UserControllerInterface;
-import com.tejko.models.general.payload.requests.PreferenceRequest;
 import com.tejko.models.general.payload.requests.UserRequest;
-import com.tejko.models.general.payload.responses.ApiResponse;
 import com.tejko.models.general.payload.responses.PreferenceResponse;
 import com.tejko.models.general.payload.responses.ScoreResponse;
 import com.tejko.models.general.payload.responses.UserResponse;
@@ -86,22 +84,25 @@ public class UserController implements UserControllerInterface {
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), userService.getById(#id))")
 	@DeleteMapping("/{id}")
 	@Override
-	public ResponseEntity<ApiResponse<?>> deleteById(@PathVariable UUID id) {
-		return new ResponseEntity<>(userService.deleteById(id), HttpStatus.OK);
+	public ResponseEntity<?> deleteById(@PathVariable UUID id) {
+		userService.deleteById(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/bulk")
 	@Override
-	public ResponseEntity<ApiResponse<?>> deleteBulkById(@RequestBody Set<UUID> idSet) {
-		return new ResponseEntity<>(userService.deleteBulkById(idSet), HttpStatus.OK);
+	public ResponseEntity<?> deleteBulkById(@RequestBody Set<UUID> idSet) {
+		userService.deleteBulkById(idSet);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("")
 	@Override
-	public ResponseEntity<ApiResponse<?>> deleteAll() {
-		return new ResponseEntity<>(userService.deleteAll(), HttpStatus.OK);
+	public ResponseEntity<?> deleteAll() {
+		userService.deleteAll();
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or authentication.principal.username.equals(\"Matej\")")
@@ -116,20 +117,6 @@ public class UserController implements UserControllerInterface {
 	@Override
 	public ResponseEntity<PreferenceResponse> getPreferenceByUserId(@PathVariable UUID id) {
 		return new ResponseEntity<>(userService.getPreferenceByUserId(id), HttpStatus.OK);
-	}
-
-	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), userService.getById(#id))")
-	@PatchMapping("/{id}/preference")
-	@Override
-	public ResponseEntity<PreferenceResponse> updatePreferenceByUserId(@PathVariable UUID id, @RequestBody PreferenceRequest preferenceRequest) {
-		return new ResponseEntity<>(userService.updatePreferenceByUserId(id, preferenceRequest), HttpStatus.OK);
-	}
-
-	@PreAuthorize("hasAuthority('ADMIN')")
-	@DeleteMapping("/{id}/preference")
-	@Override
-	public ResponseEntity<ApiResponse<?>> deletePreferenceByUserId(@PathVariable UUID id) {
-		return new ResponseEntity<>(userService.deletePreferenceByUserId(id), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), userService.getById(#id))")

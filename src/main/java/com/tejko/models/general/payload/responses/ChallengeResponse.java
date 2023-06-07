@@ -1,16 +1,34 @@
 package com.tejko.models.general.payload.responses;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
 import com.tejko.models.general.Challenge;
-import com.tejko.models.general.enums.ResponseStatus;
 
 public class ChallengeResponse extends ApiResponse<Challenge> {
+    
+    private UUID id;
+    private int appId;
+    private List<UserChallengeResponse> userChallengeList;
 
-    public ChallengeResponse(ResponseStatus status, String message, Challenge object) {
-        super(status, message, object);
+    public ChallengeResponse(LocalDateTime createdDate, LocalDateTime lastModifiedDate, UUID id, int appId, List<UserChallengeResponse> userChallengeList) {
+        super(createdDate, lastModifiedDate);
+        this.id = id;
+        this.appId = appId;
+        this.userChallengeList = userChallengeList;
     }
 
-    public ChallengeResponse(Challenge object) {
-        super(object);
+    public UUID getId() {
+        return id;
     }
 
+    public int getAppId() {
+        return appId;
+    }
+
+    public List<UserChallengeResponse> getUserChallengeList() {
+        return userChallengeList;
+    }
+    
 }

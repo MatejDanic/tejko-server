@@ -14,9 +14,8 @@ import org.springframework.stereotype.Service;
 import com.tejko.components.JwtComponent;
 import com.tejko.factories.MessageFactory;
 import com.tejko.interfaces.api.services.SocketServiceInterface;
+import com.tejko.models.general.Message;
 import com.tejko.models.general.payload.requests.MessageRequest;
-import com.tejko.models.general.payload.responses.ApiResponse;
-import com.tejko.models.general.payload.responses.MessageResponse;
 
 @Service
 public class SocketService implements SocketServiceInterface {
@@ -33,34 +32,30 @@ public class SocketService implements SocketServiceInterface {
     private Map<String, String> userMap = new HashMap<>();
 
     @Override
-    public ApiResponse<?> greet(MessageRequest messageRequest, Principal principal) {
+    public void greet(MessageRequest messageRequest, Principal principal) {
         validateMessageRequest(messageRequest);
         addUUID(messageRequest.getSender(), principal.getName());
-        return new ApiResponse<>("Greeting sent successfully.");
     }
 
     @Override
-    public ApiResponse<?> sendMessage(MessageRequest messageRequest, String sessionId) {
+    public void sendMessage(MessageRequest messageRequest, String sessionId) {
         validateMessageRequest(messageRequest);
-        MessageResponse response = new MessageResponse(messageFactory.getObject(messageRequest));
-        simpMessagingTemplate.convertAndSendToUser(getUUIDFromUsername(messageRequest.getReceiver()), "/topic/user", response);
-        return new ApiResponse<>("Message sent successfully.");
+        Message message = messageFactory.getObject(messageRequest);
+        simpMessagingTemplate.convertAndSendToUser(getUUIDFromUsername(messageRequest.getReceiver()), "/topic/user", message);
     }
 
     @Override
-    public ApiResponse<?> challenge(MessageRequest messageRequest, String sessionId) {
+    public void challenge(MessageRequest messageRequest, String sessionId) {
         validateMessageRequest(messageRequest);
-        MessageResponse response = new MessageResponse(messageFactory.getObject(messageRequest));
-        simpMessagingTemplate.convertAndSendToUser(getUUIDFromUsername(messageRequest.getReceiver()), "/topic/challenge", response);
-        return new ApiResponse<>("Challenge made successfully.");
+        Message message = messageFactory.getObject(messageRequest);
+        simpMessagingTemplate.convertAndSendToUser(getUUIDFromUsername(messageRequest.getReceiver()), "/topic/challenge", message);
     }
 
     @Override
-    public ApiResponse<?> accept(MessageRequest messageRequest, String sessionId) {
+    public void accept(MessageRequest messageRequest, String sessionId) {
         validateMessageRequest(messageRequest);
-        MessageResponse response = new MessageResponse(messageFactory.getObject(messageRequest));
-        simpMessagingTemplate.convertAndSendToUser(getUUIDFromUsername(messageRequest.getReceiver()), "/topic/accept", response);
-        return new ApiResponse<>("Challenge made successfully.");
+        Message message = messageFactory.getObject(messageRequest);
+        simpMessagingTemplate.convertAndSendToUser(getUUIDFromUsername(messageRequest.getReceiver()), "/topic/accept", message);
     }
 
     private void validateMessageRequest(MessageRequest messageRequest) {

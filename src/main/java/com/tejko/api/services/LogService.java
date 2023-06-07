@@ -12,8 +12,12 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.tejko.api.repositories.LogRepository;
+import com.tejko.factories.LogFactory;
 import com.tejko.interfaces.api.services.LogServiceInterface;
+import com.tejko.mappers.LogMapper;
 import com.tejko.models.general.Log;
+import com.tejko.models.general.payload.requests.LogRequest;
+import com.tejko.models.general.payload.responses.LogResponse;
 
 @Service
 public class LogService implements LogServiceInterface {
@@ -21,29 +25,37 @@ public class LogService implements LogServiceInterface {
     @Autowired
     LogRepository logRepository;
 
-    public Log save(Log log) {
-        return logRepository.save(log);
+    @Autowired
+    LogFactory logFactory;
+
+    @Autowired
+    LogMapper logMapper;
+
+    @Override
+    public LogResponse getById(UUID id) {
+        return logMapper.toApiResponse(logRepository.findById(id).get());
     }
 
     @Override
-    public Log getById(UUID id) {
-        return logRepository.findById(id).get();
-    }
-
-    @Override
-    public List<Log> getAll(Integer page, Integer size, String sort, String direction) {
+    public List<LogResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return logRepository.findAll(pageable).getContent();
+        return logMapper.toApiResponseList(logRepository.findAll(pageable).getContent());
     }
 
     @Override
-    public List<Log> getBulkById(Set<UUID> idSet) {
-        return logRepository.findAllById(idSet);
+    public List<LogResponse> getBulkById(Set<UUID> idSet) {
+        return logMapper.toApiResponseList(logRepository.findAllById(idSet));
     }
 
     @Override
-    public List<Log> getBulkByIdIn(Set<UUID> idList) {
-        return logRepository.findAllById(idList);
+    public List<LogResponse> getBulkByIdIn(Set<UUID> idList) {
+        return logMapper.toApiResponseList(logRepository.findAllById(idList));
+    }
+
+    @Override
+    public LogResponse create(LogRequest logRequest) {
+        Log log = logFactory.getObject(logRequest);
+        return logMapper.toApiResponse(logRepository.save(log));
     }
 
     @Override

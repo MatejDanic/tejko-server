@@ -1,17 +1,16 @@
 package com.tejko.models.yamb;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tejko.models.yamb.enums.BoxType;
 import com.tejko.models.yamb.enums.ColumnType;
 
-public class Sheet {
+public class Sheet implements Serializable {
 
-    @JsonIgnore
     private Map<ColumnType, Column> columnMap;
 
     private Sheet() {}
@@ -20,23 +19,19 @@ public class Sheet {
         this.columnMap = columnMap;
     }
 
-    public static Sheet createSheet() {
+    public static Sheet create() {
         return new Sheet(generateColumnMap());
     }
 
     private static Map<ColumnType, Column> generateColumnMap() {
         Map<ColumnType, Column> columnMap = new HashMap<>();
         for (ColumnType columnType : ColumnType.values()) {
-            columnMap.put(columnType, Column.createColumn(columnType));
+            columnMap.put(columnType, Column.create(columnType));
         }
         return columnMap;
     }
 
-    public Map<ColumnType, Column> getColumnMap() {
-        return columnMap;
-    }
-
-    @JsonProperty("columnList")
+    @JsonIgnore
     public Collection<Column> getColumnList() { 
         return columnMap.values();
     }
@@ -67,7 +62,7 @@ public class Sheet {
         }
         return bottomSectionSum;
     }
-
+    
     @JsonIgnore
     public int getTotalSum() { 
         return getTopSectionSum() + getMiddleSectionSum() + getBottomSectionSum();

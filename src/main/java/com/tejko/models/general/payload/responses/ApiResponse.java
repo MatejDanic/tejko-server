@@ -1,51 +1,25 @@
 package com.tejko.models.general.payload.responses;
 
-import com.tejko.models.general.enums.ResponseStatus;
+import java.time.LocalDateTime;
 
-public class ApiResponse<T> {
+import com.tejko.models.DatabaseEntity;
 
-    private ResponseStatus status = ResponseStatus.SUCCESS;
-    private String message;
-    private T object;
+public abstract class ApiResponse<T extends DatabaseEntity> {
 
-    public ApiResponse(ResponseStatus status, String message, T object) {
-        this.status = status;
-        this.message = message;
-        this.object = object;
-    }
+    private LocalDateTime createdDate;
+    private LocalDateTime lastModifiedDate;
 
-    public ApiResponse(ResponseStatus status, String message) {
-        this.status = status;
-        this.message = message;
+    public ApiResponse(LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
+        this.createdDate = createdDate;
+        this.lastModifiedDate = lastModifiedDate;
     }
 
-    public ApiResponse(String message) {
-        this.message = message;
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
     }
 
-    public ApiResponse(T object) {
-        this.object = object;
+    public LocalDateTime getLastModifiedDate() {
+        return lastModifiedDate;
     }
-
-    public ResponseStatus getStatus() {
-        return status;
-    }
-    public void setStatus(ResponseStatus status) {
-        this.status = status;
-    }
-    public String getMessage() {
-        return message;
-    }
-    public void setMessage(String message) {
-        this.message = message;
-    }
-    public T getobject() {
-        return object;
-    }
-    public void setobject(T object) {
-        this.object = object;
-    }
-
-    
 
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 
 import com.tejko.exceptions.IllegalActionException;
+import com.tejko.interfaces.api.ObjectControllerInterface;
 import com.tejko.models.general.payload.requests.YambRequest;
 import com.tejko.models.general.payload.responses.YambResponse;
 import com.tejko.models.yamb.Yamb;
@@ -16,7 +17,7 @@ import com.tejko.models.yamb.enums.ColumnType;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
-public interface YambControllerInterface extends ControllerInterface<UUID, Yamb, YambRequest, YambResponse> {
+public interface YambControllerInterface extends ObjectControllerInterface<UUID, Yamb, YambRequest, YambResponse> {
 
         @PutMapping("/{id}/roll")
         public ResponseEntity<YambResponse> rollDiceById(@PathVariable UUID id, @RequestBody List<Integer> diceToRoll) throws IllegalActionException;

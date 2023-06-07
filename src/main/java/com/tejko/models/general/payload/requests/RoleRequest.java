@@ -2,7 +2,9 @@ package com.tejko.models.general.payload.requests;
 
 import javax.validation.constraints.NotBlank;
 
-public class RoleRequest {
+import com.tejko.models.general.Role;
+
+public class RoleRequest extends ApiRequest<Role> {
 
     @NotBlank
     private Integer id;

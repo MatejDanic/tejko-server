@@ -6,7 +6,7 @@ import javax.validation.constraints.NotBlank;
 
 import com.tejko.models.general.Game;
 
-public abstract class GameRequest<G extends Game> {
+public abstract class GameRequest extends ApiRequest<Game> {
 
     @NotBlank
     private UUID userId;

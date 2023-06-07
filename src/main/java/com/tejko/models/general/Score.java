@@ -1,6 +1,5 @@
 package com.tejko.models.general;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -12,13 +11,15 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.tejko.models.DatabaseEntity;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 @Entity
 @Table(name = "score")
 @RestResource(rel = "scores", path = "scores")
-public class Score {
+public class Score extends DatabaseEntity {
 
 	@Id
 	@GeneratedValue(generator = "UUID")
@@ -37,52 +38,38 @@ public class Score {
 	private User user;
 
 	@Column(nullable = false)
-	private Integer value;
+	private int value;
 
-	@Column(nullable = false)
-	private LocalDateTime date;
+	private Score() { }
 
-	public Score() {
+	private Score(App app, User user, int value) {
+		this.app = app;
+		this.user = user;
+		this.value = value;
+	}
+
+	public static Score create(App app, User user, int value) {
+		return new Score(app, user, value);
 	}
 
 	public UUID getId() {
 		return id;
 	}
 
-	public void setId(UUID id) {
-		this.id = id;
-	}
-
 	public App getApp() {
 		return app;
-	}
-
-	public void setApp(App app) {
-		this.app = app;
 	}
 
 	public User getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public Integer getValue() {
+	public int getValue() {
 		return value;
 	}
 
-	public void setValue(Integer value) {
+	public void setValue(int value) {
 		this.value = value;
-	}
-
-	public LocalDateTime getDate() {
-		return date;
-	}
-
-	public void setDate(LocalDateTime date) {
-		this.date = date;
 	}
 
 }

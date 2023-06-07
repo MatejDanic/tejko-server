@@ -4,10 +4,9 @@ import java.util.Map;
 
 import com.tejko.models.yamb.Dice;
 import com.tejko.models.yamb.Sheet;
-import com.tejko.models.yamb.Yamb;
 import com.tejko.models.yamb.enums.BoxType;
 
-public class YambRequest extends GameRequest<Yamb> {
+public class YambRequest extends GameRequest {
 
     private Sheet sheet;
     private Map<Integer, Dice> diceMap;

@@ -24,7 +24,6 @@ import com.tejko.api.services.YambService;
 import com.tejko.exceptions.IllegalActionException;
 import com.tejko.interfaces.api.controllers.YambControllerInterface;
 import com.tejko.models.general.payload.requests.YambRequest;
-import com.tejko.models.general.payload.responses.ApiResponse;
 import com.tejko.models.general.payload.responses.YambResponse;
 import com.tejko.models.yamb.enums.BoxType;
 import com.tejko.models.yamb.enums.ColumnType;
@@ -91,22 +90,25 @@ public class YambController implements YambControllerInterface {
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambService.getById(#id))")
 	@DeleteMapping("/{id}")
 	@Override
-	public ResponseEntity<ApiResponse<?>> deleteById(@PathVariable UUID id) {
-		return new ResponseEntity<>(yambService.deleteById(id), HttpStatus.OK);
+	public ResponseEntity<?> deleteById(@PathVariable UUID id) {
+		yambService.deleteById(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/bulk")
 	@Override
-	public ResponseEntity<ApiResponse<?>> deleteBulkById(@RequestBody Set<UUID> idSet) {
-		return new ResponseEntity<>(yambService.deleteBulkById(idSet), HttpStatus.OK);
+	public ResponseEntity<?> deleteBulkById(@RequestBody Set<UUID> idSet) {
+		yambService.deleteBulkById(idSet);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("")
 	@Override
-	public ResponseEntity<ApiResponse<?>> deleteAll() {
-		return new ResponseEntity<>(yambService.deleteAll(), HttpStatus.OK);
+	public ResponseEntity<?> deleteAll() {
+		yambService.deleteAll();
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), yambService.getById(#id))")

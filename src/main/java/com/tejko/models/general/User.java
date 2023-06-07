@@ -1,6 +1,5 @@
 package com.tejko.models.general;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,19 +17,16 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import com.tejko.constants.TejkoConstants;
+import com.tejko.models.DatabaseEntity;
 
 @Entity
 @Table(name = "auth_user")
 @RestResource(rel = "users", path = "users")
-public class User {
+public class User extends DatabaseEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -45,41 +41,30 @@ public class User {
     @Column(unique = true)
     private String usernameLowercase;
 
-    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
-    @JsonIncludeProperties({ "id", "label" })
     @JoinTable(name = "auth_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     @ManyToMany
     private Set<Role> roles;
 
-    @JsonIgnoreProperties({ "user" })
     @OneToOne(mappedBy = "user")
     private Preference preference;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Log> logs;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Score> scores;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private Set<Game> games;
 
-    @JsonIgnoreProperties({ "user" })
     @OneToMany(mappedBy = "user")
     private Set<UserChallenge> userChallenges;
 
-    @JsonIgnore
     @Column
     private boolean testUser = false;
-
-    @Column
-    private LocalDateTime createdDate;
 
     @PrePersist
     @PreUpdate
@@ -87,7 +72,17 @@ public class User {
         this.usernameLowercase = username == null ? null : username.toLowerCase();
     }
 
-    public User() {
+    private User() { }    
+
+    private User(String username, String password, Set<Role> roles, boolean testUser) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+        this.testUser = testUser;
+    }
+
+    public static User create(String username, String password, Set<Role> roles, boolean testUser) {
+        return new User(username, password, roles, testUser);
     }
 
     public UUID getId() {
@@ -176,14 +171,6 @@ public class User {
 
     public void setTestUser(boolean testUser) {
         this.testUser = testUser;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 
     public void assignRole(Role role) {

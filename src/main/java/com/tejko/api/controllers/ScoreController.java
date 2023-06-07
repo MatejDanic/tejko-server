@@ -1,5 +1,6 @@
 package com.tejko.api.controllers;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,9 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tejko.api.services.ScoreService;
 import com.tejko.interfaces.api.controllers.ScoreControllerInterface;
-import com.tejko.models.general.payload.requests.DateIntervalRequest;
 import com.tejko.models.general.payload.requests.ScoreRequest;
-import com.tejko.models.general.payload.responses.ApiResponse;
 import com.tejko.models.general.payload.responses.ScoreResponse;
 
 @RestController
@@ -83,27 +82,30 @@ public class ScoreController implements ScoreControllerInterface {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/{id}")
 	@Override
-	public ResponseEntity<ApiResponse<?>> deleteById(@PathVariable UUID id) {
-		return new ResponseEntity<>(yambScoreService.deleteById(id), HttpStatus.OK);
+	public ResponseEntity<?> deleteById(@PathVariable UUID id) {
+		yambScoreService.deleteById(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/bulk")
 	@Override
-	public ResponseEntity<ApiResponse<?>> deleteBulkById(@RequestBody Set<UUID> idSet) {
-		return new ResponseEntity<>(yambScoreService.deleteBulkById(idSet), HttpStatus.OK);
+	public ResponseEntity<?> deleteBulkById(@RequestBody Set<UUID> idSet) {
+		yambScoreService.deleteBulkById(idSet);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("")
 	@Override
-	public ResponseEntity<ApiResponse<?>> deleteAll() {
-		return new ResponseEntity<>(yambScoreService.deleteAll(), HttpStatus.OK);
+	public ResponseEntity<?> deleteAll() {
+		yambScoreService.deleteAll();
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@GetMapping("/interval")
 	@Override
-	public ResponseEntity<List<ScoreResponse>> getAllByDateInterval(@RequestBody DateIntervalRequest dateIntervalRequest) {
-		return new ResponseEntity<>(yambScoreService.getAllByDateInterval(dateIntervalRequest), HttpStatus.OK);
+	public ResponseEntity<List<ScoreResponse>> getAllByDateInterval(@PathVariable LocalDateTime startDate, @PathVariable LocalDateTime endDate) {
+		return new ResponseEntity<>(yambScoreService.getAllByDateInterval(startDate, endDate), HttpStatus.OK);
 	}
 }

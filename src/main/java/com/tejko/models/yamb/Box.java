@@ -1,9 +1,13 @@
 package com.tejko.models.yamb;
 
+import java.io.Serializable;
+
+import com.tejko.constants.YambConstants;
+import com.tejko.exceptions.IllegalActionException;
 import com.tejko.models.yamb.enums.BoxType;
 import com.tejko.models.yamb.enums.ColumnType;
 
-public class Box {
+public class Box implements Serializable {
 
     private BoxType type;
 
@@ -41,9 +45,18 @@ public class Box {
     }
 
     public void fill(int value) {
+        validateFillAction();
         this.value = value;
         filled = true;
         available = false;
+    }
+
+    private void validateFillAction() {
+        if (filled) {
+            throw new IllegalActionException(YambConstants.ERROR_MESSAGE_BOX_ALREADY_FILLED);
+        } else if (!available) {
+			throw new IllegalActionException(YambConstants.ERROR_MESSAGE_BOX_NOT_AVAILABLE);
+        }
     }
 
     public void makeAvailable() {

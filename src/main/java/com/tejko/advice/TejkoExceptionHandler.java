@@ -15,38 +15,38 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.tejko.api.services.LogService;
 import com.tejko.api.services.UserService;
-import com.tejko.models.general.Log;
-import com.tejko.models.general.enums.MessageType;
-import com.tejko.models.general.payload.responses.MessageResponse;
+import com.tejko.models.general.enums.LogLevel;
+import com.tejko.models.general.enums.ResponseStatus;
+import com.tejko.models.general.payload.ResponseWrapper;
+import com.tejko.models.general.payload.requests.LogRequest;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class TejkoExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Autowired
-    LogService logService;
-
-    @Autowired
     UserService userService;
 
+    @Autowired
+    LogService logService;
+
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<MessageResponse> handleException(RuntimeException exception, WebRequest request) {
+    protected ResponseEntity<ResponseWrapper<?>> handleException(RuntimeException exception, WebRequest request) {
         try {
             StringWriter errors = new StringWriter();
             exception.printStackTrace(new PrintWriter(errors));
             exception.printStackTrace(System.out);
             System.out.println(errors);
-            Log log = new Log(errors.toString(), userService.getByUsername(request.getRemoteUser()));
-            logService.save(log);
+            logService.create(new LogRequest(
+                userService.getByUsername(request.getRemoteUser()).getId(),
+                LogLevel.ERROR, 
+                errors.toString()
+            ));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return new ResponseEntity<>(
-                new MessageResponse(
-                        "Error",
-                        MessageType.ERROR,
-                        exception.getMessage()),
-                HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ResponseWrapper<>(ResponseStatus.ERROR, exception.getLocalizedMessage()), HttpStatus.BAD_REQUEST);
+        
     }
 
 }

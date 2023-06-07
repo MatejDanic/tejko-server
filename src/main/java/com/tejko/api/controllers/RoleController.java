@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tejko.api.services.RoleService;
 import com.tejko.interfaces.api.controllers.RoleControllerInterface;
 import com.tejko.models.general.payload.requests.RoleRequest;
-import com.tejko.models.general.payload.responses.ApiResponse;
 import com.tejko.models.general.payload.responses.RoleResponse;
 import com.tejko.models.general.payload.responses.UserResponse;
 
@@ -82,29 +81,32 @@ public class RoleController implements RoleControllerInterface {
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<ApiResponse<?>> deleteById(@PathVariable Integer id) {
-        return new ResponseEntity<>(roleService.deleteById(id), HttpStatus.OK);
+    public ResponseEntity<?> deleteById(@PathVariable Integer id) {
+        roleService.deleteById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/bulk")
     @Override
-    public ResponseEntity<ApiResponse<?>> deleteBulkById(@RequestBody Set<Integer> idSet) {
-        return new ResponseEntity<>(roleService.deleteBulkById(idSet), HttpStatus.OK);
+    public ResponseEntity<?> deleteBulkById(@RequestBody Set<Integer> idSet) {
+        roleService.deleteBulkById(idSet);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("")
     @Override
-    public ResponseEntity<ApiResponse<?>> deleteAll() {
-        return new ResponseEntity<>(roleService.deleteAll(), HttpStatus.OK);
+    public ResponseEntity<?> deleteAll() {
+        roleService.deleteAll();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}/users")
     @Override
-    public ResponseEntity<List<UserResponse>> getUsersByRoleId(@PathVariable Integer id) {
-        return new ResponseEntity<>(roleService.getUsersByRoleId(id), HttpStatus.OK);
+    public ResponseEntity<List<UserResponse>> getUsersByRoleId(@PathVariable Integer roleId) {
+        return new ResponseEntity<>(roleService.getUsersByRoleId(roleId), HttpStatus.OK);
     }
 
 }

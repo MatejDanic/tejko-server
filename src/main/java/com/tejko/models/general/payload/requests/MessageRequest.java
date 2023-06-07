@@ -8,10 +8,13 @@ public class MessageRequest {
 
     @NotBlank
     private MessageType type;
+
     @NotBlank
     private String sender;
+
     @NotBlank
     private String receiver;
+
     @NotBlank
     private Object content;
 

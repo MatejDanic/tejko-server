@@ -1,16 +1,33 @@
 package com.tejko.models.general.payload.responses;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 import com.tejko.models.general.Score;
-import com.tejko.models.general.enums.ResponseStatus;
 
 public class ScoreResponse extends ApiResponse<Score> {
 
-    public ScoreResponse(ResponseStatus status, String message, Score object) {
-        super(status, message, object);
-    }
+	private UUID id;
+	private int appId;
+	private int value;
 
-    public ScoreResponse(Score object) {
-        super(object);
-    }
+	public ScoreResponse(LocalDateTime createdDate, LocalDateTime lastModifiedDate, UUID id, int appId, int value) {
+		super(createdDate, lastModifiedDate);
+		this.id = id;
+		this.appId = appId;
+		this.value = value;
+	}
 
+	public UUID getId() {
+		return id;
+	}
+
+	public int getAppId() {
+		return appId;
+	}
+
+	public int getValue() {
+		return value;
+	}
+    
 }

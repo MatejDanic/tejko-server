@@ -1,7 +1,5 @@
 package com.tejko.factories;
 
-import java.time.LocalDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,17 +22,14 @@ public class ScoreFactory implements ScoreFactoryInterface {
 
     @Override
     public Score getObject(ScoreRequest objectRequest) {
-        Score score = new Score();
         User user = userRepository.findById(objectRequest.getUserId()).get();
-        score.setUser(user);
-
         App app = appRepository.findById(objectRequest.getAppId()).get();
-        score.setApp(app);
         
-        score.setValue(objectRequest.getValue());
-        score.setDate(LocalDateTime.now());
-
-        return score;
+        return Score.create(
+            app, 
+            user, 
+            objectRequest.getValue()
+        );
     }
 
 }

@@ -18,8 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tejko.api.services.LogService;
 import com.tejko.interfaces.api.controllers.LogControllerInterface;
-import com.tejko.models.general.Log;
-import com.tejko.models.general.payload.responses.MessageResponse;
+import com.tejko.models.general.payload.responses.LogResponse;
 
 @RestController
 @RequestMapping("/api/logs")
@@ -31,14 +30,14 @@ public class LogController implements LogControllerInterface {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/{id}")
 	@Override
-	public ResponseEntity<Log> getById(@PathVariable UUID id) {
+	public ResponseEntity<LogResponse> getById(@PathVariable UUID id) {
 		return new ResponseEntity<>(logService.getById(id), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("")
 	@Override
-	public ResponseEntity<List<Log>> getAll(@RequestParam(defaultValue = "0") Integer page,
+	public ResponseEntity<List<LogResponse>> getAll(@RequestParam(defaultValue = "0") Integer page,
 			@RequestParam(defaultValue = "10") Integer size, @RequestParam(defaultValue = "id") String sort,
 			@RequestParam(defaultValue = "desc") String direction) {
 		return new ResponseEntity<>(logService.getAll(page, size, sort, direction), HttpStatus.OK);
@@ -47,24 +46,24 @@ public class LogController implements LogControllerInterface {
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/bulk")
 	@Override
-	public ResponseEntity<List<Log>> getBulkById(@RequestBody Set<UUID> idSet) {
+	public ResponseEntity<List<LogResponse>> getBulkById(@RequestBody Set<UUID> idSet) {
 		return new ResponseEntity<>(logService.getBulkById(idSet), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("/{id}")
 	@Override
-	public ResponseEntity<MessageResponse> deleteById(@PathVariable UUID id) {
+	public ResponseEntity<?> deleteById(@PathVariable UUID id) {
 		logService.deleteById(id);
-		return new ResponseEntity<>(new MessageResponse("Log", "Exception Log has been deleted."), HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@DeleteMapping("")
 	@Override
-	public ResponseEntity<MessageResponse> deleteAll() {
+	public ResponseEntity<?> deleteAll() {
 		logService.deleteAll();
-		return new ResponseEntity<>(new MessageResponse("Log", "All Exception Logs have been deleted."), HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tejko.models.general.payload.requests.LoginRequest;
-import com.tejko.models.general.payload.requests.RegisterRequest;
-import com.tejko.models.general.payload.responses.JwtResponse;
-import com.tejko.models.general.payload.responses.MessageResponse;
+import com.tejko.models.general.payload.requests.UserRequest;
+import com.tejko.models.general.payload.responses.LoginResponse;
 import com.tejko.api.services.AuthService;
 import com.tejko.exceptions.UsernameTakenException;
 
@@ -25,15 +24,13 @@ public class AuthController {
     AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         return new ResponseEntity<>(authService.login(loginRequest), HttpStatus.OK);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest registerRequest)
-            throws UsernameTakenException {
-        return new ResponseEntity<>(new MessageResponse("Registration", authService.register(registerRequest)),
-                HttpStatus.OK);
+    public ResponseEntity<?> register(@Valid @RequestBody UserRequest userRequest) throws UsernameTakenException {
+        return new ResponseEntity<>(authService.register(userRequest), HttpStatus.OK);
     }
 
 }

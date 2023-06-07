@@ -1,7 +1,7 @@
 package com.tejko.factories;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,20 +24,20 @@ public class UserFactory implements UserFactoryInterface {
 
     @Override
     public User getObject(UserRequest userRequest) {
-        User user = new User();
 
-        user.setUsername(userRequest.getUsername());
-        user.setPassword(encoder.encode(userRequest.getPassword()));
-        user.setTestUser(userRequest.isTestUser());
-        user.setCreatedDate(LocalDateTime.now());
-        
-        user.setRoles(new HashSet<Role>() {
+        String passwordHash = encoder.encode(userRequest.getPassword());        
+        Set<Role> roles = new HashSet<Role>() {
             {
                 add(roleRepository.findByLabel("USER").orElseThrow(() -> new RuntimeException("Role not found.")));
             }
-        });
+        };
 
-        return user;
+        return User.create(
+            userRequest.getUsername(), 
+            passwordHash, 
+            roles, 
+            userRequest.isTestUser()
+        );
     }
 
 }

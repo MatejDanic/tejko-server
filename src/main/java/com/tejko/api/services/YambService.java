@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -25,10 +24,10 @@ import com.tejko.exceptions.IllegalActionException;
 import com.tejko.factories.GameFactory;
 import com.tejko.factories.ScoreFactory;
 import com.tejko.interfaces.api.services.YambServiceInterface;
+import com.tejko.mappers.YambMapper;
 import com.tejko.models.general.Score;
 import com.tejko.models.general.payload.requests.ScoreRequest;
 import com.tejko.models.general.payload.requests.YambRequest;
-import com.tejko.models.general.payload.responses.ApiResponse;
 import com.tejko.models.general.payload.responses.YambResponse;
 import com.tejko.models.yamb.Yamb;
 import com.tejko.models.yamb.enums.BoxType;
@@ -48,33 +47,37 @@ public class YambService implements YambServiceInterface {
 
     @Autowired
     GameRepository gamesRepository;
+    
+    @Resource
+    YambMapper yambMapper;
 
     @Resource
     GameFactory gameFactory;
 
     @Resource
     ScoreFactory scoreFactory;
+    
 
     @Override
     public YambResponse getById(UUID id) {
-        return toApiResponse(yambRepository.getById(id));
+        return yambMapper.toApiResponse(yambRepository.getById(id));
     }
 
     @Override
     public List<YambResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return toApiResponseList(yambRepository.findAll(pageable).getContent());
+        return yambMapper.toApiResponseList(yambRepository.findAll(pageable).getContent());
     }
 
     @Override
     public List<YambResponse> getBulkById(Set<UUID> idSet) {
-        return toApiResponseList(yambRepository.findAllById(idSet));
+        return yambMapper.toApiResponseList(yambRepository.findAllById(idSet));
     }
 
     @Override
     public YambResponse create(YambRequest objectRequest) {
         Yamb yamb = (Yamb) gameFactory.getObject(objectRequest);
-        return toApiResponse(yambRepository.save(yamb));
+        return yambMapper.toApiResponse(yambRepository.save(yamb));
     }
 
     @Override
@@ -85,7 +88,7 @@ public class YambService implements YambServiceInterface {
             yambList.add((Yamb) gameFactory.getObject(objectRequest));
         }
 
-        return toApiResponseList(yambRepository.saveAll(yambList));
+        return yambMapper.toApiResponseList(yambRepository.saveAll(yambList));
     }
 
     @Override
@@ -94,7 +97,7 @@ public class YambService implements YambServiceInterface {
 
         yamb = applyPatch(yamb, yambRequest);
 
-        return toApiResponse(yambRepository.save(yamb));
+        return yambMapper.toApiResponse(yambRepository.save(yamb));
     }
 
     @Override
@@ -105,25 +108,22 @@ public class YambService implements YambServiceInterface {
             yamb = applyPatch(yamb, idYambRequestMap.get(yamb.getId()));
         }
 
-        return toApiResponseList(yambRepository.saveAll(yambList));
+        return yambMapper.toApiResponseList(yambRepository.saveAll(yambList));
     }
 
     @Override
-    public ApiResponse<?> deleteById(UUID id) {
+    public void deleteById(UUID id) {
         yambRepository.deleteById(id);
-        return new ApiResponse<>("Yamb has been deleted successfully.");
     }
 
     @Override
-    public ApiResponse<?> deleteAll() {
+    public void deleteAll() {
         yambRepository.deleteAll();
-        return new ApiResponse<>("Yambs have been deleted successfully.");
     }
 
     @Override
-    public ApiResponse<?> deleteBulkById(Set<UUID> idSet) {
+    public void deleteBulkById(Set<UUID> idSet) {
         yambRepository.deleteAllById(idSet);
-        return new ApiResponse<>("All Yambs have been deleted successfully.");
     }
 
     public YambResponse rollDiceById(UUID id, List<Integer> diceToRoll) throws IllegalActionException {
@@ -131,7 +131,7 @@ public class YambService implements YambServiceInterface {
 
         yamb.rollDice(diceToRoll);
 
-        return toApiResponse(yambRepository.save(yamb));
+        return yambMapper.toApiResponse(yambRepository.save(yamb));
     }
 
     @Override
@@ -140,7 +140,7 @@ public class YambService implements YambServiceInterface {
 
         yamb.announce(boxType);
 
-        return toApiResponse(yambRepository.save(yamb));
+        return yambMapper.toApiResponse(yambRepository.save(yamb));
     }
 
     @Override
@@ -154,34 +154,25 @@ public class YambService implements YambServiceInterface {
             scoreRepository.save(score);
         }
 
-        return toApiResponse(yambRepository.save(yamb));
+        return yambMapper.toApiResponse(yambRepository.save(yamb));
     }
 
     @Override
     public YambResponse restartById(UUID id) {
         Yamb yamb = yambRepository.getById(id);
         yamb.restart();
-        return toApiResponse(yambRepository.save(yamb));
+        return yambMapper.toApiResponse(yambRepository.save(yamb));
     }
 
     @Override
     public Yamb applyPatch(Yamb yamb, YambRequest yambRequest) {
-        return yamb;
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'toApiResponseList'");
     }
 
     @Override
     public boolean hasPermission(UUID userId, UUID objectId) {
         return yambRepository.getById(objectId).getUser().getId().equals(userId);
-    }
-
-    @Override
-    public YambResponse toApiResponse(Yamb object) {
-        return new YambResponse(object);
-    }
-
-    @Override
-    public List<YambResponse> toApiResponseList(List<Yamb> objectList) {
-        return objectList.stream().map(this::toApiResponse).collect(Collectors.toList());
     }
 
 }

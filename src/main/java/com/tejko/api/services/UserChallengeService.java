@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -19,10 +18,10 @@ import org.springframework.stereotype.Service;
 import com.tejko.api.repositories.UserChallengeRepository;
 import com.tejko.factories.UserChallengeFactory;
 import com.tejko.interfaces.api.services.UserChallengeServiceInterface;
+import com.tejko.mappers.UserChallengeMapper;
 import com.tejko.models.general.UserChallenge;
 import com.tejko.models.general.ids.UserChallengeId;
 import com.tejko.models.general.payload.requests.UserChallengeRequest;
-import com.tejko.models.general.payload.responses.ApiResponse;
 import com.tejko.models.general.payload.responses.UserChallengeResponse;
 
 @Service
@@ -34,26 +33,29 @@ public class UserChallengeService implements UserChallengeServiceInterface {
     @Resource
     UserChallengeFactory userChallengeFactory;
 
+    @Resource
+    UserChallengeMapper userChallengeMapper;
+
     @Override
     public UserChallengeResponse getById(UserChallengeId id) {
-        return toApiResponse(userChallengeRepository.getById(id));
+        return userChallengeMapper.toApiResponse(userChallengeRepository.getById(id));
     }
 
     @Override
     public List<UserChallengeResponse> getBulkById(Set<UserChallengeId> idSet) {
-        return toApiResponseList(userChallengeRepository.findAllById(idSet));
+        return userChallengeMapper.toApiResponseList(userChallengeRepository.findAllById(idSet));
     }
 
     @Override
     public List<UserChallengeResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return toApiResponseList(userChallengeRepository.findAll(pageable).getContent());
+        return userChallengeMapper.toApiResponseList(userChallengeRepository.findAll(pageable).getContent());
     }
 
     @Override
     public UserChallengeResponse create(UserChallengeRequest objectRequest) {
         UserChallenge userChallenge = userChallengeFactory.getObject(objectRequest);
-        return toApiResponse(userChallengeRepository.save(userChallenge));
+        return userChallengeMapper.toApiResponse(userChallengeRepository.save(userChallenge));
     }
 
     @Override
@@ -64,7 +66,7 @@ public class UserChallengeService implements UserChallengeServiceInterface {
             userChallengeList.add(userChallengeFactory.getObject(objectRequest));
         }
 
-        return toApiResponseList(userChallengeRepository.saveAll(userChallengeList));
+        return userChallengeMapper.toApiResponseList(userChallengeRepository.saveAll(userChallengeList));
     }
 
     @Override
@@ -73,7 +75,7 @@ public class UserChallengeService implements UserChallengeServiceInterface {
 
         userChallenge = applyPatch(userChallenge, userChallengeRequest);
 
-        return toApiResponse(userChallengeRepository.save(userChallenge));
+        return userChallengeMapper.toApiResponse(userChallengeRepository.save(userChallenge));
     }
 
     @Override
@@ -83,25 +85,22 @@ public class UserChallengeService implements UserChallengeServiceInterface {
         for (UserChallenge userChallenge : userChallengeList) {
             userChallenge = applyPatch(userChallenge, idUserChallengeRequestMap.get(userChallenge.getId()));
         }
-        return toApiResponseList(userChallengeRepository.saveAll(userChallengeList));
+        return userChallengeMapper.toApiResponseList(userChallengeRepository.saveAll(userChallengeList));
     }
 
     @Override
-    public ApiResponse<?> deleteById(UserChallengeId id) {
+    public void deleteById(UserChallengeId id) {
         userChallengeRepository.deleteById(id);
-        return new ApiResponse<>("User Challenge has been deleted successfully");
     }
 
     @Override
-    public ApiResponse<?> deleteAll() {
+    public void deleteAll() {
         userChallengeRepository.deleteAll();
-        return new ApiResponse<>("User Challenges have been deleted successfully");
     }
 
     @Override
-    public ApiResponse<?> deleteBulkById(Set<UserChallengeId> idSet) {
+    public void deleteBulkById(Set<UserChallengeId> idSet) {
         userChallengeRepository.deleteAllById(idSet);
-        return new ApiResponse<>("All User Challenges have been deleted successfully");
     }
 
     @Override
@@ -111,17 +110,8 @@ public class UserChallengeService implements UserChallengeServiceInterface {
 
     @Override
     public UserChallenge applyPatch(UserChallenge userChallenge, UserChallengeRequest userChallengeRequest) {
-        return userChallenge;
-    }
-
-    @Override
-    public UserChallengeResponse toApiResponse(UserChallenge object) {
-        return new UserChallengeResponse(object);
-    }
-
-    @Override
-    public List<UserChallengeResponse> toApiResponseList(List<UserChallenge> objectList) {
-        return objectList.stream().map(this::toApiResponse).collect(Collectors.toList());
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'toApiResponseList'");
     }
 
 }

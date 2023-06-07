@@ -10,31 +10,25 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-
+import com.tejko.models.DatabaseEntity;
 import com.tejko.models.general.enums.ChallengeStatus;
 import com.tejko.models.general.ids.UserChallengeId;
 
 @Entity
 @Table(name = "user_challenge")
-public class UserChallenge {
+public class UserChallenge extends DatabaseEntity {
 
-    @JsonIgnore
     @EmbeddedId
     private UserChallengeId id;
 
-    @JsonIncludeProperties({ "id" })
     @MapsId("userId")
     @ManyToOne(cascade = { CascadeType.REMOVE })
     private User user;
 
-    @JsonIncludeProperties({ "id" })
     @MapsId("challengeId")
     @ManyToOne(cascade = { CascadeType.REMOVE })
     private Challenge challenge;
 
-    @JsonIncludeProperties({ "id" })
     @JoinColumn(name = "game_id", referencedColumnName = "id")
     @OneToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST })
     private Game game;
@@ -45,7 +39,17 @@ public class UserChallenge {
     @Column
     private ChallengeStatus status = ChallengeStatus.PENDING_RESPONSE;
 
-    public UserChallenge() {
+    private UserChallenge() { }
+
+    private UserChallenge(UserChallengeId id, User user, Challenge challenge, Game game) {
+        this.id = id;
+        this.user = user;
+        this.challenge = challenge;
+        this.game = game;
+    }
+
+    public static UserChallenge create(UserChallengeId id, User user, Challenge challenge, Game game) {
+        return new UserChallenge(id, user, challenge, game);
     }
 
     public UserChallengeId getId() {

@@ -4,20 +4,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import com.tejko.models.general.Log;
+import com.tejko.models.general.payload.requests.LogRequest;
+import com.tejko.models.general.payload.responses.LogResponse;
 
 public interface LogServiceInterface {
 
-    public Log getById(UUID id);
+    public LogResponse create(LogRequest logRequest);
 
-    public List<Log> getAll(Integer page, Integer size, String sort, String direction);
+    public LogResponse getById(UUID id);
 
-    public List<Log> getBulkById(Set<UUID> idSet);
+    public List<LogResponse> getAll(Integer page, Integer size, String sort, String direction);
+
+    public List<LogResponse> getBulkById(Set<UUID> idSet);
 
     public void deleteById(UUID id);
 
     public void deleteAll();
 
-    public List<Log> getBulkByIdIn(Set<UUID> idSet);
+    public List<LogResponse> getBulkByIdIn(Set<UUID> idSet);
 
 }

@@ -13,12 +13,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.tejko.models.DatabaseEntity;
 
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class Game {
+public abstract class Game extends DatabaseEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -39,6 +40,13 @@ public abstract class Game {
     @JsonIncludeProperties({ "user", "challenge" })
     @OneToOne(mappedBy = "game")
     private UserChallenge userChallenges;
+
+    public Game() { }
+
+    public Game(App app, User user) {
+        this.app = app;
+        this.user = user;
+    }
 
     public UUID getId() {
         return id;

@@ -1,6 +1,5 @@
 package com.tejko.models.general;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -11,19 +10,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import com.tejko.models.DatabaseEntity;
+import com.tejko.models.general.enums.LogLevel;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.TypeDef;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 @Entity
 @Table(name = "log")
 @RestResource(rel = "logs", path = "logs")
-@TypeDef(name = "json_binary", typeClass = JsonBinaryType.class)
-public class Log {
+public class Log extends DatabaseEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -31,39 +28,32 @@ public class Log {
     @Column
     private UUID id;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
-    private LocalDateTime timestamp = LocalDateTime.now();
-
     @ManyToOne
     @JsonIncludeProperties({ "id", "username" })
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column
+    private LogLevel level;
+
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    public Log() {
+
+    private Log() { }
+
+    private Log(User user, LogLevel level, String content) {
+        this.user = user;
+        this.level = level;
+        this.content = content;
     }
 
-    public Log(String content, User user) {
-        this.content = content;
-        this.user = user;
+    public static Log create(User user, LogLevel level, String content) {
+        return new Log(user, level, content);
     }
 
     public UUID getId() {
         return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
     }
 
     public User getUser() {
@@ -72,6 +62,10 @@ public class Log {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public LogLevel getLevel() {
+        return level;
     }
 
     public String getContent() {
