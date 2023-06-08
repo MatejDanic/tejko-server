@@ -5,12 +5,15 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
+import org.springframework.stereotype.Component;
+
 import com.tejko.interfaces.mappers.UserMapperInterface;
 import com.tejko.models.general.User;
 import com.tejko.models.general.payload.responses.PreferenceResponse;
 import com.tejko.models.general.payload.responses.RoleResponse;
 import com.tejko.models.general.payload.responses.UserResponse;
 
+@Component
 public class UserMapper implements UserMapperInterface {
 
     @Resource
@@ -21,12 +24,13 @@ public class UserMapper implements UserMapperInterface {
 
     @Override
     public UserResponse toApiResponse(User user) {
+        if (user == null) return null;
         List<RoleResponse> roles = roleMapper.toApiResponseList(user.getRoles().stream().collect(Collectors.toList()));
         PreferenceResponse preference = preferenceMapper.toApiResponse(user.getPreference());
         return new UserResponse(
+            user.getId(), 
             user.getCreatedDate(), 
             user.getLastModifiedDate(), 
-            user.getId(), 
             user.getUsername(), 
             roles, 
             preference

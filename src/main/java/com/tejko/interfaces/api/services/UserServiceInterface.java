@@ -15,11 +15,11 @@ public interface UserServiceInterface extends ObjectServiceInterface<UUID, User,
 
     public PreferenceResponse getPreferenceByUserId(UUID id);
 
-    public UserResponse assignRoleByUserId(UUID id, Integer roleId) throws RoleNotFoundException;
+    public UserResponse assignRoleByUserId(UUID id, UUID roleId) throws RoleNotFoundException;
 
     public List<ScoreResponse> getScoresByUserId(UUID id);
     
-    public List<UserResponse> getUsersByRoleId(Integer id);
+    public List<UserResponse> getUsersByRoleId(UUID roleId);
 
     public UserResponse getByUsername(String username);
 

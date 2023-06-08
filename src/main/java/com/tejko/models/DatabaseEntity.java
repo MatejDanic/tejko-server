@@ -3,9 +3,11 @@ package com.tejko.models;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+@MappedSuperclass
 public abstract class DatabaseEntity {
 
     @Column(nullable = false)

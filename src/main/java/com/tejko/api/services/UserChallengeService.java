@@ -83,7 +83,7 @@ public class UserChallengeService implements UserChallengeServiceInterface {
         List<UserChallenge> userChallengeList = userChallengeRepository.findAllById(idUserChallengeRequestMap.keySet());
 
         for (UserChallenge userChallenge : userChallengeList) {
-            userChallenge = applyPatch(userChallenge, idUserChallengeRequestMap.get(userChallenge.getId()));
+            userChallenge = applyPatch(userChallenge, idUserChallengeRequestMap.get(userChallenge.getEmbeddedId()));
         }
         return userChallengeMapper.toApiResponseList(userChallengeRepository.saveAll(userChallengeList));
     }

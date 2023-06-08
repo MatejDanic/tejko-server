@@ -1,12 +1,9 @@
 package com.tejko.models.general;
 
 import java.util.Set;
-import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -17,22 +14,15 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
 import com.tejko.constants.TejkoConstants;
-import com.tejko.models.DatabaseEntity;
+import com.tejko.models.DatabaseEntityWithId;
 
 @Entity
 @Table(name = "auth_user")
 @RestResource(rel = "users", path = "users")
-public class User extends DatabaseEntity {
-
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column
-    private UUID id;
+public class User extends DatabaseEntityWithId {
 
     @Column(nullable = false, unique = true)
     @Size(min = TejkoConstants.USERNAME_LENGTH_MIN, max = TejkoConstants.USERNAME_LENGTH_MAX)
@@ -83,14 +73,6 @@ public class User extends DatabaseEntity {
 
     public static User create(String username, String password, Set<Role> roles, boolean testUser) {
         return new User(username, password, roles, testUser);
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
     }
 
     public String getUsername() {

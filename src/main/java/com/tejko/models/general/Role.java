@@ -4,22 +4,18 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.tejko.models.DatabaseEntity;
+import com.tejko.models.DatabaseEntityWithId;
 
 import org.springframework.data.rest.core.annotation.RestResource;
 
 @Entity
 @Table(name = "auth_role")
 @RestResource(rel = "roles", path = "roles")
-public class Role extends DatabaseEntity {
-
-    @Id
-    private int id;
+public class Role extends DatabaseEntityWithId {
 
     @Column(nullable = false, unique = true)
     private String label;
@@ -33,18 +29,13 @@ public class Role extends DatabaseEntity {
 
     private Role() { }
 
-    private Role(int id, String label, String description) {
-        this.id = id;
+    private Role(String label, String description) {
         this.label = label;
         this.description = description;
     }
 
-    public static Role create(int id, String label, String description) {
-        return new Role(id, label, description);
-    }
-
-    public int getId() {
-        return id;
+    public static Role create(String label, String description) {
+        return new Role(label, description);
     }
 
     public String getLabel() {

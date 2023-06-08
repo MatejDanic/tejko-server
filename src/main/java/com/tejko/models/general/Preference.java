@@ -1,34 +1,23 @@
 package com.tejko.models.general;
 
-import java.util.UUID;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.rest.core.annotation.RestResource;
 
-import com.tejko.models.DatabaseEntity;
+import com.tejko.models.DatabaseEntityWithId;
 import com.tejko.models.general.enums.Theme;
 import com.tejko.models.general.enums.VolumeLevel;
 
 @Entity
 @Table(name = "user_preference")
 @RestResource(rel = "preferences", path = "preferences")
-public class Preference extends DatabaseEntity {
-
-    @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column
-    private UUID id;
+public class Preference extends DatabaseEntityWithId {
 
     @OneToOne
     @JsonIncludeProperties({ "id", "username" })
@@ -53,10 +42,6 @@ public class Preference extends DatabaseEntity {
         return new Preference(user, volumeLevel, theme);
     }
 
-    public UUID getId() {
-        return id;
-    }
-    
     public User getUser() {
         return user;
     }

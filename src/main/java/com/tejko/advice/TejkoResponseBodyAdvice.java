@@ -30,7 +30,9 @@ public class TejkoResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             if (body instanceof Collection<?>) {
                 response.getHeaders().add("X-Total-Count", String.valueOf(((Collection<?>) body).size()));
             }
-            body = new ResponseWrapper<ApiResponse<?>>(ResponseStatus.SUCCESS, null, (ApiResponse<?>) body);
+            if (ApiResponse.class.isInstance(body)) {
+                body = new ResponseWrapper<ApiResponse<?>>(ResponseStatus.SUCCESS, null, (ApiResponse<?>) body);
+            }
         }
         return body;
     }

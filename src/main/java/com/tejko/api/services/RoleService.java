@@ -40,7 +40,7 @@ public class RoleService implements RoleServiceInterface {
     UserService userService;
 
     @Override
-    public RoleResponse getById(Integer id) {
+    public RoleResponse getById(UUID id) {
         return roleMapper.toApiResponse(roleRepository.getById(id));
     }
 
@@ -51,7 +51,7 @@ public class RoleService implements RoleServiceInterface {
     }
 
     @Override
-    public List<RoleResponse> getBulkById(Set<Integer> idSet) {
+    public List<RoleResponse> getBulkById(Set<UUID> idSet) {
         return roleMapper.toApiResponseList(roleRepository.findAllById(idSet));
     }
 
@@ -73,7 +73,7 @@ public class RoleService implements RoleServiceInterface {
     }
 
     @Override
-    public RoleResponse updateById(Integer id, RoleRequest roleRequest) {
+    public RoleResponse updateById(UUID id, RoleRequest roleRequest) {
         Role role = roleRepository.getById(id);
 
         role = applyPatch(role, roleRequest);
@@ -82,7 +82,7 @@ public class RoleService implements RoleServiceInterface {
     }
 
     @Override
-    public List<RoleResponse> updateBulkById(Map<Integer, RoleRequest> idRoleRequestMap) {
+    public List<RoleResponse> updateBulkById(Map<UUID, RoleRequest> idRoleRequestMap) {
         List<Role> roleList = roleRepository.findAllById(idRoleRequestMap.keySet());
 
         for (Role role : roleList) {
@@ -93,7 +93,7 @@ public class RoleService implements RoleServiceInterface {
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(UUID id) {
         roleRepository.deleteById(id);
     }
 
@@ -103,17 +103,22 @@ public class RoleService implements RoleServiceInterface {
     }
 
     @Override
-    public void deleteBulkById(Set<Integer> idSet) {
+    public void deleteBulkById(Set<UUID> idSet) {
         roleRepository.deleteAllById(idSet);
     }
 
     @Override
-    public List<UserResponse> getUsersByRoleId(Integer roleId) {
+    public List<UserResponse> getUsersByRoleId(UUID roleId) {
         return userService.getUsersByRoleId(roleId);
     }
 
     @Override
-    public boolean hasPermission(UUID userId, Integer objectId) {
+    public Role getEntityById(UUID roleId) {
+        return roleRepository.getById(roleId);
+    }
+
+    @Override
+    public boolean hasPermission(UUID userId, UUID roleId) {
         return false;
     }
 

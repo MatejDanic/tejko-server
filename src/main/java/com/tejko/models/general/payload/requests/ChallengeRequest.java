@@ -1,5 +1,7 @@
 package com.tejko.models.general.payload.requests;
 
+import java.util.UUID;
+
 import javax.validation.constraints.NotBlank;
 
 import com.tejko.models.general.Challenge;
@@ -7,9 +9,9 @@ import com.tejko.models.general.Challenge;
 public class ChallengeRequest extends ApiRequest<Challenge> {
 
     @NotBlank
-    private Integer appId;
+    private UUID appId;
 
-    public Integer getAppId() {
+    public UUID getAppId() {
         return appId;
     }
 

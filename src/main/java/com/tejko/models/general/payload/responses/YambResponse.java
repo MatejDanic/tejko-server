@@ -9,23 +9,17 @@ import com.tejko.models.yamb.enums.BoxType;
 
 public class YambResponse extends ApiResponse<Yamb> {
     
-    private UUID id;
     private SheetResponse sheet;
     private List<DiceResponse> diceList;
     private int rollCount;
     private BoxType announcement;
 
-    public YambResponse(LocalDateTime createdDate, LocalDateTime lastModifiedDate, UUID id, SheetResponse sheet, List<DiceResponse> diceList, int rollCount, BoxType announcement) {
-        super(createdDate, lastModifiedDate);
-        this.id = id;
+    public YambResponse(UUID id, LocalDateTime createdDate, LocalDateTime lastModifiedDate, SheetResponse sheet, List<DiceResponse> diceList, int rollCount, BoxType announcement) {
+        super(id, createdDate, lastModifiedDate);
         this.sheet = sheet;
         this.diceList = diceList;
         this.rollCount = rollCount;
         this.announcement = announcement;
-    }
-
-    public UUID getId() {
-        return id;
     }
 
     public SheetResponse getSheet() {

@@ -4,19 +4,15 @@ import com.tejko.models.general.enums.Theme;
 
 public class TejkoConstants {
 
-    public static Integer APP_YAMB_ID = 1;
     public static String APP_YAMB_NAME = "Yamb";
     public static String APP_YAMB_DESCRIPTION = "";
 
-    public static Integer ROLE_ADMIN_ID = 1;
     public static String ROLE_ADMIN_LABEL = "ADMIN";
     public static String ROLE_ADMIN_DESCRIPTION = "";
 
-    public static Integer ROLE_USER_ID = 2;
     public static String ROLE_USER_LABEL = "USER";
     public static String ROLE_USER_DESCRIPTION = "";
 
-    public static Integer ROLE_MODERATOR_ID = 3;
     public static String ROLE_MODERATOR_LABEL = "MODERATOR";
     public static String ROLE_MODERATOR_DESCRIPTION = "";
 

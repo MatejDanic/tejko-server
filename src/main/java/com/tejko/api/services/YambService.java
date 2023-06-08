@@ -15,17 +15,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-import com.tejko.api.repositories.UserRepository;
 import com.tejko.api.repositories.YambRepository;
-import com.tejko.constants.TejkoConstants;
-import com.tejko.api.repositories.ScoreRepository;
 import com.tejko.api.repositories.GameRepository;
 import com.tejko.exceptions.IllegalActionException;
 import com.tejko.factories.GameFactory;
-import com.tejko.factories.ScoreFactory;
 import com.tejko.interfaces.api.services.YambServiceInterface;
 import com.tejko.mappers.YambMapper;
-import com.tejko.models.general.Score;
 import com.tejko.models.general.payload.requests.ScoreRequest;
 import com.tejko.models.general.payload.requests.YambRequest;
 import com.tejko.models.general.payload.responses.YambResponse;
@@ -40,12 +35,6 @@ public class YambService implements YambServiceInterface {
     YambRepository yambRepository;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    ScoreRepository scoreRepository;
-
-    @Autowired
     GameRepository gamesRepository;
     
     @Resource
@@ -55,9 +44,8 @@ public class YambService implements YambServiceInterface {
     GameFactory gameFactory;
 
     @Resource
-    ScoreFactory scoreFactory;
+    ScoreService scoreService;
     
-
     @Override
     public YambResponse getById(UUID id) {
         return yambMapper.toApiResponse(yambRepository.getById(id));
@@ -150,8 +138,11 @@ public class YambService implements YambServiceInterface {
         yamb.fillBox(columnType, boxType);
 
         if (yamb.getSheet().isCompleted()) {
-            Score score = scoreFactory.getObject(new ScoreRequest(yamb.getUser().getId(), TejkoConstants.APP_YAMB_ID, yamb.getSheet().getTotalSum()));
-            scoreRepository.save(score);
+            scoreService.create(new ScoreRequest(
+                yamb.getUser().getId(),
+                yamb.getApp().getId(), 
+                yamb.getSheet().getTotalSum()
+            ));
         }
 
         return yambMapper.toApiResponse(yambRepository.save(yamb));

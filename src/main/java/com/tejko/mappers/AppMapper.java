@@ -15,9 +15,9 @@ public class AppMapper implements AppMapperInterface {
     @Override
     public AppResponse toApiResponse(App app) {
         return new AppResponse(
+            app.getId(), 
             app.getCreatedDate(), 
             app.getLastModifiedDate(), 
-            app.getId(), 
             app.getName(), 
             app.getDescription()
         );

@@ -21,7 +21,6 @@ import com.tejko.factories.PreferenceFactory;
 import com.tejko.factories.UserFactory;
 import com.tejko.interfaces.api.services.UserServiceInterface;
 import com.tejko.mappers.UserMapper;
-import com.tejko.models.general.Role;
 import com.tejko.models.general.User;
 import com.tejko.models.general.payload.requests.UserRequest;
 import com.tejko.models.general.payload.responses.PreferenceResponse;
@@ -129,9 +128,9 @@ public class UserService implements UserServiceInterface {
     }
 
     @Override
-    public UserResponse assignRoleByUserId(UUID id, Integer roleId) throws RoleNotFoundException {
+    public UserResponse assignRoleByUserId(UUID id, UUID roleId) throws RoleNotFoundException {
         User user = userRepository.getById(id);
-        user.assignRole(Role.create(roleId, null, null));
+        user.assignRole(roleService.getEntityById(roleId));
         return userMapper.toApiResponse(userRepository.save(user));
     }
 
@@ -141,7 +140,7 @@ public class UserService implements UserServiceInterface {
     }
     
     @Override
-    public List<UserResponse> getUsersByRoleId(Integer id) {
+    public List<UserResponse> getUsersByRoleId(UUID id) {
         return userMapper.toApiResponseList(userRepository.findAllByRolesId(id));
     }
 

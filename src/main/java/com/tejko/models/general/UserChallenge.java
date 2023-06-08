@@ -52,11 +52,11 @@ public class UserChallenge extends DatabaseEntity {
         return new UserChallenge(id, user, challenge, game);
     }
 
-    public UserChallengeId getId() {
+    public UserChallengeId getEmbeddedId() {
         return id;
     }
 
-    public void setId(UserChallengeId id) {
+    public void setEmbeddedId(UserChallengeId id) {
         this.id = id;
     }
 

@@ -13,6 +13,7 @@ public class UserChallengeResponse extends ApiResponse<UserChallenge> {
 
     public UserChallengeResponse(LocalDateTime createdDate, LocalDateTime lastModifiedDate, UUID userId, UUID challengeId, UUID gameId) {
         super(createdDate, lastModifiedDate);
+        //super(id, createdDate, lastModifiedDate);
         this.userId = userId;
         this.challengeId = challengeId;
         this.gameId = gameId;

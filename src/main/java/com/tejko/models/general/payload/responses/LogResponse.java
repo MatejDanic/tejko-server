@@ -8,21 +8,15 @@ import com.tejko.models.general.enums.LogLevel;
 
 public class LogResponse extends ApiResponse<Log> {
     
-    private UUID id;
     private UUID userId;
     private LogLevel level;
     private String content;
 
-    public LogResponse(LocalDateTime createdDate, LocalDateTime lastModifiedDate, UUID id, UUID userId, LogLevel level, String content) {
-        super(createdDate, lastModifiedDate);
-        this.id = id;
+    public LogResponse(UUID id, LocalDateTime createdDate, LocalDateTime lastModifiedDate, UUID userId, LogLevel level, String content) {
+        super(id, createdDate, lastModifiedDate);
         this.userId = userId;
         this.level = level;
         this.content = content;
-    }
-
-    public UUID getId() {
-        return id;
     }
 
     public LogLevel getLevel() {

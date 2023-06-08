@@ -3,6 +3,7 @@ package com.tejko.api.controllers;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,14 +33,14 @@ public class AppController implements AppControllerInterface {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<AppResponse> getById(@PathVariable Integer id) {
+    public ResponseEntity<AppResponse> getById(@PathVariable UUID id) {
         return new ResponseEntity<>(appService.getById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/bulk")
     @Override
-    public ResponseEntity<List<AppResponse>> getBulkById(@RequestBody Set<Integer> idSet) {
+    public ResponseEntity<List<AppResponse>> getBulkById(@RequestBody Set<UUID> idSet) {
         return new ResponseEntity<>(appService.getBulkById(idSet), HttpStatus.OK);
     }
 
@@ -66,21 +67,21 @@ public class AppController implements AppControllerInterface {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("/{id}")
     @Override
-    public ResponseEntity<AppResponse> updateById(@PathVariable Integer id, @RequestBody AppRequest appRequest) {
+    public ResponseEntity<AppResponse> updateById(@PathVariable UUID id, @RequestBody AppRequest appRequest) {
         return new ResponseEntity<>(appService.updateById(id, appRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("/bulk")
     @Override
-    public ResponseEntity<List<AppResponse>> updateBulkById(@RequestBody Map<Integer, AppRequest> idAppRequestMap) {
+    public ResponseEntity<List<AppResponse>> updateBulkById(@RequestBody Map<UUID, AppRequest> idAppRequestMap) {
         return new ResponseEntity<>(appService.updateBulkById(idAppRequestMap), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<?> deleteById(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteById(@PathVariable UUID id) {
         appService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -88,7 +89,7 @@ public class AppController implements AppControllerInterface {
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/bulk")
     @Override
-    public ResponseEntity<?> deleteBulkById(@RequestBody Set<Integer> idSet) {
+    public ResponseEntity<?> deleteBulkById(@RequestBody Set<UUID> idSet) {
         appService.deleteBulkById(idSet);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -103,7 +104,7 @@ public class AppController implements AppControllerInterface {
 
     @GetMapping("/{id}/scores")
     @Override
-    public ResponseEntity<List<ScoreResponse>> getScoresByAppId(@PathVariable Integer id) {
+    public ResponseEntity<List<ScoreResponse>> getScoresByAppId(@PathVariable UUID id) {
         return new ResponseEntity<>(appService.getScoresByAppId(id), HttpStatus.OK);
     }
 

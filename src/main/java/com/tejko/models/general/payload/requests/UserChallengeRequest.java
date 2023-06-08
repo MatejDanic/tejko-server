@@ -7,9 +7,7 @@ import com.tejko.models.general.UserChallenge;
 public class UserChallengeRequest extends ApiRequest<UserChallenge> {
 
     private UUID userId;
-
     private UUID challengeId;
-
     private UUID gameId;
 
     public UUID getUserId() {

@@ -3,6 +3,8 @@ package com.tejko.mappers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Component;
+
 import com.tejko.interfaces.mappers.YambMapperInterface;
 import com.tejko.models.general.payload.responses.BoxResponse;
 import com.tejko.models.general.payload.responses.ColumnResponse;
@@ -15,6 +17,7 @@ import com.tejko.models.yamb.Dice;
 import com.tejko.models.yamb.Sheet;
 import com.tejko.models.yamb.Yamb;
 
+@Component
 public class YambMapper implements YambMapperInterface {
 
     @Override
@@ -22,9 +25,9 @@ public class YambMapper implements YambMapperInterface {
         SheetResponse sheet = getSheetResponseFromSheet(yamb.getSheet());
         List<DiceResponse> diceList = yamb.getDiceList().stream().map(this::getDiceResponseFromDice).collect(Collectors.toList());
         return new YambResponse(
+            yamb.getId(), 
             yamb.getCreatedDate(), 
             yamb.getLastModifiedDate(), 
-            yamb.getId(), 
             sheet, 
             diceList, 
             yamb.getRollCount(), 

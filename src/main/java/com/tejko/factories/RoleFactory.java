@@ -21,7 +21,6 @@ public class RoleFactory implements RoleFactoryInterface {
     @Override
     public Role getObject(RoleRequest roleRequest) {
         return Role.create(
-            roleRequest.getId(), 
             roleRequest.getLabel(), 
             roleRequest.getDescription()
         );

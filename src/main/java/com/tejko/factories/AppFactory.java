@@ -10,7 +10,7 @@ public class AppFactory implements AppFactoryInterface {
 
     @Override
     public App getObject(AppRequest objectRequest) {
-        App app = App.create(objectRequest.getId(), objectRequest.getName(), objectRequest.getDescription());
+        App app = App.create(objectRequest.getName(), objectRequest.getDescription());
         return app;
     }
 

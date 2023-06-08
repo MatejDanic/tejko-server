@@ -21,14 +21,14 @@ public class ScoreFactory implements ScoreFactoryInterface {
     AppRepository appRepository;
 
     @Override
-    public Score getObject(ScoreRequest objectRequest) {
-        User user = userRepository.findById(objectRequest.getUserId()).get();
-        App app = appRepository.findById(objectRequest.getAppId()).get();
+    public Score getObject(ScoreRequest scoreRequest) {
+        User user = userRepository.findById(scoreRequest.getUserId()).get();
+        App app = appRepository.findById(scoreRequest.getAppId()).get();
         
         return Score.create(
             app, 
             user, 
-            objectRequest.getValue()
+            scoreRequest.getValue()
         );
     }
 

@@ -3,10 +3,13 @@ package com.tejko.mappers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Component;
+
 import com.tejko.interfaces.mappers.UserChallengeMapperInterface;
 import com.tejko.models.general.UserChallenge;
 import com.tejko.models.general.payload.responses.UserChallengeResponse;
 
+@Component
 public class UserChallengeMapper implements UserChallengeMapperInterface {
 
     @Override

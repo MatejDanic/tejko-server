@@ -108,7 +108,7 @@ public class UserController implements UserControllerInterface {
 	@PreAuthorize("hasAuthority('ADMIN') or authentication.principal.username.equals(\"Matej\")")
 	@PutMapping("/{id}/assign-role")
 	@Override
-	public ResponseEntity<UserResponse> assignRoleByUserId(@PathVariable UUID id, @RequestBody Integer roleId) {
+	public ResponseEntity<UserResponse> assignRoleByUserId(@PathVariable UUID id, @RequestBody UUID roleId) {
 		return new ResponseEntity<>(userService.assignRoleByUserId(id, roleId), HttpStatus.OK);
 	}
 

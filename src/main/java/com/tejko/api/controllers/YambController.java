@@ -59,7 +59,7 @@ public class YambController implements YambControllerInterface {
 		return new ResponseEntity<>(yambService.getAll(page, size, sort, direction), HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('USER')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("")
 	@Override
 	public ResponseEntity<YambResponse> create(@RequestBody YambRequest objectRequest) {

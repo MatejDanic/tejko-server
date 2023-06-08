@@ -12,13 +12,13 @@ public abstract class GameRequest extends ApiRequest<Game> {
     private UUID userId;
 
     @NotBlank
-    private Integer appId;
+    private UUID appId;
 
     public UUID getUserId() {
         return userId;
     }
 
-    public Integer getAppId() {
+    public UUID getAppId() {
         return appId;
     }
 

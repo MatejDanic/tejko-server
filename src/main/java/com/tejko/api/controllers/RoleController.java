@@ -3,6 +3,7 @@ package com.tejko.api.controllers;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,14 +33,14 @@ public class RoleController implements RoleControllerInterface {
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<RoleResponse> getById(@PathVariable Integer id) {
+    public ResponseEntity<RoleResponse> getById(@PathVariable UUID id) {
         return new ResponseEntity<>(roleService.getById(id), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/bulk")
     @Override
-    public ResponseEntity<List<RoleResponse>> getBulkById(@RequestBody Set<Integer> idSet) {
+    public ResponseEntity<List<RoleResponse>> getBulkById(@RequestBody Set<UUID> idSet) {
         return new ResponseEntity<>(roleService.getBulkById(idSet), HttpStatus.OK);
     }
 
@@ -67,21 +68,21 @@ public class RoleController implements RoleControllerInterface {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("/{id}")
     @Override
-    public ResponseEntity<RoleResponse> updateById(@PathVariable Integer id, @RequestBody RoleRequest roleRequest) {
+    public ResponseEntity<RoleResponse> updateById(@PathVariable UUID id, @RequestBody RoleRequest roleRequest) {
         return new ResponseEntity<>(roleService.updateById(id, roleRequest), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PatchMapping("/bulk")
     @Override
-    public ResponseEntity<List<RoleResponse>> updateBulkById(@RequestBody Map<Integer, RoleRequest> idRoleRequestMap) {
+    public ResponseEntity<List<RoleResponse>> updateBulkById(@RequestBody Map<UUID, RoleRequest> idRoleRequestMap) {
         return new ResponseEntity<>(roleService.updateBulkById(idRoleRequestMap), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<?> deleteById(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteById(@PathVariable UUID id) {
         roleService.deleteById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -89,7 +90,7 @@ public class RoleController implements RoleControllerInterface {
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/bulk")
     @Override
-    public ResponseEntity<?> deleteBulkById(@RequestBody Set<Integer> idSet) {
+    public ResponseEntity<?> deleteBulkById(@RequestBody Set<UUID> idSet) {
         roleService.deleteBulkById(idSet);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -105,7 +106,7 @@ public class RoleController implements RoleControllerInterface {
     @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/{id}/users")
     @Override
-    public ResponseEntity<List<UserResponse>> getUsersByRoleId(@PathVariable Integer roleId) {
+    public ResponseEntity<List<UserResponse>> getUsersByRoleId(@PathVariable UUID roleId) {
         return new ResponseEntity<>(roleService.getUsersByRoleId(roleId), HttpStatus.OK);
     }
 

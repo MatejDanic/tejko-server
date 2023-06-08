@@ -107,7 +107,7 @@ public class ScoreService implements ScoreServiceInterface {
 
 	@Override
 	public List<ScoreResponse> getAllByDateInterval(LocalDateTime startDate, LocalDateTime endDate) {
-		return scoreMapper.toApiResponseList(scoreRepository.findAllByDateBetween(startDate, endDate));
+		return scoreMapper.toApiResponseList(scoreRepository.findAllByCreatedDateBetween(startDate, endDate));
 	}
 	
 	@Override
@@ -116,7 +116,7 @@ public class ScoreService implements ScoreServiceInterface {
     }
 
 	@Override
-    public List<ScoreResponse> getScoresByAppId(Integer appId) {
+    public List<ScoreResponse> getScoresByAppId(UUID appId) {
         return scoreMapper.toApiResponseList(scoreRepository.findAllByAppId(appId));
     }
 

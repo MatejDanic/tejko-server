@@ -10,7 +10,7 @@ public class YambRequest extends GameRequest {
 
     private Sheet sheet;
     private Map<Integer, Dice> diceMap;
-    private Integer rollCount;
+    private int rollCount;
     private BoxType announcement;
 
     public Sheet getSheet() {
@@ -21,7 +21,7 @@ public class YambRequest extends GameRequest {
         return diceMap;
     }
     
-    public Integer getRollCount() {
+    public int getRollCount() {
         return rollCount;
     }
 

@@ -8,22 +8,16 @@ import com.tejko.models.general.Challenge;
 
 public class ChallengeResponse extends ApiResponse<Challenge> {
     
-    private UUID id;
-    private int appId;
+    private UUID appId;
     private List<UserChallengeResponse> userChallengeList;
 
-    public ChallengeResponse(LocalDateTime createdDate, LocalDateTime lastModifiedDate, UUID id, int appId, List<UserChallengeResponse> userChallengeList) {
-        super(createdDate, lastModifiedDate);
-        this.id = id;
+    public ChallengeResponse(UUID id, LocalDateTime createdDate, LocalDateTime lastModifiedDate, UUID appId, List<UserChallengeResponse> userChallengeList) {
+        super(id, createdDate, lastModifiedDate);
         this.appId = appId;
         this.userChallengeList = userChallengeList;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public int getAppId() {
+    public UUID getAppId() {
         return appId;
     }
 

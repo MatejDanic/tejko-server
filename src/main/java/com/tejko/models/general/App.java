@@ -4,18 +4,14 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.tejko.models.DatabaseEntity;
+import com.tejko.models.DatabaseEntityWithId;
 
 @Entity
 @Table(name = "app")
-public class App extends DatabaseEntity {
-
-    @Id
-    private int id;
+public class App extends DatabaseEntityWithId {
 
     @Column(nullable = false, unique = true)
     private String name;
@@ -28,18 +24,13 @@ public class App extends DatabaseEntity {
 
     private App() {}
 
-    private App(int id, String name, String description) {
-        this.id = id;
+    private App(String name, String description) {
         this.name = name;
         this.description = description;
     }
 
-    public static App create(int id, String name, String description) {
-        return new App(id, name, description);
-    }
-
-    public int getId() {
-        return id;
+    public static App create(String name, String description) {
+        return new App(name, description);
     }
 
     public String getName() {

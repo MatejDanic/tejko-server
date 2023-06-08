@@ -12,12 +12,12 @@ public class ScoreRequest extends ApiRequest<Score> {
     private UUID userId;
 
     @NotBlank
-    private Integer appId;
+    private UUID appId;
 
     @NotBlank
     private Integer value;
 
-    public ScoreRequest(UUID userId, Integer appId, Integer value) {
+    public ScoreRequest(UUID userId, UUID appId, Integer value) {
         this.userId = userId;
         this.appId = appId;
         this.value = value;
@@ -27,7 +27,7 @@ public class ScoreRequest extends ApiRequest<Score> {
         return userId;
     }
 
-    public Integer getAppId() {
+    public UUID getAppId() {
         return appId;
     }
 

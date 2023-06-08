@@ -41,7 +41,7 @@ public class AppService implements AppServiceInterface {
     ScoreService scoreService;
 
     @Override
-    public AppResponse getById(Integer id) {
+    public AppResponse getById(UUID id) {
         return appMapper.toApiResponse(appRepository.getById(id));
     }
 
@@ -52,7 +52,7 @@ public class AppService implements AppServiceInterface {
     }
 
     @Override
-    public List<AppResponse> getBulkById(Set<Integer> idSet) {
+    public List<AppResponse> getBulkById(Set<UUID> idSet) {
         return appMapper.toApiResponseList(appRepository.findAllById(idSet));
     }
 
@@ -74,7 +74,7 @@ public class AppService implements AppServiceInterface {
     }
 
     @Override
-    public AppResponse updateById(Integer id, AppRequest appRequest) {
+    public AppResponse updateById(UUID id, AppRequest appRequest) {
         App app = appRepository.getById(id);
 
         app = applyPatch(app, appRequest);
@@ -83,7 +83,7 @@ public class AppService implements AppServiceInterface {
     }
 
     @Override
-    public List<AppResponse> updateBulkById(Map<Integer, AppRequest> idAppRequestMap) {
+    public List<AppResponse> updateBulkById(Map<UUID, AppRequest> idAppRequestMap) {
         List<App> appList = appRepository.findAllById(idAppRequestMap.keySet());
 
         for (App app : appList) {
@@ -94,12 +94,12 @@ public class AppService implements AppServiceInterface {
     }
 
     @Override
-    public void deleteById(Integer id) {
+    public void deleteById(UUID id) {
         appRepository.deleteById(id);
     }
 
     @Override
-    public void deleteBulkById(Set<Integer> idSet) {
+    public void deleteBulkById(Set<UUID> idSet) {
         appRepository.deleteAllById(idSet);
     }
 
@@ -109,12 +109,12 @@ public class AppService implements AppServiceInterface {
     }
 
     @Override
-    public List<ScoreResponse> getScoresByAppId(Integer appId) {
+    public List<ScoreResponse> getScoresByAppId(UUID appId) {
         return scoreService.getScoresByAppId(appId);
     }
 
     @Override
-    public boolean hasPermission(UUID userId, Integer objectId) {
+    public boolean hasPermission(UUID userId, UUID appId) {
         return false;
     }
 

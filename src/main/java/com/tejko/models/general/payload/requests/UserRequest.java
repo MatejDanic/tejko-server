@@ -16,7 +16,7 @@ public class UserRequest extends ApiRequest<User> {
     @Size(min = TejkoConstants.PASSWORD_LENGTH_MIN)
     private String password;
 
-    private Boolean testUser;
+    private boolean testUser;
 
     public String getUsername() {
         return username;
@@ -26,7 +26,7 @@ public class UserRequest extends ApiRequest<User> {
         return password;
     }
 
-    public Boolean isTestUser() {
+    public boolean isTestUser() {
         return testUser;
     }
 
