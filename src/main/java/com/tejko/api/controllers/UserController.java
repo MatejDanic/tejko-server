@@ -108,8 +108,8 @@ public class UserController implements UserControllerInterface {
 	@PreAuthorize("hasAuthority('ADMIN') or authentication.principal.username.equals(\"Matej\")")
 	@PutMapping("/{id}/assign-role")
 	@Override
-	public ResponseEntity<UserResponse> assignRoleByUserId(@PathVariable UUID id, @RequestBody UUID roleId) {
-		return new ResponseEntity<>(userService.assignRoleByUserId(id, roleId), HttpStatus.OK);
+	public ResponseEntity<UserResponse> assignRoleByUserId(@PathVariable UUID id, @RequestBody String label) {
+		return new ResponseEntity<>(userService.assignRoleByUserId(id, label), HttpStatus.OK);
 	}
 
 	@PreAuthorize("hasAuthority('ADMIN') or @authPermissionComponent.hasPermission(@jwtComponent.getUserIdFromHeader(#headerAuth), userService.getById(#id))")

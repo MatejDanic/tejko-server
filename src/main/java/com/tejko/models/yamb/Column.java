@@ -1,9 +1,10 @@
 package com.tejko.models.yamb;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.persistence.Transient;
 
@@ -49,8 +50,8 @@ public class Column implements Serializable {
     }
 
     @Transient
-    public Collection<Box> getBoxList() {
-        return boxMap.values();
+    public List<Box> getBoxList() {
+        return boxMap.values().stream().collect(Collectors.toList());
     }
 
     @JsonIgnore

@@ -113,8 +113,8 @@ public class RoleService implements RoleServiceInterface {
     }
 
     @Override
-    public Role getEntityById(UUID roleId) {
-        return roleRepository.getById(roleId);
+    public Role getEntityByLabel(String label) {
+        return roleRepository.findByLabel(label).get();
     }
 
     @Override

@@ -1,6 +1,8 @@
 package com.tejko.models.general.payload.responses;
 
-public class DiceResponse {
+import java.io.Serializable;
+
+public class DiceResponse implements Serializable {
 
     private int value;
     private int order;

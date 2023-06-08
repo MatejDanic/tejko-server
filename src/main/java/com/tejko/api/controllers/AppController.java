@@ -22,7 +22,6 @@ import com.tejko.api.services.AppService;
 import com.tejko.interfaces.api.controllers.AppControllerInterface;
 import com.tejko.models.general.payload.requests.AppRequest;
 import com.tejko.models.general.payload.responses.AppResponse;
-import com.tejko.models.general.payload.responses.ScoreResponse;
 
 @RestController
 @RequestMapping("/api/apps")
@@ -100,12 +99,6 @@ public class AppController implements AppControllerInterface {
     public ResponseEntity<?> deleteAll() {
         appService.deleteAll();
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}/scores")
-    @Override
-    public ResponseEntity<List<ScoreResponse>> getScoresByAppId(@PathVariable UUID id) {
-        return new ResponseEntity<>(appService.getScoresByAppId(id), HttpStatus.OK);
     }
 
 }

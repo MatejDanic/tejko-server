@@ -128,9 +128,9 @@ public class UserService implements UserServiceInterface {
     }
 
     @Override
-    public UserResponse assignRoleByUserId(UUID id, UUID roleId) throws RoleNotFoundException {
+    public UserResponse assignRoleByUserId(UUID id, String label) throws RoleNotFoundException {
         User user = userRepository.getById(id);
-        user.assignRole(roleService.getEntityById(roleId));
+        user.assignRole(roleService.getEntityByLabel(label));
         return userMapper.toApiResponse(userRepository.save(user));
     }
 
@@ -147,6 +147,11 @@ public class UserService implements UserServiceInterface {
     @Override
     public UserResponse getByUsername(String username) {
         return userMapper.toApiResponse(userRepository.findByUsername(username).get());
+    }
+
+    @Override
+    public User getEntityByUsername(String username) {
+        return userRepository.findByUsername(username).get();
     }
 
     @Override

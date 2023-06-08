@@ -28,9 +28,9 @@ public abstract class Game extends DatabaseEntityWithId {
     @OneToOne(mappedBy = "game")
     private UserChallenge userChallenges;
 
-    public Game() { }
+    protected Game() { }
 
-    public Game(App app, User user) {
+    protected Game(App app, User user) {
         this.app = app;
         this.user = user;
     }

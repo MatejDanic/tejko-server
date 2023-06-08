@@ -1,8 +1,10 @@
 package com.tejko.models.general.payload.responses;
 
+import java.io.Serializable;
+
 import com.tejko.models.yamb.enums.BoxType;
 
-public class BoxResponse {
+public class BoxResponse implements Serializable {
 
     private BoxType type;
     private int value;

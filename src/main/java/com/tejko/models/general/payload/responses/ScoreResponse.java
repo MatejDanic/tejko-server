@@ -7,21 +7,21 @@ import com.tejko.models.general.Score;
 
 public class ScoreResponse extends ApiResponse<Score> {
 
-	private UUID appId;
+	private UUID userId;
 	private int value;
 
-	public ScoreResponse(UUID id, LocalDateTime createdDate, LocalDateTime lastModifiedDate, UUID appId, int value) {
+	public ScoreResponse(UUID id, LocalDateTime createdDate, LocalDateTime lastModifiedDate, UUID userId, int value) {
 		super(id, createdDate, lastModifiedDate);
-		this.appId = appId;
+		this.userId = userId;
 		this.value = value;
 	}
 
-	public UUID getAppId() {
-		return appId;
+	public UUID getUserId() {
+		return userId;
 	}
 
 	public int getValue() {
 		return value;
 	}
-    
+
 }

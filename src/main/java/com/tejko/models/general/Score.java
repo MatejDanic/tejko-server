@@ -20,9 +20,7 @@ import org.springframework.data.rest.core.annotation.RestResource;
 @RestResource(rel = "scores", path = "scores")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="app", discriminatorType = DiscriminatorType.STRING)
-public class Score extends DatabaseEntityWithId {
-
-	private String app;
+public abstract class Score extends DatabaseEntityWithId {
 
 	@ManyToOne
 	@JsonIncludeProperties({ "id", "username" })
@@ -32,20 +30,11 @@ public class Score extends DatabaseEntityWithId {
 	@Column(nullable = false)
 	private int value;
 
-	private Score() { }
+	protected Score() { }
 
-	private Score(App app, User user, int value) {
-		this.app = app;
+	protected Score(User user, int value) {
 		this.user = user;
 		this.value = value;
-	}
-
-	public static Score create(App app, User user, int value) {
-		return new Score(app, user, value);
-	}
-
-	public App getApp() {
-		return app;
 	}
 
 	public User getUser() {

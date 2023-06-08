@@ -29,11 +29,9 @@ public class GameFactory implements GameFactoryInterface {
 
     @Override
     public Game getObject(GameRequest gameRequest) {
-        App app = appRepository.findById(gameRequest.getAppId()).get();
 
-        switch (app.getName()) {
-            case "Yamb":
-                return getYambObject((YambRequest) gameRequest);
+        if (YambRequest.class.isInstance(gameRequest)) {
+            return getYambObject((YambRequest) gameRequest);
         }
 
         return null;

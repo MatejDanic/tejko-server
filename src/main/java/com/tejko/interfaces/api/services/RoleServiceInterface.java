@@ -15,7 +15,7 @@ public interface RoleServiceInterface extends ObjectServiceInterface<UUID, Role,
 
     // this method is called by the user service for assigning new roles to users
     // that is why it returns Role instead of RoleResponse
-    public Role getEntityById(UUID roleId); 
+    public Role getEntityByLabel(String label); 
 
 
 }

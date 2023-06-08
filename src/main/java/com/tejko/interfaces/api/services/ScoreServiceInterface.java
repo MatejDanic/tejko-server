@@ -15,6 +15,6 @@ public interface ScoreServiceInterface extends ObjectServiceInterface<UUID, Scor
 
     public List<ScoreResponse> getScoresByUserId(UUID userId);
 
-    public List<ScoreResponse> getScoresByAppId(UUID appId);
+    public List<ScoreResponse> getAllYambScores();
 
 }

@@ -1,9 +1,10 @@
 package com.tejko.models.yamb;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tejko.models.yamb.enums.BoxType;
@@ -31,9 +32,13 @@ public class Sheet implements Serializable {
         return columnMap;
     }
 
+    public Map<ColumnType, Column> getColumnMap() {
+        return columnMap;
+    }
+
     @JsonIgnore
-    public Collection<Column> getColumnList() { 
-        return columnMap.values();
+    public List<Column> getColumnList() { 
+        return columnMap.values().stream().collect(Collectors.toList());
     }
 
     @JsonIgnore

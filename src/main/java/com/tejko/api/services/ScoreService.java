@@ -116,8 +116,8 @@ public class ScoreService implements ScoreServiceInterface {
     }
 
 	@Override
-    public List<ScoreResponse> getScoresByAppId(UUID appId) {
-        return scoreMapper.toApiResponseList(scoreRepository.findAllByAppId(appId));
+    public List<ScoreResponse> getAllYambScores() {
+        return scoreMapper.toApiResponseList(scoreRepository.findAllYambScores());
     }
 
 	@Override

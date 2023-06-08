@@ -35,8 +35,8 @@ public class TejkoExceptionHandler extends ResponseEntityExceptionHandler {
         try {
             StringWriter errors = new StringWriter();
             exception.printStackTrace(new PrintWriter(errors));
+            System.out.println(exception.getLocalizedMessage());
             exception.printStackTrace(System.out);
-            System.out.println(errors);
             logService.create(new LogRequest(
                 userService.getByUsername(request.getRemoteUser()).getId(),
                 LogLevel.ERROR, 

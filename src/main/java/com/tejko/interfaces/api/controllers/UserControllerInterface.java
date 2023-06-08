@@ -19,7 +19,7 @@ import com.tejko.models.general.payload.responses.UserResponse;
 public interface UserControllerInterface extends ObjectControllerInterface<UUID, User, UserRequest, UserResponse> {
 
     @PutMapping("/{id}/assign-role")
-    public ResponseEntity<UserResponse> assignRoleByUserId(@PathVariable UUID id, @RequestBody UUID roleId);
+    public ResponseEntity<UserResponse> assignRoleByUserId(@PathVariable UUID id, @RequestBody String label);
 
     @GetMapping("/{id}/preference")
     public ResponseEntity<PreferenceResponse> getPreferenceByUserId(UUID id);

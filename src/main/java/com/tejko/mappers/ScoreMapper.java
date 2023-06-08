@@ -17,8 +17,8 @@ public class ScoreMapper implements ScoreMapperInterface {
         return new ScoreResponse(
             score.getId(), 
             score.getCreatedDate(), 
-            score.getLastModifiedDate(), 
-            score.getApp().getId(),
+            score.getLastModifiedDate(),
+            score.getUser().getId(),
             score.getValue()
         );
     }

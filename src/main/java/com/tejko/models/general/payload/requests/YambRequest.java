@@ -1,6 +1,7 @@
 package com.tejko.models.general.payload.requests;
 
 import java.util.Map;
+import java.util.UUID;
 
 import com.tejko.models.yamb.Dice;
 import com.tejko.models.yamb.Sheet;
@@ -12,6 +13,10 @@ public class YambRequest extends GameRequest {
     private Map<Integer, Dice> diceMap;
     private int rollCount;
     private BoxType announcement;
+
+    public YambRequest(UUID userId) {
+        super(userId);
+    }
 
     public Sheet getSheet() {
         return sheet;
@@ -28,5 +33,5 @@ public class YambRequest extends GameRequest {
     public BoxType getAnnouncement() {
         return announcement;
     }
-
+    
 }

@@ -1,10 +1,11 @@
 package com.tejko.models.general.payload.responses;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import com.tejko.models.yamb.enums.ColumnType;
 
-public class ColumnResponse {
+public class ColumnResponse implements Serializable {
 
     private ColumnType type;
     private Collection<BoxResponse> getBoxList;

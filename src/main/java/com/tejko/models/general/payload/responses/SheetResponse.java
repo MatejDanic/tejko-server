@@ -1,8 +1,9 @@
 package com.tejko.models.general.payload.responses;
 
+import java.io.Serializable;
 import java.util.Collection;
 
-public class SheetResponse {
+public class SheetResponse implements Serializable {
 
     private Collection<ColumnResponse> columnList;
     private int topSectionSum;

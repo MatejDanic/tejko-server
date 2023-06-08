@@ -22,7 +22,6 @@ import com.tejko.api.repositories.AppRepository;
 import com.tejko.models.general.App;
 import com.tejko.models.general.payload.requests.AppRequest;
 import com.tejko.models.general.payload.responses.AppResponse;
-import com.tejko.models.general.payload.responses.ScoreResponse;
 
 @Service
 public class AppService implements AppServiceInterface {
@@ -106,11 +105,6 @@ public class AppService implements AppServiceInterface {
     @Override
     public void deleteAll() {
         appRepository.deleteAll();
-    }
-
-    @Override
-    public List<ScoreResponse> getScoresByAppId(UUID appId) {
-        return scoreService.getScoresByAppId(appId);
     }
 
     @Override

@@ -27,9 +27,9 @@ public class Role extends DatabaseEntityWithId {
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
-    private Role() { }
+    protected Role() { }
 
-    private Role(String label, String description) {
+    protected Role(String label, String description) {
         this.label = label;
         this.description = description;
     }

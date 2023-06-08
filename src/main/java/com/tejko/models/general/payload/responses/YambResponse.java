@@ -4,10 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import com.tejko.models.yamb.Yamb;
 import com.tejko.models.yamb.enums.BoxType;
 
-public class YambResponse extends ApiResponse<Yamb> {
+public class YambResponse extends GameResponse {
     
     private SheetResponse sheet;
     private List<DiceResponse> diceList;

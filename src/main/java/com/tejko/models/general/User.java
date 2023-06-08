@@ -62,9 +62,9 @@ public class User extends DatabaseEntityWithId {
         this.usernameLowercase = username == null ? null : username.toLowerCase();
     }
 
-    private User() { }    
+    protected User() { }    
 
-    private User(String username, String password, Set<Role> roles, boolean testUser) {
+    protected User(String username, String password, Set<Role> roles, boolean testUser) {
         this.username = username;
         this.password = password;
         this.roles = roles;
