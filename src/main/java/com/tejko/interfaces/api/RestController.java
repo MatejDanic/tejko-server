@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.tejko.models.general.payload.requests.ApiRequest;
-import com.tejko.models.general.payload.responses.ApiResponse;
+import com.tejko.models.general.payload.RestRequest;
+import com.tejko.models.general.payload.RestResponse;
 
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
-public interface ObjectControllerInterface<K, T, S extends ApiRequest<?>, U extends ApiResponse<?>> {
+public interface RestController<K, T, S extends RestRequest<?>, U extends RestResponse<?>> {
 
 	@GetMapping("/{id}")
 	public ResponseEntity<U> getById(@PathVariable K id);

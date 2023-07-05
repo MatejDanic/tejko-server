@@ -33,29 +33,29 @@ public class LogService implements LogServiceInterface {
 
     @Override
     public LogResponse getById(UUID id) {
-        return logMapper.toApiResponse(logRepository.findById(id).get());
+        return logMapper.toRestResponse(logRepository.findById(id).get());
     }
 
     @Override
     public List<LogResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return logMapper.toApiResponseList(logRepository.findAll(pageable).getContent());
+        return logMapper.toRestResponseList(logRepository.findAll(pageable).getContent());
     }
 
     @Override
     public List<LogResponse> getBulkById(Set<UUID> idSet) {
-        return logMapper.toApiResponseList(logRepository.findAllById(idSet));
+        return logMapper.toRestResponseList(logRepository.findAllById(idSet));
     }
 
     @Override
     public List<LogResponse> getBulkByIdIn(Set<UUID> idList) {
-        return logMapper.toApiResponseList(logRepository.findAllById(idList));
+        return logMapper.toRestResponseList(logRepository.findAllById(idList));
     }
 
     @Override
     public LogResponse create(LogRequest logRequest) {
         Log log = logFactory.getObject(logRequest);
-        return logMapper.toApiResponse(logRepository.save(log));
+        return logMapper.toRestResponse(logRepository.save(log));
     }
 
     @Override

@@ -6,8 +6,9 @@ import java.util.UUID;
 import com.tejko.models.general.Preference;
 import com.tejko.models.general.enums.Theme;
 import com.tejko.models.general.enums.VolumeLevel;
+import com.tejko.models.general.payload.RestResponse;
 
-public class PreferenceResponse extends ApiResponse<Preference> {
+public class PreferenceResponse extends RestResponse<Preference> {
 
     public VolumeLevel volumeLevel;
     public Theme theme;

@@ -23,7 +23,7 @@ import com.tejko.models.general.Game;
 public class GameMapper implements GameMapperInterface {
 
     @Override
-    public GameResponse toApiResponse(Game game) {
+    public GameResponse toRestResponse(Game game) {
         if (Yamb.class.isInstance(game)) {
             return toYambResponse((Yamb) game);
         }
@@ -46,8 +46,8 @@ public class GameMapper implements GameMapperInterface {
     }
 
     @Override
-    public List<GameResponse> toApiResponseList(List<Game> gameList) {
-        return gameList.stream().map(this::toApiResponse).collect(Collectors.toList());
+    public List<GameResponse> toRestResponseList(List<Game> gameList) {
+        return gameList.stream().map(this::toRestResponse).collect(Collectors.toList());
     }
 
     private DiceResponse getDiceResponseFromDice(Dice dice) {

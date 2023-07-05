@@ -56,24 +56,24 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public UserResponse getById(UUID id) {
-        return userMapper.toApiResponse(userRepository.getById(id));
+        return userMapper.toRestResponse(userRepository.getById(id));
     }
 
     @Override
     public List<UserResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return userMapper.toApiResponseList(userRepository.findAll(pageable).getContent());
+        return userMapper.toRestResponseList(userRepository.findAll(pageable).getContent());
     }
 
     @Override
     public List<UserResponse> getBulkById(Set<UUID> idSet) {
-        return userMapper.toApiResponseList(userRepository.findAllById(idSet));
+        return userMapper.toRestResponseList(userRepository.findAllById(idSet));
     }
 
     @Override
     public UserResponse create(UserRequest objectRequest) {
         User user = userFactory.getObject(objectRequest);
-        return userMapper.toApiResponse(userRepository.save(user));
+        return userMapper.toRestResponse(userRepository.save(user));
     }
 
     @Override
@@ -84,7 +84,7 @@ public class UserService implements UserServiceInterface {
             userList.add(userFactory.getObject(objectRequest));
         }
 
-        return userMapper.toApiResponseList(userRepository.saveAll(userList));
+        return userMapper.toRestResponseList(userRepository.saveAll(userList));
     }
 
     @Override
@@ -93,7 +93,7 @@ public class UserService implements UserServiceInterface {
 
         user = applyPatch(user, userRequest);
 
-        return userMapper.toApiResponse(userRepository.save(user));
+        return userMapper.toRestResponse(userRepository.save(user));
     }
 
     @Override
@@ -104,7 +104,7 @@ public class UserService implements UserServiceInterface {
             user = applyPatch(user, idUserRequestMap.get(user.getId()));
         }
 
-        return userMapper.toApiResponseList(userRepository.saveAll(userList));
+        return userMapper.toRestResponseList(userRepository.saveAll(userList));
     }
 
     @Override
@@ -131,7 +131,7 @@ public class UserService implements UserServiceInterface {
     public UserResponse assignRoleByUserId(UUID id, String label) throws RoleNotFoundException {
         User user = userRepository.getById(id);
         user.assignRole(roleService.getEntityByLabel(label));
-        return userMapper.toApiResponse(userRepository.save(user));
+        return userMapper.toRestResponse(userRepository.save(user));
     }
 
     @Override
@@ -141,12 +141,12 @@ public class UserService implements UserServiceInterface {
     
     @Override
     public List<UserResponse> getUsersByRoleId(UUID id) {
-        return userMapper.toApiResponseList(userRepository.findAllByRolesId(id));
+        return userMapper.toRestResponseList(userRepository.findAllByRolesId(id));
     }
 
     @Override
     public UserResponse getByUsername(String username) {
-        return userMapper.toApiResponse(userRepository.findByUsername(username).get());
+        return userMapper.toRestResponse(userRepository.findByUsername(username).get());
     }
 
     @Override

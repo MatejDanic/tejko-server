@@ -41,24 +41,24 @@ public class RoleService implements RoleServiceInterface {
 
     @Override
     public RoleResponse getById(UUID id) {
-        return roleMapper.toApiResponse(roleRepository.getById(id));
+        return roleMapper.toRestResponse(roleRepository.getById(id));
     }
 
     @Override
     public List<RoleResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return roleMapper.toApiResponseList(roleRepository.findAll(pageable).getContent());
+        return roleMapper.toRestResponseList(roleRepository.findAll(pageable).getContent());
     }
 
     @Override
     public List<RoleResponse> getBulkById(Set<UUID> idSet) {
-        return roleMapper.toApiResponseList(roleRepository.findAllById(idSet));
+        return roleMapper.toRestResponseList(roleRepository.findAllById(idSet));
     }
 
     @Override
     public RoleResponse create(RoleRequest objectRequest) {
         Role role = roleFactory.getObject(objectRequest);
-        return roleMapper.toApiResponse(roleRepository.save(role));
+        return roleMapper.toRestResponse(roleRepository.save(role));
     }
 
     @Override
@@ -69,7 +69,7 @@ public class RoleService implements RoleServiceInterface {
             roleList.add(roleFactory.getObject(objectRequest));
         }
 
-        return roleMapper.toApiResponseList(roleRepository.saveAll(roleList));
+        return roleMapper.toRestResponseList(roleRepository.saveAll(roleList));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class RoleService implements RoleServiceInterface {
 
         role = applyPatch(role, roleRequest);
 
-        return roleMapper.toApiResponse(roleRepository.save(role));
+        return roleMapper.toRestResponse(roleRepository.save(role));
     }
 
     @Override
@@ -89,7 +89,7 @@ public class RoleService implements RoleServiceInterface {
             role = applyPatch(role, idRoleRequestMap.get(role.getId()));
         }
 
-        return roleMapper.toApiResponseList(roleRepository.saveAll(roleList));
+        return roleMapper.toRestResponseList(roleRepository.saveAll(roleList));
     }
 
     @Override

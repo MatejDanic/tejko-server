@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.UUID;
 
 import com.tejko.models.general.User;
+import com.tejko.models.general.payload.RestResponse;
 
-public class UserResponse extends ApiResponse<User> {
+public class UserResponse extends RestResponse<User> {
     
     private String username;
     private List<RoleResponse> roles;

@@ -6,8 +6,9 @@ import javax.validation.constraints.NotBlank;
 
 import com.tejko.models.general.Log;
 import com.tejko.models.general.enums.LogLevel;
+import com.tejko.models.general.payload.RestRequest;
 
-public class LogRequest extends ApiRequest<Log> {
+public class LogRequest extends RestRequest<Log> {
 
     @NotBlank
     private UUID userId;

@@ -4,8 +4,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.tejko.models.general.Score;
+import com.tejko.models.general.payload.RestResponse;
 
-public class ScoreResponse extends ApiResponse<Score> {
+public class ScoreResponse extends RestResponse<Score> {
 
 	private UUID userId;
 	private int value;

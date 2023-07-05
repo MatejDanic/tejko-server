@@ -13,7 +13,7 @@ import com.tejko.models.general.payload.responses.ScoreResponse;
 public class ScoreMapper implements ScoreMapperInterface {
 
     @Override
-    public ScoreResponse toApiResponse(Score score) {
+    public ScoreResponse toRestResponse(Score score) {
         return new ScoreResponse(
             score.getId(), 
             score.getCreatedDate(), 
@@ -24,8 +24,8 @@ public class ScoreMapper implements ScoreMapperInterface {
     }
 
     @Override
-    public List<ScoreResponse> toApiResponseList(List<Score> scoreList) {
-        return scoreList.stream().map(this::toApiResponse).collect(Collectors.toList());
+    public List<ScoreResponse> toRestResponseList(List<Score> scoreList) {
+        return scoreList.stream().map(this::toRestResponse).collect(Collectors.toList());
     }
 
 }

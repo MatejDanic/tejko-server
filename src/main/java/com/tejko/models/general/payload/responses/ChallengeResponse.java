@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.UUID;
 
 import com.tejko.models.general.Challenge;
+import com.tejko.models.general.payload.RestResponse;
 
-public class ChallengeResponse extends ApiResponse<Challenge> {
+public class ChallengeResponse extends RestResponse<Challenge> {
     
     private UUID appId;
     private List<UserChallengeResponse> userChallengeList;

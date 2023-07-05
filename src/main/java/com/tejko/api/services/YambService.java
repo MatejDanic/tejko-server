@@ -46,7 +46,7 @@ public class YambService implements YambServiceInterface {
         YambRequest yambRequest = new YambRequest(user.getId());
         Yamb yamb = (Yamb) gameFactory.getObject(yambRequest);
         yamb = yambRepository.save(yamb);
-        YambResponse yambResponse = (YambResponse) gameMapper.toApiResponse(yamb);
+        YambResponse yambResponse = (YambResponse) gameMapper.toRestResponse(yamb);
         return yambResponse;
     }
 
@@ -56,7 +56,7 @@ public class YambService implements YambServiceInterface {
 
         yamb.rollDice(diceToRoll);
 
-        return (YambResponse) gameMapper.toApiResponse(yambRepository.save(yamb));
+        return (YambResponse) gameMapper.toRestResponse(yambRepository.save(yamb));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class YambService implements YambServiceInterface {
 
         yamb.announce(boxType);
 
-        return (YambResponse) gameMapper.toApiResponse(yambRepository.save(yamb));
+        return (YambResponse) gameMapper.toRestResponse(yambRepository.save(yamb));
     }
 
     @Override
@@ -81,14 +81,14 @@ public class YambService implements YambServiceInterface {
             ));
         }
 
-        return (YambResponse) gameMapper.toApiResponse(yambRepository.save(yamb));
+        return (YambResponse) gameMapper.toRestResponse(yambRepository.save(yamb));
     }
 
     @Override
     public YambResponse restartById(UUID id) {
         Yamb yamb = yambRepository.getById(id);
         yamb.restart();
-        return (YambResponse) gameMapper.toApiResponse(yambRepository.save(yamb));
+        return (YambResponse) gameMapper.toRestResponse(yambRepository.save(yamb));
     }
 
     @Override

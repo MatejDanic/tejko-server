@@ -5,8 +5,9 @@ import javax.validation.constraints.Size;
 
 import com.tejko.constants.TejkoConstants;
 import com.tejko.models.general.User;
+import com.tejko.models.general.payload.RestRequest;
 
-public class UserRequest extends ApiRequest<User> {
+public class UserRequest extends RestRequest<User> {
 
     @NotBlank
     @Size(min = TejkoConstants.USERNAME_LENGTH_MIN, max = TejkoConstants.USERNAME_LENGTH_MAX)

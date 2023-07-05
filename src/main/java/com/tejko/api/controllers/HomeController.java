@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("")
+@RequestMapping("/api")
 public class HomeController {
 
-	@GetMapping("/api")
+	@GetMapping("")
 	public void home(HttpServletResponse response) throws IOException {
 		response.sendRedirect("/swagger-ui/index.html?configUrl=/v3/api-docs/swagger-config");
 	}

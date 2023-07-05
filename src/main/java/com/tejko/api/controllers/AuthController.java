@@ -15,10 +15,11 @@ import com.tejko.models.general.payload.requests.UserRequest;
 import com.tejko.models.general.payload.responses.LoginResponse;
 import com.tejko.api.services.AuthService;
 import com.tejko.exceptions.UsernameTakenException;
+import com.tejko.interfaces.api.controllers.AuthControllerInterface;
 
 @RestController
 @RequestMapping("/api/auth")
-public class AuthController {
+public class AuthController implements AuthControllerInterface {
 
     @Autowired
     AuthService authService;

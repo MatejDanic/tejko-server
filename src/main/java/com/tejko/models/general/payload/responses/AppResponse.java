@@ -4,8 +4,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.tejko.models.general.App;
+import com.tejko.models.general.payload.RestResponse;
 
-public class AppResponse extends ApiResponse<App> {
+public class AppResponse extends RestResponse<App> {
     
     private String name;
     private String description;

@@ -5,8 +5,9 @@ import java.util.UUID;
 
 import com.tejko.models.general.Log;
 import com.tejko.models.general.enums.LogLevel;
+import com.tejko.models.general.payload.RestResponse;
 
-public class LogResponse extends ApiResponse<Log> {
+public class LogResponse extends RestResponse<Log> {
     
     private UUID userId;
     private LogLevel level;

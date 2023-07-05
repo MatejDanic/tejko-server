@@ -13,7 +13,7 @@ import com.tejko.models.general.payload.responses.LogResponse;
 public class LogMapper implements LogMapperInterface {
 
     @Override
-    public LogResponse toApiResponse(Log log) {
+    public LogResponse toRestResponse(Log log) {
         return new LogResponse(
             log.getId(), 
             log.getCreatedDate(), 
@@ -25,8 +25,8 @@ public class LogMapper implements LogMapperInterface {
     }
 
     @Override
-    public List<LogResponse> toApiResponseList(List<Log> logList) {
-        return logList.stream().map(this::toApiResponse).collect(Collectors.toList());
+    public List<LogResponse> toRestResponseList(List<Log> logList) {
+        return logList.stream().map(this::toRestResponse).collect(Collectors.toList());
     }
 
 }

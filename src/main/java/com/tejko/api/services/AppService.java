@@ -26,7 +26,6 @@ import com.tejko.models.general.payload.responses.AppResponse;
 @Service
 public class AppService implements AppServiceInterface {
 
-
     @Autowired
     AppRepository appRepository;
 
@@ -41,24 +40,24 @@ public class AppService implements AppServiceInterface {
 
     @Override
     public AppResponse getById(UUID id) {
-        return appMapper.toApiResponse(appRepository.getById(id));
+        return appMapper.toRestResponse(appRepository.getById(id));
     }
 
     @Override
     public List<AppResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return appMapper.toApiResponseList(appRepository.findAll(pageable).getContent());
+        return appMapper.toRestResponseList(appRepository.findAll(pageable).getContent());
     }
 
     @Override
     public List<AppResponse> getBulkById(Set<UUID> idSet) {
-        return appMapper.toApiResponseList(appRepository.findAllById(idSet));
+        return appMapper.toRestResponseList(appRepository.findAllById(idSet));
     }
 
     @Override
     public AppResponse create(AppRequest appRequest) {
         App app = appFactory.getObject(appRequest);
-        return appMapper.toApiResponse(appRepository.save(app));
+        return appMapper.toRestResponse(appRepository.save(app));
     }
 
     @Override
@@ -69,7 +68,7 @@ public class AppService implements AppServiceInterface {
             appList.add(appFactory.getObject(objectRequest));
         }
 
-        return appMapper.toApiResponseList(appRepository.saveAll(appList));
+        return appMapper.toRestResponseList(appRepository.saveAll(appList));
     }
 
     @Override
@@ -78,7 +77,7 @@ public class AppService implements AppServiceInterface {
 
         app = applyPatch(app, appRequest);
 
-        return appMapper.toApiResponse(appRepository.save(app));
+        return appMapper.toRestResponse(appRepository.save(app));
     }
 
     @Override
@@ -89,7 +88,7 @@ public class AppService implements AppServiceInterface {
             app = applyPatch(app, idAppRequestMap.get(app.getId()));
         }
 
-        return appMapper.toApiResponseList(appRepository.saveAll(appList));
+        return appMapper.toRestResponseList(appRepository.saveAll(appList));
     }
 
     @Override

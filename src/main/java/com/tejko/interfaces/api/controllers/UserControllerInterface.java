@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.tejko.interfaces.api.ObjectControllerInterface;
+import com.tejko.interfaces.api.RestController;
 import com.tejko.models.general.User;
 import com.tejko.models.general.payload.requests.UserRequest;
 import com.tejko.models.general.payload.responses.PreferenceResponse;
 import com.tejko.models.general.payload.responses.ScoreResponse;
 import com.tejko.models.general.payload.responses.UserResponse;
 
-public interface UserControllerInterface extends ObjectControllerInterface<UUID, User, UserRequest, UserResponse> {
+public interface UserControllerInterface extends RestController<UUID, User, UserRequest, UserResponse> {
 
     @PutMapping("/{id}/assign-role")
     public ResponseEntity<UserResponse> assignRoleByUserId(@PathVariable UUID id, @RequestBody String label);

@@ -38,24 +38,24 @@ public class UserChallengeService implements UserChallengeServiceInterface {
 
     @Override
     public UserChallengeResponse getById(UserChallengeId id) {
-        return userChallengeMapper.toApiResponse(userChallengeRepository.getById(id));
+        return userChallengeMapper.toRestResponse(userChallengeRepository.getById(id));
     }
 
     @Override
     public List<UserChallengeResponse> getBulkById(Set<UserChallengeId> idSet) {
-        return userChallengeMapper.toApiResponseList(userChallengeRepository.findAllById(idSet));
+        return userChallengeMapper.toRestResponseList(userChallengeRepository.findAllById(idSet));
     }
 
     @Override
     public List<UserChallengeResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return userChallengeMapper.toApiResponseList(userChallengeRepository.findAll(pageable).getContent());
+        return userChallengeMapper.toRestResponseList(userChallengeRepository.findAll(pageable).getContent());
     }
 
     @Override
     public UserChallengeResponse create(UserChallengeRequest objectRequest) {
         UserChallenge userChallenge = userChallengeFactory.getObject(objectRequest);
-        return userChallengeMapper.toApiResponse(userChallengeRepository.save(userChallenge));
+        return userChallengeMapper.toRestResponse(userChallengeRepository.save(userChallenge));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class UserChallengeService implements UserChallengeServiceInterface {
             userChallengeList.add(userChallengeFactory.getObject(objectRequest));
         }
 
-        return userChallengeMapper.toApiResponseList(userChallengeRepository.saveAll(userChallengeList));
+        return userChallengeMapper.toRestResponseList(userChallengeRepository.saveAll(userChallengeList));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class UserChallengeService implements UserChallengeServiceInterface {
 
         userChallenge = applyPatch(userChallenge, userChallengeRequest);
 
-        return userChallengeMapper.toApiResponse(userChallengeRepository.save(userChallenge));
+        return userChallengeMapper.toRestResponse(userChallengeRepository.save(userChallenge));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class UserChallengeService implements UserChallengeServiceInterface {
         for (UserChallenge userChallenge : userChallengeList) {
             userChallenge = applyPatch(userChallenge, idUserChallengeRequestMap.get(userChallenge.getEmbeddedId()));
         }
-        return userChallengeMapper.toApiResponseList(userChallengeRepository.saveAll(userChallengeList));
+        return userChallengeMapper.toRestResponseList(userChallengeRepository.saveAll(userChallengeList));
     }
 
     @Override
@@ -111,7 +111,7 @@ public class UserChallengeService implements UserChallengeServiceInterface {
     @Override
     public UserChallenge applyPatch(UserChallenge userChallenge, UserChallengeRequest userChallengeRequest) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toApiResponseList'");
+        throw new UnsupportedOperationException("Unimplemented method 'toRestResponseList'");
     }
 
 }

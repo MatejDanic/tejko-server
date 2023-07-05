@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import com.tejko.models.general.payload.requests.ApiRequest;
-import com.tejko.models.general.payload.responses.ApiResponse;
+import com.tejko.models.general.payload.RestRequest;
+import com.tejko.models.general.payload.RestResponse;
 
-public interface ObjectServiceInterface<K, T, S extends ApiRequest<?>, U extends ApiResponse<?>> {
+public interface RestService<K, T, S extends RestRequest<?>, U extends RestResponse<?>> {
 
     public U getById(K id);
 

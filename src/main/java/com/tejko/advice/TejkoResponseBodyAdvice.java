@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import com.tejko.models.general.enums.ResponseStatus;
 import com.tejko.models.general.payload.ResponseWrapper;
-import com.tejko.models.general.payload.responses.ApiResponse;
+import com.tejko.models.general.payload.RestResponse;
 
 @ControllerAdvice
 public class TejkoResponseBodyAdvice implements ResponseBodyAdvice<Object> {
@@ -30,8 +30,8 @@ public class TejkoResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             if (body instanceof Collection<?>) {
                 response.getHeaders().add("X-Total-Count", String.valueOf(((Collection<?>) body).size()));
             }
-            if (ApiResponse.class.isInstance(body)) {
-                body = new ResponseWrapper<ApiResponse<?>>(ResponseStatus.SUCCESS, null, (ApiResponse<?>) body);
+            if (RestResponse.class.isInstance(body)) {
+                body = new ResponseWrapper<RestResponse<?>>(ResponseStatus.SUCCESS, null, (RestResponse<?>) body);
             }
         }
         return body;

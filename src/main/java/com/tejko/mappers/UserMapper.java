@@ -23,10 +23,10 @@ public class UserMapper implements UserMapperInterface {
     PreferenceMapper preferenceMapper;
 
     @Override
-    public UserResponse toApiResponse(User user) {
+    public UserResponse toRestResponse(User user) {
         if (user == null) return null;
-        List<RoleResponse> roles = roleMapper.toApiResponseList(user.getRoles().stream().collect(Collectors.toList()));
-        PreferenceResponse preference = preferenceMapper.toApiResponse(user.getPreference());
+        List<RoleResponse> roles = roleMapper.toRestResponseList(user.getRoles().stream().collect(Collectors.toList()));
+        PreferenceResponse preference = preferenceMapper.toRestResponse(user.getPreference());
         return new UserResponse(
             user.getId(), 
             user.getCreatedDate(), 
@@ -38,8 +38,8 @@ public class UserMapper implements UserMapperInterface {
     }
 
     @Override
-    public List<UserResponse> toApiResponseList(List<User> userList) {
-        return userList.stream().map(this::toApiResponse).collect(Collectors.toList());
+    public List<UserResponse> toRestResponseList(List<User> userList) {
+        return userList.stream().map(this::toRestResponse).collect(Collectors.toList());
     }
 
 }

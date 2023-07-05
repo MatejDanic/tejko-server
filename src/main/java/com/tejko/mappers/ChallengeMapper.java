@@ -19,8 +19,8 @@ public class ChallengeMapper implements ChallengeMapperInterface {
     UserChallengeMapper userChallengeMapper;
 
     @Override
-    public ChallengeResponse toApiResponse(Challenge challenge) {
-        List<UserChallengeResponse> userChallenges = userChallengeMapper.toApiResponseList(challenge.getUserChallenges().stream().collect(Collectors.toList()));
+    public ChallengeResponse toRestResponse(Challenge challenge) {
+        List<UserChallengeResponse> userChallenges = userChallengeMapper.toRestResponseList(challenge.getUserChallenges().stream().collect(Collectors.toList()));
         return new ChallengeResponse(
             challenge.getId(), 
             challenge.getCreatedDate(), 
@@ -31,8 +31,8 @@ public class ChallengeMapper implements ChallengeMapperInterface {
     }
 
     @Override
-    public List<ChallengeResponse> toApiResponseList(List<Challenge> challengeList) {
-        return challengeList.stream().map(this::toApiResponse).collect(Collectors.toList());
+    public List<ChallengeResponse> toRestResponseList(List<Challenge> challengeList) {
+        return challengeList.stream().map(this::toRestResponse).collect(Collectors.toList());
     }
 
 }

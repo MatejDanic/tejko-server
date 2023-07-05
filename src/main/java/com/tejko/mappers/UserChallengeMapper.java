@@ -13,7 +13,7 @@ import com.tejko.models.general.payload.responses.UserChallengeResponse;
 public class UserChallengeMapper implements UserChallengeMapperInterface {
 
     @Override
-    public UserChallengeResponse toApiResponse(UserChallenge userChallenge) {
+    public UserChallengeResponse toRestResponse(UserChallenge userChallenge) {
         return new UserChallengeResponse(
             userChallenge.getCreatedDate(), 
             userChallenge.getLastModifiedDate(), 
@@ -24,8 +24,8 @@ public class UserChallengeMapper implements UserChallengeMapperInterface {
     }
 
     @Override
-    public List<UserChallengeResponse> toApiResponseList(List<UserChallenge> userChallengeList) {
-        return userChallengeList.stream().map(this::toApiResponse).collect(Collectors.toList());
+    public List<UserChallengeResponse> toRestResponseList(List<UserChallenge> userChallengeList) {
+        return userChallengeList.stream().map(this::toRestResponse).collect(Collectors.toList());
     }
 
 }

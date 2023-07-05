@@ -37,25 +37,25 @@ public class PreferenceService implements PreferenceServiceInterface {
 
     @Override
     public PreferenceResponse getById(UUID id) {
-        return preferenceMapper.toApiResponse(preferenceRepository.getById(id));
+        return preferenceMapper.toRestResponse(preferenceRepository.getById(id));
     }
 
     @Override
     public List<PreferenceResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return preferenceMapper.toApiResponseList(preferenceRepository.findAll(pageable).getContent());
+        return preferenceMapper.toRestResponseList(preferenceRepository.findAll(pageable).getContent());
     }
 
     @Override
     public List<PreferenceResponse> getBulkById(Set<UUID> idSet) {
-        return preferenceMapper.toApiResponseList(preferenceRepository.findAllById(idSet));
+        return preferenceMapper.toRestResponseList(preferenceRepository.findAllById(idSet));
     }
 
     @Override
     public PreferenceResponse create(PreferenceRequest objectRequest) {
         Preference preference = preferenceFactory.getObject(objectRequest);
 
-        return preferenceMapper.toApiResponse(preferenceRepository.save(preference));
+        return preferenceMapper.toRestResponse(preferenceRepository.save(preference));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class PreferenceService implements PreferenceServiceInterface {
             preferenceList.add(preferenceFactory.getObject(objectRequest));
         }
 
-        return preferenceMapper.toApiResponseList(preferenceRepository.saveAll(preferenceList));
+        return preferenceMapper.toRestResponseList(preferenceRepository.saveAll(preferenceList));
     }
 
     @Override
@@ -75,7 +75,7 @@ public class PreferenceService implements PreferenceServiceInterface {
 
         preference = applyPatch(preference, preferenceRequest);
 
-        return preferenceMapper.toApiResponse(preferenceRepository.save(preference));
+        return preferenceMapper.toRestResponse(preferenceRepository.save(preference));
     }
 
     @Override
@@ -86,7 +86,7 @@ public class PreferenceService implements PreferenceServiceInterface {
             preference = applyPatch(preference, idPreferenceRequestMap.get(preference.getId()));
         }
 
-        return preferenceMapper.toApiResponseList(preferenceRepository.saveAll(preferenceList));
+        return preferenceMapper.toRestResponseList(preferenceRepository.saveAll(preferenceList));
     }
 
     @Override
@@ -106,7 +106,7 @@ public class PreferenceService implements PreferenceServiceInterface {
 
     @Override
     public PreferenceResponse getByUserId(UUID userId) {
-        return preferenceMapper.toApiResponse(preferenceRepository.getByUserId(userId));
+        return preferenceMapper.toRestResponse(preferenceRepository.getByUserId(userId));
     }
 
     @Override
@@ -117,7 +117,7 @@ public class PreferenceService implements PreferenceServiceInterface {
     @Override
     public Preference applyPatch(Preference preference, PreferenceRequest preferenceRequest) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toApiResponseList'");
+        throw new UnsupportedOperationException("Unimplemented method 'toRestResponseList'");
     }
 
 }

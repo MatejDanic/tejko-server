@@ -13,7 +13,7 @@ import com.tejko.models.general.payload.responses.PreferenceResponse;
 public class PreferenceMapper implements PreferenceMapperInterface {
 
     @Override
-    public PreferenceResponse toApiResponse(Preference preference) {
+    public PreferenceResponse toRestResponse(Preference preference) {
         if (preference == null) return null;
         return new PreferenceResponse(
             preference.getId(), 
@@ -25,8 +25,8 @@ public class PreferenceMapper implements PreferenceMapperInterface {
     }
 
     @Override
-    public List<PreferenceResponse> toApiResponseList(List<Preference> preferenceList) {
-        return preferenceList.stream().map(this::toApiResponse).collect(Collectors.toList());
+    public List<PreferenceResponse> toRestResponseList(List<Preference> preferenceList) {
+        return preferenceList.stream().map(this::toRestResponse).collect(Collectors.toList());
     }
 
 }

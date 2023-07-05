@@ -3,13 +3,13 @@ package com.tejko.interfaces.api.services;
 import java.util.List;
 import java.util.UUID;
 
-import com.tejko.interfaces.api.ObjectServiceInterface;
+import com.tejko.interfaces.api.RestService;
 import com.tejko.models.general.Role;
 import com.tejko.models.general.payload.requests.RoleRequest;
 import com.tejko.models.general.payload.responses.RoleResponse;
 import com.tejko.models.general.payload.responses.UserResponse;
 
-public interface RoleServiceInterface extends ObjectServiceInterface<UUID, Role, RoleRequest, RoleResponse> {
+public interface RoleServiceInterface extends RestService<UUID, Role, RoleRequest, RoleResponse> {
 
     public List<UserResponse> getUsersByRoleId(UUID roleId);
 

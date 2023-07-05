@@ -13,7 +13,7 @@ import com.tejko.models.general.payload.responses.RoleResponse;
 public class RoleMapper implements RoleMapperInterface {
 
     @Override
-    public RoleResponse toApiResponse(Role role) {
+    public RoleResponse toRestResponse(Role role) {
         return new RoleResponse(
             role.getId(), 
             role.getCreatedDate(), 
@@ -24,8 +24,8 @@ public class RoleMapper implements RoleMapperInterface {
     }
 
     @Override
-    public List<RoleResponse> toApiResponseList(List<Role> roleList) {
-        return roleList.stream().map(this::toApiResponse).collect(Collectors.toList());
+    public List<RoleResponse> toRestResponseList(List<Role> roleList) {
+        return roleList.stream().map(this::toRestResponse).collect(Collectors.toList());
     }
 
 }

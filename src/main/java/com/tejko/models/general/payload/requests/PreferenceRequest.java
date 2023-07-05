@@ -9,8 +9,9 @@ import com.tejko.constants.TejkoConstants;
 import com.tejko.models.general.Preference;
 import com.tejko.models.general.enums.Theme;
 import com.tejko.models.general.enums.VolumeLevel;
+import com.tejko.models.general.payload.RestRequest;
 
-public class PreferenceRequest extends ApiRequest<Preference> {
+public class PreferenceRequest extends RestRequest<Preference> {
 
     @NotBlank
     private UUID userId;

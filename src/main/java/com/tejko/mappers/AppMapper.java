@@ -13,7 +13,7 @@ import com.tejko.models.general.payload.responses.AppResponse;
 public class AppMapper implements AppMapperInterface {
 
     @Override
-    public AppResponse toApiResponse(App app) {
+    public AppResponse toRestResponse(App app) {
         return new AppResponse(
             app.getId(), 
             app.getCreatedDate(), 
@@ -24,8 +24,8 @@ public class AppMapper implements AppMapperInterface {
     }
 
     @Override
-    public List<AppResponse> toApiResponseList(List<App> appList) {
-        return appList.stream().map(this::toApiResponse).collect(Collectors.toList());
+    public List<AppResponse> toRestResponseList(List<App> appList) {
+        return appList.stream().map(this::toRestResponse).collect(Collectors.toList());
     }
 
 }

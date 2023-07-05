@@ -40,24 +40,24 @@ public class GameService implements GameServiceInterface {
 
     @Override
     public GameResponse getById(UUID id) {
-        return gameMapper.toApiResponse(gameRepository.getById(id));
+        return gameMapper.toRestResponse(gameRepository.getById(id));
     }
 
     @Override
     public List<GameResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return gameMapper.toApiResponseList(gameRepository.findAll(pageable).getContent());
+        return gameMapper.toRestResponseList(gameRepository.findAll(pageable).getContent());
     }
 
     @Override
     public List<GameResponse> getBulkById(Set<UUID> idSet) {
-        return gameMapper.toApiResponseList(gameRepository.findAllById(idSet));
+        return gameMapper.toRestResponseList(gameRepository.findAllById(idSet));
     }
 
     @Override
     public GameResponse create(GameRequest gameRequest) {
         Game game = gameFactory.getObject(gameRequest);
-        return gameMapper.toApiResponse(gameRepository.save(game));
+        return gameMapper.toRestResponse(gameRepository.save(game));
     }
 
     @Override
@@ -68,7 +68,7 @@ public class GameService implements GameServiceInterface {
             gameList.add(gameFactory.getObject(objectRequest));
         }
 
-        return gameMapper.toApiResponseList(gameRepository.saveAll(gameList));
+        return gameMapper.toRestResponseList(gameRepository.saveAll(gameList));
     }
 
     @Override
@@ -77,7 +77,7 @@ public class GameService implements GameServiceInterface {
 
         game = applyPatch(game, gameRequest);
 
-        return gameMapper.toApiResponse(gameRepository.save(game));
+        return gameMapper.toRestResponse(gameRepository.save(game));
     }
 
     @Override
@@ -88,7 +88,7 @@ public class GameService implements GameServiceInterface {
             game = applyPatch(game, idGameRequestMap.get(game.getId()));
         }
 
-        return gameMapper.toApiResponseList(gameRepository.saveAll(gameList));
+        return gameMapper.toRestResponseList(gameRepository.saveAll(gameList));
     }
 
     @Override

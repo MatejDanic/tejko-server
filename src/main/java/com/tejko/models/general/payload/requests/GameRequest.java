@@ -3,8 +3,9 @@ package com.tejko.models.general.payload.requests;
 import java.util.UUID;
 
 import com.tejko.models.general.Game;
+import com.tejko.models.general.payload.RestRequest;
 
-public abstract class GameRequest extends ApiRequest<Game> {
+public abstract class GameRequest extends RestRequest<Game> {
 
     private UUID userId;
 

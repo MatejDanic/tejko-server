@@ -37,24 +37,24 @@ public class ChallengeService implements ChallengeServiceInterface {
 
     @Override
     public ChallengeResponse getById(UUID id) {
-        return challengeMapper.toApiResponse(challengeRepository.getById(id));
+        return challengeMapper.toRestResponse(challengeRepository.getById(id));
     }
 
     @Override
     public List<ChallengeResponse> getAll(Integer page, Integer size, String sort, String direction) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-        return challengeMapper.toApiResponseList(challengeRepository.findAll(pageable).getContent());
+        return challengeMapper.toRestResponseList(challengeRepository.findAll(pageable).getContent());
     }
 
     @Override
     public List<ChallengeResponse> getBulkById(Set<UUID> idSet) {
-        return challengeMapper.toApiResponseList(challengeRepository.findAllById(idSet));
+        return challengeMapper.toRestResponseList(challengeRepository.findAllById(idSet));
     }
 
     @Override
     public ChallengeResponse create(ChallengeRequest challengeRequest) {
         Challenge challenge = challengeFactory.getObject(challengeRequest);
-        return challengeMapper.toApiResponse(challengeRepository.save(challenge));
+        return challengeMapper.toRestResponse(challengeRepository.save(challenge));
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ChallengeService implements ChallengeServiceInterface {
             challengeList.add(challengeFactory.getObject(objectRequest));
         }
 
-        return challengeMapper.toApiResponseList(challengeRepository.saveAll(challengeList));
+        return challengeMapper.toRestResponseList(challengeRepository.saveAll(challengeList));
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ChallengeService implements ChallengeServiceInterface {
 
         challenge = applyPatch(challenge, challengeRequest);
 
-        return challengeMapper.toApiResponse(challengeRepository.save(challenge));
+        return challengeMapper.toRestResponse(challengeRepository.save(challenge));
     }
 
     @Override
@@ -85,7 +85,7 @@ public class ChallengeService implements ChallengeServiceInterface {
             challenge = applyPatch(challenge, idChallengeRequestMap.get(challenge.getId()));
         }
 
-        return challengeMapper.toApiResponseList(challengeRepository.saveAll(challengeList));
+        return challengeMapper.toRestResponseList(challengeRepository.saveAll(challengeList));
     }
 
     @Override
@@ -111,7 +111,7 @@ public class ChallengeService implements ChallengeServiceInterface {
     @Override
     public Challenge applyPatch(Challenge challenge, ChallengeRequest challengeRequest) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toApiResponseList'");
+        throw new UnsupportedOperationException("Unimplemented method 'toRestResponseList'");
     }
 
 }

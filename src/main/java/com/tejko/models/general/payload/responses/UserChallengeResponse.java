@@ -4,8 +4,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.tejko.models.general.UserChallenge;
+import com.tejko.models.general.payload.RestResponse;
 
-public class UserChallengeResponse extends ApiResponse<UserChallenge> {
+public class UserChallengeResponse extends RestResponse<UserChallenge> {
     
     private UUID userId;
     private UUID challengeId;

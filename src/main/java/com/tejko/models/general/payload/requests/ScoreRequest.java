@@ -5,8 +5,9 @@ import java.util.UUID;
 import javax.validation.constraints.NotBlank;
 
 import com.tejko.models.general.Score;
+import com.tejko.models.general.payload.RestRequest;
 
-public abstract class ScoreRequest extends ApiRequest<Score> {
+public abstract class ScoreRequest extends RestRequest<Score> {
 
     @NotBlank
     private UUID userId;

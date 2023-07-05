@@ -2,9 +2,8 @@ package com.tejko.models.general.payload;
 
 import com.tejko.models.DatabaseEntity;
 import com.tejko.models.general.enums.ResponseStatus;
-import com.tejko.models.general.payload.responses.ApiResponse;
 
-public class ResponseWrapper<T extends ApiResponse<? extends DatabaseEntity>> {
+public class ResponseWrapper<T extends RestResponse<? extends DatabaseEntity>> {
 
     private ResponseStatus status;
     private String message;

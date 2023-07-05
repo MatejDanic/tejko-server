@@ -39,24 +39,24 @@ public class ScoreService implements ScoreServiceInterface {
 
 	@Override
 	public ScoreResponse getById(UUID id) {
-		return scoreMapper.toApiResponse(scoreRepository.getById(id));
+		return scoreMapper.toRestResponse(scoreRepository.getById(id));
 	}
 
 	@Override
 	public List<ScoreResponse> getAll(Integer page, Integer size, String sort, String direction) {
 		Pageable pageable = PageRequest.of(page, size, Sort.by(Direction.fromString(direction), sort));
-		return scoreMapper.toApiResponseList(scoreRepository.findAll(pageable).getContent());
+		return scoreMapper.toRestResponseList(scoreRepository.findAll(pageable).getContent());
 	}
 
 	@Override
 	public List<ScoreResponse> getBulkById(Set<UUID> idSet) {
-		return scoreMapper.toApiResponseList(scoreRepository.findAllById(idSet));
+		return scoreMapper.toRestResponseList(scoreRepository.findAllById(idSet));
 	}
 
 	@Override
 	public ScoreResponse create(ScoreRequest objectRequest) {
 		Score score = scoreFactory.getObject(objectRequest);
-		return scoreMapper.toApiResponse(scoreRepository.save(score));
+		return scoreMapper.toRestResponse(scoreRepository.save(score));
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class ScoreService implements ScoreServiceInterface {
 			scoreList.add(scoreFactory.getObject(objectRequest));
 		}
 
-		return scoreMapper.toApiResponseList(scoreRepository.saveAll(scoreList));
+		return scoreMapper.toRestResponseList(scoreRepository.saveAll(scoreList));
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class ScoreService implements ScoreServiceInterface {
 
 		score = applyPatch(score, scoreRequest);
 
-		return scoreMapper.toApiResponse(scoreRepository.save(score));
+		return scoreMapper.toRestResponse(scoreRepository.save(score));
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class ScoreService implements ScoreServiceInterface {
 			score = applyPatch(score, idScoreRequestMap.get(score.getId()));
 		}
 
-		return scoreMapper.toApiResponseList(scoreRepository.saveAll(scoreList));
+		return scoreMapper.toRestResponseList(scoreRepository.saveAll(scoreList));
 	}
 
 	@Override
@@ -107,17 +107,17 @@ public class ScoreService implements ScoreServiceInterface {
 
 	@Override
 	public List<ScoreResponse> getAllByDateInterval(LocalDateTime startDate, LocalDateTime endDate) {
-		return scoreMapper.toApiResponseList(scoreRepository.findAllByCreatedDateBetween(startDate, endDate));
+		return scoreMapper.toRestResponseList(scoreRepository.findAllByCreatedDateBetween(startDate, endDate));
 	}
 	
 	@Override
     public List<ScoreResponse> getScoresByUserId(UUID userId) {
-        return scoreMapper.toApiResponseList(scoreRepository.findAllByUserId(userId));
+        return scoreMapper.toRestResponseList(scoreRepository.findAllByUserId(userId));
     }
 
 	@Override
     public List<ScoreResponse> getAllYambScores() {
-        return scoreMapper.toApiResponseList(scoreRepository.findAllYambScores());
+        return scoreMapper.toRestResponseList(scoreRepository.findAllYambScores());
     }
 
 	@Override
@@ -128,7 +128,7 @@ public class ScoreService implements ScoreServiceInterface {
 	@Override
 	public Score applyPatch(Score score, ScoreRequest scoreRequest) {
 		// TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toApiResponseList'");
+        throw new UnsupportedOperationException("Unimplemented method 'toRestResponseList'");
 	}
 
 }
